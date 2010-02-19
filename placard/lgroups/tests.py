@@ -5,13 +5,13 @@ from django.conf import settings
 import unittest
 
 from placard import slapd
-from placard.client import LDAPClient
+from placard import LDAPClient
 from placard.misc.test_data import test_ldif
 
 server = None
 
 
-class LDAPUserTest(unittest.TestCase):
+class LDAPGroupTest(unittest.TestCase):
     def setUp(self):
         global server
         server = slapd.Slapd()
@@ -35,25 +35,20 @@ class LDAPUserTest(unittest.TestCase):
         
     def test_get_user(self):
         c = LDAPClient()      
-        u = c.get_user('uid=testuser3')
-        self.failUnlessEqual(u.mail, 't.user3@example.com')
+        g = c.get_group('testgroup')
+        self.failUnlessEqual(g.cn, 'testgroup')
                              
     def test_delete_user(self):
         c = LDAPClient()
-        self.failUnlessEqual(len(c.get_users()), 3)
-        c.delete_user('testuser2')
-        self.failUnlessEqual(len(c.get_users()), 2)
+        self.failUnlessEqual(len(c.get_groups()), 3)
+        c.delete_group('testgroup2')
+        self.failUnlessEqual(len(c.get_groups()), 2)
                 
-    def test_in_ldap(self):
-        c = LDAPClient()
-        self.assertTrue(c.in_ldap('testuser1'))
-        self.assertFalse(c.in_ldap('testuser4'))
-        
     def test_update(self):
         c = LDAPClient()
-        u = c.get_user('uid=testuser1')
-        self.failUnlessEqual(u.sn, 'User')  
-        c.update_user(u.uid, sn='Bloggs')
-        u = c.get_user('uid=testuser1')
-        self.failUnlessEqual(u.sn, 'Bloggs')
+        g = c.get_group('testgroup3')
+        self.failUnlessEqual(g.description, 'Test Group3')  
+        c.update_user(g.gidNumber, cn='Systems')
+        g = c.get_group('uid=testgroup3')
+        self.failUnlessEqual(g.sn, 'Systems')
 
