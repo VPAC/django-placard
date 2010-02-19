@@ -80,5 +80,5 @@ LDAP_GROUP_BASE='ou=Group, %s' % LDAP_BASE
 LDAP_ATTRS = 'placard.demo.ldap_attrs'
 
 
-#TEST_RUNNER='openidp.test_utils.xmlrunner.run_tests'
+TEST_RUNNER='placard.demo.test_utils.xmlrunner.run_tests'
 DATABASE_ENGINE = 'sqlite3'
