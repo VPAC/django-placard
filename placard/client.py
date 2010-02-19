@@ -12,14 +12,11 @@ try:
 except:
     pass
 
-from ldap_passwd import UserPassword
-import exceptions
-from lusers.models import LDAPUser
-from lgroups.models import LDAPGroup
-#from placard.ldap_passwd import UserPassword
-#from placard import exceptions
-#from placard.lusers.models import LDAPUser
-#from placard.lgroups.models import LDAPGroup
+
+from placard.ldap_passwd import UserPassword
+from placard import exceptions
+from placard.lusers.models import LDAPUser
+from placard.lgroups.models import LDAPGroup
 
 
 if hasattr(settings, 'LDAP_USE_TLS'):
@@ -381,10 +378,13 @@ class LDAPClient(object):
         """
         Simple check to see if user in LDAP
         """
-        if self.get_user('uid=%s' % uid):
-            return True
+        try:
+            self.get_user('uid=%s' % uid)
+        except exceptions.DoesNotExistException:
+            return False
+    
+        return True
         
-        return False
 
 
     def update_user(self, uid, **kwargs):
