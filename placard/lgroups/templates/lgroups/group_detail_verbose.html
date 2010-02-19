@@ -1,0 +1,30 @@
+{% extends "main.html" %}
+
+{% block title %}Groups{% endblock %}
+
+{% block content_title %}{% endblock %}
+
+{% block bread_crumbs_1 %}
+ &rsaquo; <a href="../../">Groups
+ &rsaquo; <a href="../">{{ group_id }}</a>
+ &rsaquo; Verbose
+{% endblock %}   
+
+{% block content %}
+<div id="content-main">
+
+<div class="module">
+	<h3>{{ dn }}</h3>
+   	<table>
+   	{% for i in lgroup %}
+   		<tr>
+				<td>{{ i.0 }}</td><td>{{ i.1 }}</td>
+			</tr>
+			<tr>
+   	{% endfor %}
+			
+		
+
+	</div>
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "main.html" %}
+
+{% block title %}Users{% endblock %}
+
+{% block content_title %}{% endblock %}
+
+{% block bread_crumbs_1 %}
+ &rsaquo; <a href="../../">Users
+ &rsaquo; <a href="../">{{ username }}</a>
+ &rsaquo; Verbose
+{% endblock %}   
+
+{% block content %}
+<div id="content-main">
+
+<div class="module">
+	<h3>{{ dn }}</h3>
+   	<table>
+   	{% for i in luser %}
+   		<tr>
+				<td>{{ i.0 }}</td><td>{{ i.1 }}</td>
+			</tr>
+			<tr>
+   	{% endfor %}
+			
+		
+
+	</div>
+</div>
+{% endblock %}

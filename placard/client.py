@@ -38,7 +38,7 @@ ldap_attrs = __import__(settings.LDAP_ATTRS, {}, {}, [''])
 class LDAPClient(object):
 
     def __init__(self, url=settings.LDAP_URL, 
-                 user=settings.LDAP_ADMIN_USER, 
+                 username=settings.LDAP_ADMIN_USER, 
                  password=settings.LDAP_ADMIN_PASSWORD,
                  base=settings.LDAP_BASE,
                  user_base=settings.LDAP_USER_BASE,

@@ -1,0 +1,77 @@
+{% extends "main.html" %}
+
+{% block title %}LDAP Groups{% endblock %}
+
+{% block content_title %}{% endblock %}
+
+{% block bread_crumbs_1 %}
+ &rsaquo; <a href="../">LDAP Groups</a>
+ &rsaquo; {{ group }}
+{% endblock %}   
+
+{% block content %}
+<div id="content-main">
+
+<div class="module">
+   	<h2>LDAP Groups</h2>
+   	
+   	<h3>{{ group.cn }}</h3>
+   	<table>
+			<tr>
+				<td>cn</td><td>{{ group.cn }}</td>
+			</tr>
+			<tr>
+				<td>description</td><td>{{ group.description }}</td>
+			</tr>
+			<tr>	
+				<td>displayName</td><td>{{ group.displayName }}</td>
+			</tr>
+			<tr>	
+				<td>gidNumber</td><td>{{ group.gidNumber }}</td>
+			</tr>
+			<tr>
+				<td>objectClass</td><td>{{ group.objectClass }}</td>
+			</tr>
+			<tr>	
+				<td>sambaGroupType</td><td>{{ group.sambaGroupType }}</td>
+			</tr>
+			<tr>
+				<td>sambaSID</td><td>{{ group.sambaSID }}</td>
+			</tr>
+   	</table>
+   	{% if perms.auth.delete_group %}
+   	<p><a href="verbose/">Verbose</a></p>
+   	{% endif %}
+	{% if perms.auth.change_group %}
+   	<form method="post" action=".">
+			<div>
+			{% load forms %}
+				<fieldset class="module aligned ()">
+					{% formfield form.add_user %}<input type="submit" value="Add" class="default" />
+				</fieldset>
+			</div>
+			</form>
+	{% endif %}   	
+
+<table cellspacing="0">
+	<thead>
+		<tr>
+			<th>User</th>
+		</tr>
+	</thead>   	
+   <tbody>
+   	{% for m in member_list %}
+	   	<tr class="{% cycle row1,row2 %}">
+				<td><a href="{{ m.get_absolute_url }}" >{{ m }}</a></td>
+				{% if perms.auth.change_group %}<td><a href="remove/{{ m.uid }}/" class="deletelink">Remove</a></td>{% endif %}
+			</tr>
+			</tbody>  
+		{% endfor %}
+   </tbody>  	
+</table>	
+   		{% if perms.auth.delete_group %}
+   	<p><a href="delete/" class="deletelink">Delete</a></p>
+   	{% endif %}
+	</div>
+</div>
+{% endblock %}
