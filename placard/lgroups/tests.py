@@ -112,6 +112,29 @@ class LDAPGroupTest(unittest.TestCase):
         members = c.get_group_members('cn=full')
         self.failUnlessEqual(len(members), 3)
 
+    def test_add_group(self):
+        c = LDAPClient()
+        c.add_group(cn='Admin')
+        self.failUnlessEqual(len(c.get_groups()), 4)
+        g = c.get_group('cn=Admin')
+        self.failUnlessEqual(g.gidNumber, '10004')
+        self.failUnlessEqual(g.objectClass, ['posixGroup', 'top'])
+        
+    def test_add_group_required_attributes(self):
+        c = LDAPClient()
+        self.failUnlessRaises(exceptions.RequiredAttributeNotGiven, c.add_group, description='Admin Group')
 
-
-    
+    def test_add_group_override_generated(self):
+        c = LDAPClient()
+        c.add_group(cn='Admin', gidNumber='10008')
+        self.failUnlessEqual(len(c.get_groups()), 4)
+        g = c.get_group('cn=Admin')
+        self.failUnlessEqual(g.gidNumber, '10008')
+        
+    def test_add_group_optional(self):
+        c = LDAPClient()
+        c.add_group(cn='Admin', description='Admin Group')
+        self.failUnlessEqual(len(c.get_groups()), 4)
+        g = c.get_group('cn=Admin')
+        self.failUnlessEqual(g.description, 'Admin Group')
+        
