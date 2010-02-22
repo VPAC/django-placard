@@ -7,6 +7,7 @@ import unittest
 from placard import slapd
 from placard import LDAPClient
 from placard.misc.test_data import test_ldif
+from placard import DoesNotExistException
 
 server = None
 
@@ -37,6 +38,10 @@ class LDAPGroupTest(unittest.TestCase):
         c = LDAPClient()      
         g = c.get_group('cn=systems')
         self.failUnlessEqual(g.cn, 'systems')
+        g = c.get_group('cn=empty')
+        self.failUnlessEqual(g.cn, 'empty')
+        g = c.get_group('cn=full')
+        self.failUnlessEqual(g.cn, 'full')
                              
     def test_delete_group(self):
         c = LDAPClient()
@@ -47,8 +52,66 @@ class LDAPGroupTest(unittest.TestCase):
     def test_update(self):
         c = LDAPClient()
         g = c.get_group('cn=empty')
-        self.failUnlessEqual(g.description, 'Empty')  
+        self.failUnlessEqual(g.description, 'Empty Group')  
         c.update_group(g.gidNumber, description='No Members')
-        g = c.get_group('cn=emtpy')
+        g = c.get_group('cn=empty')
         self.failUnlessEqual(g.description, 'No Members')
 
+    def test_no_group(self):
+        c = LDAPClient()
+        self.assertRaises(c.get_group('cn=nosuchgroup'), exceptions.DoesNotExistException)
+
+    def test_get_members_empty(self):
+        c = LDAPClient()
+        members = c.get_group_members('cn=empty')
+        self.failUnlessEqual(len(members), 0)
+
+    def test_get_members_one(self):
+        c = LDAPClient()
+        members = c.get_group_members('cn=systems')
+        self.failUnlessEqual(len(members), 1)
+
+    def test_get_members_many(self):
+        c = LDAPClient()
+        members = c.get_group_members('cn=full')
+        self.failUnlessEqual(len(members), 3)
+        
+    def test_remove_group_member(self):
+        c = LDAPClient()
+        c.remove_group_member('cn=full', 'testuser2') 
+        members = c.get_group_members('cn=full')
+        self.failUnlessEqual(len(members), 2)
+
+    def test_remove_group_member_one(self):
+        c = LDAPClient()
+        c.remove_group_member('cn=systems', 'testuser1') 
+        members = c.get_group_members('cn=systems')
+        self.failUnlessEqual(len(members), 0)
+
+    def test_remove_group_member_empty(self):
+        c = LDAPClient()
+        c.remove_group_member('cn=empty', 'testuser1') 
+        members = c.get_group_members('cn=empty')
+        self.failUnlessEqual(len(members), 0)
+
+    def test_add_member(self):
+        c = LDAPClient()
+        c.add_group_member('cn=systems', 'testuser2')
+        members = c.get_group_members('cn=systems')
+        self.failUnlessEqual(len(members), 2)
+
+    def test_add_member_empty(self):
+        c = LDAPClient()
+        c.add_group_member('cn=empty', 'testuser2')
+        members = c.get_group_members('cn=empty')
+        self.failUnlessEqual(len(members), 1)
+
+    def test_add_member_exists(self):
+        c = LDAPClient()
+        c.add_group_member('cn=full', 'testuser2')
+        members = c.get_group_members('cn=full')
+        self.failUnlessEqual(len(members), 3)
+
+
+
+    
