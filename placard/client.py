@@ -187,11 +187,25 @@ class LDAPClient(object):
 
     def remove_group_member(self, search_string, uid):
         group = self.get_group(search_string)
-        members = group.memberUid[:]
-        members.remove(str(uid))
+        try:
+            members = group.memberUid[:]
+        except AttributeError:
+            members = []
+
+        try:
+            members.remove(str(uid))
+        except ValueError:
+            # Log warning
+            pass
+
         dn = 'cn=%s, %s' % (group.cn, self.group_base)
         
-        old = {'memberUid': group.memberUid,}
+        try:
+            old_members = group.memberUid[:]
+        except AttributeError:
+            old_members = []
+
+        old = {'memberUid': old_members,}
         new = {'memberUid': members }
         
         self.ldap_modify(dn, old, new)
