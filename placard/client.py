@@ -92,7 +92,7 @@ class LDAPClient(object):
 
     def update_group(self, gidNumber, **kwargs):
 
-        group = self.get_group(gidNumber)
+        group = self.get_group('gidNumber=%s' % gidNumber)
             # Some place-holders for old and new values
         old = {}
         for k, i in kwargs.items():
@@ -157,22 +157,22 @@ class LDAPClient(object):
         return attrs['gidNumber']
 
 
-    def get_group(self, gid):
+    def get_group(self, search_string):
 
-        result_data = self.ldap_search(self.group_base, 'gidNumber=%s' % gid)
+        result_data = self.ldap_search(self.group_base, search_string)
     
         if len(result_data) == 1:
         
             return LDAPGroup(result_data[0])
 
-        raise exceptions.DoesNotExistException("""Group "%s" does not exist""" % gid)
+        raise exceptions.DoesNotExistException("""Group "%s" does not exist""" % search_string)
 
 
-    def get_group_members(self, gid):
+    def get_group_members(self, search_string):
     
         members = []
         
-        result_data = self.ldap_search(self.group_base, 'gidNumber=%s' % gid) 
+        result_data = self.ldap_search(self.group_base, search_string) 
         if 'memberUid' in result_data[0][1]:
             for m in result_data[0][1]['memberUid']:
                 try:
@@ -180,7 +180,7 @@ class LDAPClient(object):
                     members.append(u)
                 except exceptions.DoesNotExist:
                     self.remove_group_member(gid, m)
-                    
+        gid = self.get_group(search_string).gidNumber
         primary_members = self.ldap_search(self.user_base, 'gidNumber=%s' % gid)
         for m in primary_members:
             members.append(LDAPUser(m))
@@ -188,8 +188,8 @@ class LDAPClient(object):
         return dictsort(members, "givenName")
 
 
-    def remove_group_member(self, gidNumber, uid):
-        group = self.get_group(gidNumber)
+    def remove_group_member(self, search_string, uid):
+        group = self.get_group(search_string)
         members = group.memberUid[:]
         members.remove(str(uid))
         dn = 'cn=%s, %s' % (group.cn, self.group_base)
