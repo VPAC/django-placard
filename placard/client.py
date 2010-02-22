@@ -2,14 +2,12 @@ from django.core.mail import mail_admins
 from django.conf import settings
 from django.template.defaultfilters import dictsort
 
-from django_common.util import unique
-import time, datetime
 import os
 import ldap
 import ldap.modlist as modlist
 try:
     import smbpasswd
-except:
+except ImportError:
     pass
 
 
@@ -22,7 +20,7 @@ from placard.lgroups.models import LDAPGroup
 if hasattr(settings, 'LDAP_USE_TLS'):
     LDAP_USE_TLS = settings.LDAP_USE_TLS
 else:
-    LDAP_USE_TLS= False
+    LDAP_USE_TLS = False
 
 if LDAP_USE_TLS:
     ldap.set_option(ldap.OPT_X_TLS_CACERTFILE, settings.LDAP_TLS_CA)
@@ -34,7 +32,8 @@ ldap_attrs = __import__(settings.LDAP_ATTRS, {}, {}, [''])
 
 class LDAPClient(object):
 
-    def __init__(self, url=settings.LDAP_URL, 
+    def __init__(self, 
+                 url=settings.LDAP_URL, 
                  username=settings.LDAP_ADMIN_USER, 
                  password=settings.LDAP_ADMIN_PASSWORD,
                  base=settings.LDAP_BASE,
@@ -45,7 +44,7 @@ class LDAPClient(object):
         l.protocol_version = ldap.VERSION3
 
         if LDAP_USE_TLS:
-            l.set_option(ldap.OPT_X_TLS,ldap.OPT_X_TLS_DEMAND)
+            l.set_option(ldap.OPT_X_TLS, ldap.OPT_X_TLS_DEMAND)
             l.start_tls_s()
 
         l.simple_bind_s(username, password)
@@ -61,12 +60,12 @@ class LDAPClient(object):
 
     def ldap_add(self, dn, attrs):
         ldif = modlist.addModlist(attrs)
-        self.conn.add_s(dn,ldif)
+        self.conn.add_s(dn, ldif)
 
-    def ldap_search(self, baseDN, searchFilter):
-        searchScope = ldap.SCOPE_SUBTREE
-        retrieveAttributes = None
-        return self.conn.search_s(baseDN, searchScope, searchFilter, retrieveAttributes)
+    def ldap_search(self, base_dn, search_filter):
+        search_scope = ldap.SCOPE_SUBTREE
+        retrieve_attributes = None
+        return self.conn.search_s(base_dn, search_scope, search_filter, retrieve_attributes)
 
     def ldap_modify(self, dn, old, new):
         # Convert place-holders for modify-operation using modlist-module
@@ -96,13 +95,13 @@ class LDAPClient(object):
         group = self.get_group(gidNumber)
             # Some place-holders for old and new values
         old = {}
-        for k,i in kwargs.items():
+        for k, i in kwargs.items():
             try:
                 old[k] = getattr(group, k)
             except:
                 pass
         new = {}
-        for k,i in kwargs.items():
+        for k, i in kwargs.items():
             new[k] = str(i)
             
         self.ldap_modify(group.dn, old, new)
@@ -144,7 +143,7 @@ class LDAPClient(object):
             elif a in ldap_attrs.GENERATED_GROUP_ATTRS:
                 attrs[a] = ldap_attrs.GENERATED_GROUP_ATTRS[a](attrs)
             else:
-                raise RequiredAttributeNotGiven('Required attribute %s not found' % a)
+                raise exceptions.RequiredAttributeNotGiven('Required attribute %s not found' % a)
 
         for a in ldap_attrs.OPTIONAL_GROUP_ATTRS:
             if a in kwargs:
@@ -174,14 +173,14 @@ class LDAPClient(object):
         members = []
         
         result_data = self.ldap_search(self.group_base, 'gidNumber=%s' % gid) 
-	if 'memberUid' in result_data[0][1]:
+        if 'memberUid' in result_data[0][1]:
             for m in result_data[0][1]['memberUid']:
-	        try:
+                try:
                     u = self.get_user("uid=%s" % m)
                     members.append(u)
-                except:
+                except exceptions.DoesNotExist:
                     self.remove_group_member(gid, m)
-
+                    
         primary_members = self.ldap_search(self.user_base, 'gidNumber=%s' % gid)
         for m in primary_members:
             members.append(LDAPUser(m))
@@ -214,9 +213,9 @@ class LDAPClient(object):
         dn = 'cn=%s, %s' % (group.cn, self.group_base)
         
         try:
-            old = {'memberUid': group.memberUid,}
+            old = {'memberUid': group.memberUid}
         except:
-            old = {'MemberUid': [],}
+            old = {'MemberUid': []}
         new = {'memberUid': members }
     
         self.ldap_modify(dn, old, new)
@@ -233,9 +232,6 @@ class LDAPClient(object):
 
 
 
-    ##
-    ## USER
-    ##
     def add_user(self, has_raw_password=False, **kwargs):
         """Creates an LDAP user given a Person"""
 
@@ -251,7 +247,7 @@ class LDAPClient(object):
             elif a in ldap_attrs.GENERATED_USER_ATTRS:
                 attrs[a] = ldap_attrs.GENERATED_USER_ATTRS[a](attrs)
             else:
-                raise RequiredAttributeNotGiven('Required attribute %s not found' % a)
+                raise exceptions.RequiredAttributeNotGiven('Required attribute %s not found' % a)
 
         for a in ldap_attrs.OPTIONAL_USER_ATTRS:
             if a in kwargs:
@@ -268,7 +264,7 @@ class LDAPClient(object):
             raw_password = attrs['raw_password']
             del attrs['raw_password']
           
-        for k,v in attrs.items():
+        for k, v in attrs.items():
             if v == '':
                 del(attrs[k])
 
@@ -292,7 +288,7 @@ class LDAPClient(object):
 
     def change_password(self, username, raw_password):
         # The dn of our existing entry/object
-        dn="uid=%s,%s" % (username, self.user_base)
+        dn = "uid=%s,%s" % (username, self.user_base)
         
         up = UserPassword(l=self.conn, dn=dn)
         up.changePassword(newPassword=raw_password, scheme=settings.LDAP_PASSWD_SCHEME)
