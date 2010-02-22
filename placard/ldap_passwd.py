@@ -15,10 +15,7 @@ string module.
 __version__ = '0.1.0'
 
 import random, ldap
-try:
-  from hashlib import md5
-except ImportError:
-  import md5
+import md5
 import string
   
   
@@ -71,22 +68,16 @@ else:
     _remove_dict_items(AVAIL_AUTHPASSWORD_SCHEMES, ['md5','sha1'])
   else:
     random.seed()
+  try:  
+    import sha
+  except ImportError:
+    _remove_dict_items(AVAIL_USERPASSWORD_SCHEMES, ['sha','ssha'])
+    _remove_dict_items(AVAIL_AUTHPASSWORD_SCHEMES, ['sha1'])
   try:
-    from hashlib import sha1 as sha
-  except:
-    try:
-      import sha
-    except ImportError:
-      _remove_dict_items(AVAIL_USERPASSWORD_SCHEMES, ['sha','ssha'])
-      _remove_dict_items(AVAIL_AUTHPASSWORD_SCHEMES, ['sha1'])
-  try:
-    from hashlib import md5
-  except:
-    try:
-      import md5
-    except ImportError:
-      _remove_dict_items(AVAIL_USERPASSWORD_SCHEMES, ['md5','smd5'])
-      _remove_dict_items(AVAIL_AUTHPASSWORD_SCHEMES, ['md5'])
+    import md5
+  except ImportError:
+    _remove_dict_items(AVAIL_USERPASSWORD_SCHEMES, ['md5','smd5'])
+    _remove_dict_items(AVAIL_AUTHPASSWORD_SCHEMES, ['md5'])
   try:
     import crypt
   except ImportError:
