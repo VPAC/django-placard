@@ -7,7 +7,7 @@ import unittest
 from placard import slapd
 from placard import LDAPClient
 from placard.misc.test_data import test_ldif
-from placard import DoesNotExistException
+from placard import exceptions
 
 server = None
 
@@ -59,7 +59,7 @@ class LDAPGroupTest(unittest.TestCase):
 
     def test_no_group(self):
         c = LDAPClient()
-        self.assertRaises(c.get_group('cn=nosuchgroup'), exceptions.DoesNotExistException)
+        self.failUnlessRaises(exceptions.DoesNotExistException, c.get_group, 'cn=nosuchgroup')
 
     def test_get_members_empty(self):
         c = LDAPClient()
