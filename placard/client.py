@@ -269,7 +269,7 @@ class LDAPClient(object):
         self.ldap_delete(dn)    
 
         for g in self.get_group_memberships(uid):
-            self.remove_group_member(g.gidNumber, uid)
+            self.remove_group_member('gidNumber=%s' % g.gidNumber, uid)
         
 
     def change_password(self, username, raw_password):
