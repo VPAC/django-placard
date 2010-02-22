@@ -77,8 +77,8 @@ LDAP_BASE="dc=python-ldap,dc=org"
 LDAP_ADMIN_USER="cn=Manager,dc=python-ldap,dc=org"
 LDAP_USER_BASE='ou=VHO, %s' % LDAP_BASE
 LDAP_GROUP_BASE='ou=Group, %s' % LDAP_BASE
-LDAP_ATTRS = 'placard.demo.ldap_attrs'
+LDAP_ATTRS = 'demo.ldap_attrs'
 
 
-TEST_RUNNER='placard.demo.test_utils.xmlrunner.run_tests'
+TEST_RUNNER='demo.test_utils.xmlrunner.run_tests'
 DATABASE_ENGINE = 'sqlite3'
