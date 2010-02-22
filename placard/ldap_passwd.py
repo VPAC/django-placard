@@ -14,14 +14,14 @@ string module.
 
 __version__ = '0.1.0'
 
-import random,ldap
+import random, ldap
 try:
   from hashlib import md5
 except ImportError:
   import md5
 import string
-
-
+  
+  
 # Alphabet for encrypted passwords (see module crypt)
 CRYPT_ALPHABET = './0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
@@ -46,7 +46,7 @@ AVAIL_AUTHPASSWORD_SCHEMES = {
 
 _UnicodeType = type(u'')
 
-def _remove_dict_items(l,rl):
+def _remove_dict_items(l, rl):
   """
   Not for public use:
   Remove a list item ignoring ValueError: list.remove(x): x not in list
@@ -56,19 +56,19 @@ def _remove_dict_items(l,rl):
       del l[i]
     except KeyError:
       pass
-
+    
 try:
   import base64
 except ImportError:
-  _remove_dict_items(AVAIL_USERPASSWORD_SCHEMES,['md5','smd5','sha','ssha'])
-  _remove_dict_items(AVAIL_AUTHPASSWORD_SCHEMES,['md5','sha1'])
+  _remove_dict_items(AVAIL_USERPASSWORD_SCHEMES, ['md5','smd5','sha','ssha'])
+  _remove_dict_items(AVAIL_AUTHPASSWORD_SCHEMES, ['md5','sha1'])
 else:
   try:
     # random is needed for salted hashs
     import random
   except ImportError:
-    _remove_dict_items(AVAIL_USERPASSWORD_SCHEMES,['crypt','smd5','ssha'])
-    _remove_dict_items(AVAIL_AUTHPASSWORD_SCHEMES,['md5','sha1'])
+    _remove_dict_items(AVAIL_USERPASSWORD_SCHEMES, ['crypt','smd5','ssha'])
+    _remove_dict_items(AVAIL_AUTHPASSWORD_SCHEMES, ['md5','sha1'])
   else:
     random.seed()
   try:
@@ -77,23 +77,23 @@ else:
     try:
       import sha
     except ImportError:
-      _remove_dict_items(AVAIL_USERPASSWORD_SCHEMES,['sha','ssha'])
-      _remove_dict_items(AVAIL_AUTHPASSWORD_SCHEMES,['sha1'])
+      _remove_dict_items(AVAIL_USERPASSWORD_SCHEMES, ['sha','ssha'])
+      _remove_dict_items(AVAIL_AUTHPASSWORD_SCHEMES, ['sha1'])
   try:
     from hashlib import md5
   except:
     try:
       import md5
     except ImportError:
-      _remove_dict_items(AVAIL_USERPASSWORD_SCHEMES,['md5','smd5'])
-      _remove_dict_items(AVAIL_AUTHPASSWORD_SCHEMES,['md5'])
+      _remove_dict_items(AVAIL_USERPASSWORD_SCHEMES, ['md5','smd5'])
+      _remove_dict_items(AVAIL_AUTHPASSWORD_SCHEMES, ['md5'])
   try:
     import crypt
   except ImportError:
-    _remove_dict_items(AVAIL_USERPASSWORD_SCHEMES,['crypt'])
+    _remove_dict_items(AVAIL_USERPASSWORD_SCHEMES, ['crypt'])
 
 
-def _salt(saltLen=2,saltAlphabet=None):
+def _salt(saltLen=2, saltAlphabet=None):
   """
   Create a random salt.
 
@@ -108,10 +108,10 @@ def _salt(saltLen=2,saltAlphabet=None):
   if saltAlphabet:
     saltAlphabetBounce = len(saltAlphabet)-1
     for i in range(saltLen):
-      salt.append(saltAlphabet[random.randrange(0,saltAlphabetBounce)])
+      salt.append(saltAlphabet[random.randrange(0, saltAlphabetBounce)])
   else:
     for i in range(saltLen):
-      salt.append(chr(random.randrange(0,255)))
+      salt.append(chr(random.randrange(0, 255)))
   return ''.join(salt)
 
 
@@ -120,7 +120,7 @@ class Password:
   Base class for plain-text LDAP passwords.
   """
   
-  def __init__(self,l,dn=None,charset='utf-8'):
+  def __init__(self, l, dn=None, charset='utf-8'):
     """
     l
         LDAPObject instance to operate with. The application
@@ -138,19 +138,19 @@ class Password:
     self._charset = charset
     if not dn is None:
       result = self._l.search_s(
-        self._dn,ldap.SCOPE_BASE,'(objectClass=*)',[self.passwordAttributeType]
+        self._dn, ldap.SCOPE_BASE, '(objectClass=*)', [self.passwordAttributeType]
       )
       if result:
         entry_data = result[0][1]
         self._passwordAttributeValue = entry_data.get(
-          self.passwordAttributeType,entry_data.get(self.passwordAttributeType.lower(),[])
+          self.passwordAttributeType, entry_data.get(self.passwordAttributeType.lower(), [])
         )
       else:
         self._passwordAttributeValue = []
     else:
       self._passwordAttributeValue = []
 
-  def _compareSinglePassword(self,testPassword,singlePasswordValue):
+  def _compareSinglePassword(self, testPassword, singlePasswordValue):
     """
     Compare testPassword with encoded password in singlePasswordValue.
     
@@ -161,28 +161,28 @@ class Password:
     """
     return testPassword==singlePasswordValue
 
-  def comparePassword(self,testPassword):
+  def comparePassword(self, testPassword):
     """
     Return 1 if testPassword is in self._passwordAttributeValue
     """
     if type(testPassword)==_UnicodeType:
       testPassword = testPassword.encode(self._charset)
     for p in self._passwordAttributeValue:
-      if self._compareSinglePassword(testPassword,p):
+      if self._compareSinglePassword(testPassword, p):
         return 1
     return 0
 
-  def _delOldPassword(self,oldPassword):
+  def _delOldPassword(self, oldPassword):
     """
     Return list with all occurences of oldPassword being removed.
     """
     return [
       p
       for p in self._passwordAttributeValue
-      if not self._compareSinglePassword(oldPassword,p.strip())
+      if not self._compareSinglePassword(oldPassword, p.strip())
     ]
 
-  def encodePassword(self,plainPassword,scheme=None):
+  def encodePassword(self, plainPassword, scheme=None):
     """
     encode plainPassword into plain text password
     """
@@ -190,7 +190,7 @@ class Password:
       plainPassword = plainPassword.encode(self._charset)
     return plainPassword
 
-  def changePassword(self,oldPassword=None,newPassword=None,scheme=None):
+  def changePassword(self, oldPassword=None, newPassword=None, scheme=None):
     """
     oldPassword
       Old password associated with entry.
@@ -213,20 +213,20 @@ class Password:
       newPasswordValueList = self._delOldPassword(oldPassword)
     else:
       newPasswordValueList = []
-    newPasswordValue = self.encodePassword(newPassword,scheme)
+    newPasswordValue = self.encodePassword(newPassword, scheme)
     newPasswordValueList.append(newPasswordValue)
-    self._storePassword(oldPassword,newPasswordValueList)
+    self._storePassword(oldPassword, newPasswordValueList)
     # In case a new password was auto-generated the application
     # has to know it => return it as result
     return newPassword
 
-  def _storePassword(self,oldPassword,newPasswordValueList):
+  def _storePassword(self, oldPassword, newPasswordValueList):
     """Replace the password value completely"""
 
     self._l.modify_s(
       self._dn,
       [
-        (ldap.MOD_REPLACE,self.passwordAttributeType,newPasswordValueList)
+        (ldap.MOD_REPLACE, self.passwordAttributeType, newPasswordValueList)
       ]
     )
 
@@ -243,10 +243,10 @@ class UserPassword(Password):
     http://developer.netscape.com/docs/technote/ldap/pass_sha.html
   """
   passwordAttributeType='userPassword'
-  _hash_bytelen = {'md5':16,'sha':20}
+  _hash_bytelen = {'md5':16, 'sha':20}
 
 
-  def __init__(self,l=None,dn=None,charset='utf-8',multiple=0):
+  def __init__(self, l=None, dn=None, charset='utf-8', multiple=0):
     """
     Like CharsetPassword.__init__() with one additional parameter:
     multiple
@@ -254,35 +254,35 @@ class UserPassword(Password):
         Default is single-valued (flag is 0).
     """
     self._multiple = multiple
-    Password.__init__(self,l,dn,charset)
+    Password.__init__(self, l, dn, charset)
 
-  def _hashPassword(self,password,scheme,salt=None):
+  def _hashPassword(self, password, scheme, salt=None):
     """
     Return hashed password (including salt).
     """
     scheme = scheme.lower()
     if not scheme in AVAIL_USERPASSWORD_SCHEMES.keys():
-      raise ValueError,'Hashing scheme %s not supported for class %s.' % (
-        scheme,self.__class__.__name__
+      raise ValueError, 'Hashing scheme %s not supported for class %s.' % (
+        scheme, self.__class__.__name__
       )
-      raise ValueError,'Hashing scheme %s not supported.' % (scheme)
+      raise ValueError, 'Hashing scheme %s not supported.' % (scheme)
     if salt is None:
       if scheme=='crypt':
-        salt = _salt(saltLen=2,saltAlphabet=CRYPT_ALPHABET)
-      elif scheme in ['smd5','ssha']:
-        salt = _salt(saltLen=4,saltAlphabet=None)
+        salt = _salt(saltLen=2, saltAlphabet=CRYPT_ALPHABET)
+      elif scheme in ['smd5', 'ssha']:
+        salt = _salt(saltLen=4, saltAlphabet=None)
       else:
         salt = ''
     if scheme=='crypt':
-      return crypt.crypt(password,salt)
-    elif scheme in ['md5','smd5']:
+      return crypt.crypt(password, salt)
+    elif scheme in ['md5', 'smd5']:
       return base64.encodestring(md5.new(password+salt).digest()+salt).strip()
-    elif scheme in ['sha','ssha']:
+    elif scheme in ['sha', 'ssha']:
       return base64.encodestring(sha.new(password+salt).digest()+salt).strip()
     else:
       return password
 
-  def _compareSinglePassword(self,testPassword,singlePasswordValue,charset='utf-8'):
+  def _compareSinglePassword(self, testPassword, singlePasswordValue, charset='utf-8'):
     """
     Compare testPassword with encoded password in singlePasswordValue.
     
@@ -294,25 +294,25 @@ class UserPassword(Password):
     """
     singlePasswordValue = singlePasswordValue.strip()
     try:
-      scheme,encoded_p = singlePasswordValue[singlePasswordValue.find('{')+1:].split('}',1)
+      scheme, encoded_p = singlePasswordValue[singlePasswordValue.find('{')+1:].split('}', 1)
     except ValueError:
-      scheme,encoded_p = '',singlePasswordValue
+      scheme, encoded_p = '', singlePasswordValue
     scheme = scheme.lower()
-    if scheme in ['md5','sha','smd5','ssha']:
+    if scheme in ['md5', 'sha', 'smd5', 'ssha']:
       hashed_p = base64.decodestring(encoded_p)
-      if scheme in ['smd5','ssha']:
+      if scheme in ['smd5', 'ssha']:
         pos = self._hash_bytelen[scheme[1:]]
-        cmp_password,salt = hashed_p[:pos],hashed_p[pos:]
+        cmp_password, salt = hashed_p[:pos], hashed_p[pos:]
       else:
-        cmp_password,salt = hashed_p,''
-    hashed_password = self._hashPassword(testPassword,scheme,salt)
+        cmp_password, salt = hashed_p, ''
+    hashed_password = self._hashPassword(testPassword, scheme, salt)
     return hashed_password==encoded_p
 
-  def encodePassword(self,plainPassword,scheme):
+  def encodePassword(self, plainPassword, scheme):
     """
     encode plainPassword according to RFC2307 password attribute syntax
     """
-    plainPassword = Password.encodePassword(self,plainPassword)
+    plainPassword = Password.encodePassword(self, plainPassword)
     if scheme:
       # Brutal Hack
       if scheme == 'md5-crypt':
@@ -320,7 +320,7 @@ class UserPassword(Password):
       
       return ('{%s}%s' % (
         scheme.upper(),
-        self._hashPassword(plainPassword,scheme)
+        self._hashPassword(plainPassword, scheme)
       )).encode('ascii')
     else:
       return plainPassword
@@ -345,7 +345,7 @@ def md5crypt(password, salt=None, magic='$1$'):
     m = md5.md5()
     m.update(password + magic + salt)
 
-    # /* Then just as many characters of the MD5(pw,salt,pw) */
+    # /* Then just as many characters of the MD5(pw, salt, pw) */
     mixin = md5.md5(password + salt + password).digest()
     for i in range(0, len(password)):
         m.update(mixin[i % 16])
@@ -404,44 +404,44 @@ def md5crypt(password, salt=None, magic='$1$'):
 if __debug__:
   rfc2307_tests = [
     # Test data generated by slappasswd of OpenLDAP 2.0.11
-    ('test1','{MD5}WhBei51A4TKXgNYuoiZdig=='),
-    ('test1','{SMD5}i1GhUWtlHIva18fyzSVoSi6pLqk='),
-    ('test1','{SHA}tESsBmE/yNY3lb6a0L6vVQEZNqw='),
-    ('test1','{SSHA}uWg1PmLHZsZUqGOncZBiRTNXE3uHSyGC'),
-    ('test2','{MD5}rQI0gpIFuQMxlrqBj3qHKw=='),
-    ('test2','{SMD5}cavgPXL7OAX6Nkz4oxPCw0ff8/8='),
-    ('test2','{SHA}EJ9LPFDXsN9ynSmbxvjp75Bmlx8='),
-    ('test2','{SSHA}STa8xdUq+G6StaVHCjAKzy0rB9DZBIry'),
-    ('test3','{MD5}ith1e6qFZNwTbB4HUH9KmA=='),
-    ('test3','{SMD5}MSQjqRuAZYtVmF1te6hO2Yn7gFQ='),
-    ('test3','{SHA}Pr+jAdxZGW8YWTxF5RkoeiMpdYk='),
-    ('test3','{SSHA}BUTK//6laPB9HN4cjK31RzTnmwMYmHnG'),
-    ('test4','{MD5}hpheEF95uV1ryRj7Rex3Jw=='),
-    ('test4','{SMD5}5TWxU4fGloruSpD0u1IdxKd5ZZA='),
-    ('test4','{SHA}H/KzcErt4E7stR5QymmO/VChN5s='),
-    ('test4','{SSHA}4ckBH1ib1IgiISp3tvZf4bDXtk5xlUBy'),
-    ('test5','{MD5}49cE81QrRKYh6+1w3A7+Ew=='),
-    ('test5','{SMD5}4NJzKqIX2sr8q3a4u0i92/4KPOY='),
-    ('test5','{SHA}kR3cO4+aE7VJm2vEY4orTz9ovyM='),
-    ('test5','{SSHA}kNTfeXHKb32yT4wUkN3AcpMCTHEx3Q2Q'),
-    ('test6','{MD5}TPrXB2Epli7nDDaDmh4+FQ=='),
-    ('test6','{SMD5}TesgPJdimK4miVwRcRQk/FZr7Uk='),
-    ('test6','{SHA}pm3yYRILbCMRxu8LG6tOWDr8vMA='),
-    ('test6','{SSHA}dIXzm4t40GfUXdHyBs//O3f09i/Ft3ik'),
-    ('test7','{MD5}sECD5T4kJiZZXiuOoyflJQ=='),
-    ('test7','{SMD5}TX6YHy6c0p1U9n6etx/irMv3cyE='),
-    ('test7','{SHA}6jJDEy1lOzkCWpROcPPs33DuOZQ='),
-    ('test7','{SSHA}zQ1xCPfNJgeDahwzzCLjM05cMJjaCULJ'),
-    ('test8','{MD5}XkDQn6BSl4Gv0SVKQpE4Rw=='),
-    ('test8','{SMD5}6wNcr1crfhnTOmJj0oi4Ukc9/+o='),
-    ('test8','{SHA}0D+dNBlDkwGebRLXyUKCfr1pREM='),
-    ('test8','{SSHA}BnNwRej74F2NicyGggpTgWUajPenNvZa'),
-    ('test9','{MD5}c5lptTJGsscnhQ27NJDt5g=='),
-    ('test9','{SMD5}mJUntKUUqtO+FgO7pIreIAHW4tA='),
-    ('test9','{SHA}U9Ulg2zJbQiaWkIYtGT9pTL33r4='),
-    ('test9','{SSHA}LdF62OhXywwvY6DMOCVkO25hHGG5fIAA'),
+    ('test1', '{MD5}WhBei51A4TKXgNYuoiZdig=='),
+    ('test1', '{SMD5}i1GhUWtlHIva18fyzSVoSi6pLqk='),
+    ('test1', '{SHA}tESsBmE/yNY3lb6a0L6vVQEZNqw='),
+    ('test1', '{SSHA}uWg1PmLHZsZUqGOncZBiRTNXE3uHSyGC'),
+    ('test2', '{MD5}rQI0gpIFuQMxlrqBj3qHKw=='),
+    ('test2', '{SMD5}cavgPXL7OAX6Nkz4oxPCw0ff8/8='),
+    ('test2', '{SHA}EJ9LPFDXsN9ynSmbxvjp75Bmlx8='),
+    ('test2', '{SSHA}STa8xdUq+G6StaVHCjAKzy0rB9DZBIry'),
+    ('test3', '{MD5}ith1e6qFZNwTbB4HUH9KmA=='),
+    ('test3', '{SMD5}MSQjqRuAZYtVmF1te6hO2Yn7gFQ='),
+    ('test3', '{SHA}Pr+jAdxZGW8YWTxF5RkoeiMpdYk='),
+    ('test3', '{SSHA}BUTK//6laPB9HN4cjK31RzTnmwMYmHnG'),
+    ('test4', '{MD5}hpheEF95uV1ryRj7Rex3Jw=='),
+    ('test4', '{SMD5}5TWxU4fGloruSpD0u1IdxKd5ZZA='),
+    ('test4', '{SHA}H/KzcErt4E7stR5QymmO/VChN5s='),
+    ('test4', '{SSHA}4ckBH1ib1IgiISp3tvZf4bDXtk5xlUBy'),
+    ('test5', '{MD5}49cE81QrRKYh6+1w3A7+Ew=='),
+    ('test5', '{SMD5}4NJzKqIX2sr8q3a4u0i92/4KPOY='),
+    ('test5', '{SHA}kR3cO4+aE7VJm2vEY4orTz9ovyM='),
+    ('test5', '{SSHA}kNTfeXHKb32yT4wUkN3AcpMCTHEx3Q2Q'),
+    ('test6', '{MD5}TPrXB2Epli7nDDaDmh4+FQ=='),
+    ('test6', '{SMD5}TesgPJdimK4miVwRcRQk/FZr7Uk='),
+    ('test6', '{SHA}pm3yYRILbCMRxu8LG6tOWDr8vMA='),
+    ('test6', '{SSHA}dIXzm4t40GfUXdHyBs//O3f09i/Ft3ik'),
+    ('test7', '{MD5}sECD5T4kJiZZXiuOoyflJQ=='),
+    ('test7', '{SMD5}TX6YHy6c0p1U9n6etx/irMv3cyE='),
+    ('test7', '{SHA}6jJDEy1lOzkCWpROcPPs33DuOZQ='),
+    ('test7', '{SSHA}zQ1xCPfNJgeDahwzzCLjM05cMJjaCULJ'),
+    ('test8', '{MD5}XkDQn6BSl4Gv0SVKQpE4Rw=='),
+    ('test8', '{SMD5}6wNcr1crfhnTOmJj0oi4Ukc9/+o='),
+    ('test8', '{SHA}0D+dNBlDkwGebRLXyUKCfr1pREM='),
+    ('test8', '{SSHA}BnNwRej74F2NicyGggpTgWUajPenNvZa'),
+    ('test9', '{MD5}c5lptTJGsscnhQ27NJDt5g=='),
+    ('test9', '{SMD5}mJUntKUUqtO+FgO7pIreIAHW4tA='),
+    ('test9', '{SHA}U9Ulg2zJbQiaWkIYtGT9pTL33r4='),
+    ('test9', '{SSHA}LdF62OhXywwvY6DMOCVkO25hHGG5fIAA'),
     # Test data from Netscape's perlSHA demo on developer docs page
-    ('abc','{SHA}qZk+NkcGgWq6PiVxeFDCbJzQ2J0='),
+    ('abc', '{SHA}qZk+NkcGgWq6PiVxeFDCbJzQ2J0='),
     (
       'abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq',
       '{SHA}hJg+RBw70m66rkqh+VEp5eVGcPE='
@@ -450,10 +450,10 @@ if __debug__:
 
   def test():
     u = UserPassword()
-    for password,encoded_password in rfc2307_tests:
-      print password,encoded_password
-      if not u._compareSinglePassword(password,encoded_password):
-        print 'Test failed:',password,encoded_password
+    for password, encoded_password in rfc2307_tests:
+      print password, encoded_password
+      if not u._compareSinglePassword(password, encoded_password):
+        print 'Test failed:', password, encoded_password
 
   if __name__ == '__main__':
     test()
