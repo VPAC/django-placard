@@ -29,26 +29,26 @@ class LDAPGroupTest(unittest.TestCase):
         self.server.stop()
 
 
-    def test_get_users(self):
+    def test_get_groups(self):
         c = LDAPClient()
         self.failUnlessEqual(len(c.get_users()), 3)
         
-    def test_get_user(self):
+    def test_get_group(self):
         c = LDAPClient()      
-        g = c.get_group('testgroup')
-        self.failUnlessEqual(g.cn, 'testgroup')
+        g = c.get_group('cn=systems')
+        self.failUnlessEqual(g.cn, 'systems')
                              
-    def test_delete_user(self):
+    def test_delete_group(self):
         c = LDAPClient()
         self.failUnlessEqual(len(c.get_groups()), 3)
-        c.delete_group('testgroup2')
+        c.delete_group('cn=full')
         self.failUnlessEqual(len(c.get_groups()), 2)
                 
     def test_update(self):
         c = LDAPClient()
-        g = c.get_group('testgroup3')
-        self.failUnlessEqual(g.description, 'Test Group3')  
-        c.update_user(g.gidNumber, cn='Systems')
-        g = c.get_group('uid=testgroup3')
-        self.failUnlessEqual(g.sn, 'Systems')
+        g = c.get_group('cn=empty')
+        self.failUnlessEqual(g.description, 'Empty')  
+        c.update_user(g.gidNumber, description='No Members')
+        g = c.get_group('cn=emtpy')
+        self.failUnlessEqual(g.description, 'No Members')
 
