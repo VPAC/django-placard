@@ -157,16 +157,24 @@ class LDAPClient(object):
 
 
     def get_group(self, search_string):
+        """ Returns a LDAPGroup object
+        raises MulitpleResultsException if more than one entry exists
+        raises DoesNotExistException if no group exists
+        """
         result_data = self.ldap_search(self.group_base, search_string)
 
         if len(result_data) == 1:       
             return LDAPGroup(result_data[0])
-
+        elif len(result_data) > 1:
+            raise exceptions.MulitpleResultsException("""Multiple groups exist for the given search string""")
+        
         raise exceptions.DoesNotExistException("""Group "%s" does not exist""" % search_string)
 
 
     def get_group_members(self, search_string):
-    
+        """ Returns a list of LDAPUser objects that are members
+        of given group
+        """
         members = []
         
         result_data = self.ldap_search(self.group_base, search_string) 
@@ -186,6 +194,8 @@ class LDAPClient(object):
 
 
     def remove_group_member(self, search_string, uid):
+        """ Removes a member from a group"""
+
         group = self.get_group(search_string)
         try:
             members = group.memberUid[:]
@@ -212,6 +222,8 @@ class LDAPClient(object):
         
 
     def add_group_member(self, search_string, uid):
+        """ Adds a user to a group"""
+
         group = self.get_group(search_string)
         try:
             members = group.memberUid[:]
@@ -233,7 +245,7 @@ class LDAPClient(object):
             
 
     def add_user(self, has_raw_password=False, **kwargs):
-        """Creates an LDAP user given a Person"""
+        """Creates an LDAP user"""
 
         attrs = {}
         for a in ldap_attrs.REQUIRED_USER_ATTRS:
@@ -278,9 +290,12 @@ class LDAPClient(object):
         return "Added"
 
 
-    def delete_user(self, uid):
-        dn = "uid=%s, %s" % (uid, self.user_base)
-        self.ldap_delete(dn)    
+    def delete_user(self, search_string):
+        """
+        Deletes user from LDAP and removes user from all groups
+        """
+        user = self.get_user(search_string)
+        self.ldap_delete(user.dn)
 
         for g in self.get_group_memberships(uid):
             self.remove_group_member('gidNumber=%s' % g.gidNumber, uid)
@@ -346,7 +361,9 @@ class LDAPClient(object):
     
     def get_user(self, search_string):
         """
-        returns ldap object for uid
+        returns ldap object for search_string
+        raises MultipleResultsException if more than one 
+        entry exists for given search string
         """
         result_data = self.ldap_search(self.user_base, search_string)
         
@@ -363,7 +380,9 @@ class LDAPClient(object):
 
 
     def get_users(self, search_filter='(&(uid=*)(!(uid=nobody))(!(uid=administrator)))'):
-
+        """
+        Returns a list of LDAPUser objects based on search_filter
+        """
         result_data = self.ldap_search(self.user_base, search_filter)
         user_list = []
         for i in result_data:
@@ -384,7 +403,9 @@ class LDAPClient(object):
 
 
     def update_user(self, uid, **kwargs):
-
+        """
+        Updates a user in LDAP
+        """
         try:
             ldap_user = self.get_user("uid=%s" % uid)
         
@@ -444,9 +465,8 @@ class LDAPClient(object):
 
 
     def get_group_memberships(self, uid):
-        
         """
-        Gets all groups prson is in
+        Gets all groups person is in
         """
         result_data = self.ldap_search(self.group_base, 'memberUid=*%s*' % uid) 
         
