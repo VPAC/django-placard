@@ -53,7 +53,7 @@ class LDAPGroupTest(unittest.TestCase):
         c = LDAPClient()
         g = c.get_group('cn=empty')
         self.failUnlessEqual(g.description, 'Empty Group')  
-        c.update_group(g.gidNumber, description='No Members')
+        c.update_group('gidNumber=%s' % g.gidNumber, description='No Members')
         g = c.get_group('cn=empty')
         self.failUnlessEqual(g.description, 'No Members')
 
