@@ -41,19 +41,27 @@ class LDAPUserTest(unittest.TestCase):
     def test_delete_user(self):
         c = LDAPClient()
         self.failUnlessEqual(len(c.get_users()), 3)
-        c.delete_user('testuser2')
+        c.delete_user('uid=testuser2')
         self.failUnlessEqual(len(c.get_users()), 2)
                 
     def test_in_ldap(self):
         c = LDAPClient()
-        self.assertTrue(c.in_ldap('testuser1'))
-        self.assertFalse(c.in_ldap('testuser4'))
+        self.assertTrue(c.in_ldap('uid=testuser1'))
+        self.assertFalse(c.in_ldap('uid=testuser4'))
         
-    def test_update(self):
+    def test_update_user(self):
         c = LDAPClient()
         u = c.get_user('uid=testuser1')
         self.failUnlessEqual(u.sn, 'User')  
-        c.update_user(u.uid, sn='Bloggs')
+        c.update_user('uid=%s' % u.uid, sn='Bloggs')
         u = c.get_user('uid=testuser1')
         self.failUnlessEqual(u.sn, 'Bloggs')
+
+    def test_update_user_no_modifications(self):
+        c = LDAPClient()
+        u = c.get_user('uid=testuser1')
+        self.failUnlessEqual(u.sn, 'User')  
+        c.update_user('uid=%s' % u.uid, sn='User')
+        u = c.get_user('uid=testuser1')
+        self.failUnlessEqual(u.sn, 'User')
 

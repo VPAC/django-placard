@@ -49,13 +49,21 @@ class LDAPGroupTest(unittest.TestCase):
         c.delete_group('cn=full')
         self.failUnlessEqual(len(c.get_groups()), 2)
                 
-    def test_update(self):
+    def test_update_group(self):
         c = LDAPClient()
         g = c.get_group('cn=empty')
         self.failUnlessEqual(g.description, 'Empty Group')  
         c.update_group('gidNumber=%s' % g.gidNumber, description='No Members')
         g = c.get_group('cn=empty')
         self.failUnlessEqual(g.description, 'No Members')
+
+    def test_update_group_no_modifications(self):
+        c = LDAPClient()
+        g = c.get_group('cn=empty')
+        self.failUnlessEqual(g.description, 'Empty Group')  
+        c.update_group('gidNumber=%s' % g.gidNumber, description='Empty Group')
+        g = c.get_group('cn=empty')
+        self.failUnlessEqual(g.description, 'Empty Group')
 
     def test_no_group(self):
         c = LDAPClient()

@@ -297,8 +297,8 @@ class LDAPClient(object):
         user = self.get_user(search_string)
         self.ldap_delete(user.dn)
 
-        for g in self.get_group_memberships(uid):
-            self.remove_group_member('gidNumber=%s' % g.gidNumber, uid)
+        for g in self.get_group_memberships(user):
+            self.remove_group_member('gidNumber=%s' % g.gidNumber, user.uid)
         
 
     def change_password(self, username, raw_password):
@@ -389,12 +389,12 @@ class LDAPClient(object):
             user_list.append(LDAPUser(i))
         return dictsort(user_list, "givenName")
         
-    def in_ldap(self, uid):
+    def in_ldap(self, search_string):
         """
         Simple check to see if user in LDAP
         """
         try:
-            self.get_user('uid=%s' % uid)
+            self.get_user(search_string)
         except exceptions.DoesNotExistException:
             return False
     
@@ -402,46 +402,30 @@ class LDAPClient(object):
         
 
 
-    def update_user(self, uid, **kwargs):
+    def update_user(self, search_string, **kwargs):
         """
         Updates a user in LDAP
         """
-        try:
-            ldap_user = self.get_user("uid=%s" % uid)
+        ldap_user = self.get_user(search_string)
         
-            # Some place-holders for old and new values
-            old = {}
-            for k,i in kwargs.items():
-                try:
-                    old[k] = getattr(ldap_user, k)
-                except:
-                    pass
-            new = {}
-            for k,i in kwargs.items():
-                if i == '':
-                    continue
-                if k == 'objectClass':
-                    new[k] = i
-                else:
-                    new[k] = str(i)
+        # Some place-holders for old and new values
+        old = {}
+        for k,i in kwargs.items():
+            try:
+                old[k] = getattr(ldap_user, k)
+            except:
+                pass
+        new = {}
+        for k,i in kwargs.items():
+            if i == '':
+                continue
+            if k == 'objectClass':
+                new[k] = i
+            else:
+                new[k] = str(i)
     
-            self.ldap_modify(ldap_user.dn, old, new)
-        except Exception, e:
-            if hasattr(e, 'message'):
-                if not e.message['info'] == 'no modifications specified':
-                    message ="Failed to update details for '%s'\nPlease investigate\n\n%s" % (uid, e)
-                    mail_admins('Placard LDAP Error',  message, fail_silently=False)                    
-            elif hasattr(e, 'info'):
-		if not e['info'] == 'no modifications specified':
-		    message ="Failed to update details for '%s'\nPlease investigate\n\n%s" % (uid, e)
-	            mail_admins('Placard LDAP Error',  message, fail_silently=False)
-            elif hasattr(e, 'args'):
-		if not e.args[0]['info'] == 'no modifications specified':
-		    message ="Failed to update details for '%s'\nPlease investigate\n\n%s" % (uid, e)
-	            mail_admins('Placard LDAP Error',  message, fail_silently=False)
-  	    else:
-                message ="Failed to update details for '%s'\nPlease investigate\n\n%s" % (uid, e)
-                mail_admins('Placard LDAP Error',  message, fail_silently=False)
+        self.ldap_modify(ldap_user.dn, old, new)
+
 
 
             
@@ -464,17 +448,18 @@ class LDAPClient(object):
         return id_list[0] + 1
 
 
-    def get_group_memberships(self, uid):
+    def get_group_memberships(self, user):
         """
         Gets all groups person is in
         """
-        result_data = self.ldap_search(self.group_base, 'memberUid=*%s*' % uid) 
+        
+        result_data = self.ldap_search(self.group_base, 'memberUid=*%s*' % user.uid) 
         
         groups = []
         for i in result_data:
             group = i[1]
             if 'memberUid' in i[1]:
-                if uid in i[1]['memberUid']:
+                if user.uid in i[1]['memberUid']:
                     groups.append(LDAPGroup(i))
 
         return groups
