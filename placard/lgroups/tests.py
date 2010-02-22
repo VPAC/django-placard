@@ -31,7 +31,7 @@ class LDAPGroupTest(unittest.TestCase):
 
     def test_get_groups(self):
         c = LDAPClient()
-        self.failUnlessEqual(len(c.get_users()), 3)
+        self.failUnlessEqual(len(c.get_groups()), 3)
         
     def test_get_group(self):
         c = LDAPClient()      
@@ -48,7 +48,7 @@ class LDAPGroupTest(unittest.TestCase):
         c = LDAPClient()
         g = c.get_group('cn=empty')
         self.failUnlessEqual(g.description, 'Empty')  
-        c.update_user(g.gidNumber, description='No Members')
+        c.update_group(g.gidNumber, description='No Members')
         g = c.get_group('cn=emtpy')
         self.failUnlessEqual(g.description, 'No Members')
 
