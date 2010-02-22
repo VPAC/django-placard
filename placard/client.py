@@ -90,9 +90,9 @@ class LDAPClient(object):
         return groups
 
 
-    def update_group(self, gidNumber, **kwargs):
+    def update_group(self, search_string, **kwargs):
 
-        group = self.get_group('gidNumber=%s' % gidNumber)
+        group = self.get_group(search_string)
             # Some place-holders for old and new values
         old = {}
         for k, i in kwargs.items():
@@ -123,10 +123,9 @@ class LDAPClient(object):
             return 10001
         return int(groups[len(groups) - 1]) + 1
 
-    def delete_group(self, gid):
-        group = self.get_group(gid)
-        dn = "cn=%s, %s" % (str(group.cn), self.group_base)
-        self.ldap_delete(dn)
+    def delete_group(self, search_string):
+        group = self.get_group(search_string)
+        self.ldap_delete(group.dn)
             
 
     def add_group(self, **kwargs):
@@ -158,11 +157,9 @@ class LDAPClient(object):
 
 
     def get_group(self, search_string):
-
         result_data = self.ldap_search(self.group_base, search_string)
-    
-        if len(result_data) == 1:
-        
+
+        if len(result_data) == 1:       
             return LDAPGroup(result_data[0])
 
         raise exceptions.DoesNotExistException("""Group "%s" does not exist""" % search_string)
@@ -200,8 +197,8 @@ class LDAPClient(object):
         self.ldap_modify(dn, old, new)
         
 
-    def add_group_member(self, gidNumber, uid):
-        group = self.get_group(gidNumber)
+    def add_group_member(self, search_string, uid):
+        group = self.get_group(search_string)
         try:
             members = group.memberUid[:]
         except:
@@ -210,7 +207,7 @@ class LDAPClient(object):
             return
         members.append(str(uid))
         members.sort()
-        dn = 'cn=%s, %s' % (group.cn, self.group_base)
+        dn = group.dn
         
         try:
             old = {'memberUid': group.memberUid}
@@ -220,17 +217,6 @@ class LDAPClient(object):
     
         self.ldap_modify(dn, old, new)
             
-
-    def get_gid(self, name):
-        
-        result_data = self.ldap_search(self.group_base, 'cn=%s' % name)
-
-        if (len(result_data) != 1):
-            return None
-    
-        return result_data[0][1]['gidNumber'][0]
-
-
 
     def add_user(self, has_raw_password=False, **kwargs):
         """Creates an LDAP user given a Person"""
