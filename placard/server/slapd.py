@@ -55,8 +55,6 @@ class Slapd:
 
     # Use /var/tmp to placate apparmour on Ubuntu:
     TEST_UTILS_DIR = os_path.abspath(os_path.split(__file__)[0])
-    print TEST_UTILS_DIR
-    print 'ssssddss'
     PATH_TMPDIR = tempfile.mkdtemp()  
     PATH_SBINDIR = "/usr/sbin"
     PATH_BINDIR = "/usr/bin"
