@@ -469,11 +469,11 @@ class LDAPClient(object):
         for s in no_search_fields:
             try:
                 search_fields.remove(s)
-            except KeyError:
+            except ValueError:
                 pass
 
         filter = '(&(uid=*)'
-        
+
         for t in term_list:
             filter += '(|'
             for s in search_fields:
