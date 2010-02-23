@@ -6,6 +6,8 @@ from django_common.middleware.threadlocals import get_current_user
 import datetime, time
 
 from placard import LDAPClient
+from placard.utils import is_pasword_strong
+
 
 class BasicLDAPUserForm(forms.Form):
     """ Basic form used for sub classing """
@@ -27,6 +29,9 @@ class LDAPAdminPasswordForm(forms.Form):
             if data['new1'] != data['new2']:
                 raise forms.ValidationError(u'You must type the same password each time')
 
+            if not is_password_strong(data['new1']):
+                raise forms.ValidationError(u'Your password was found to be insecure, a good password has a combination of letters (upercase, lowercase), numbers and is at least 8 characters long.')
+            
             return data
 
     def save(self, username):        
