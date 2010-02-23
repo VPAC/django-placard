@@ -6,7 +6,7 @@ from django_common.middleware.threadlocals import get_current_user
 import datetime, time
 
 from placard import LDAPClient
-from placard.utils import is_pasword_strong
+from placard.utils import is_password_strong
 
 
 class BasicLDAPUserForm(forms.Form):
