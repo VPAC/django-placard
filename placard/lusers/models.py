@@ -41,7 +41,7 @@ class LDAPUser(object):
         from placard import LDAPClient
         conn = LDAPClient()
         try:
-            return conn.get_user("dn=%s" % self.manager)
+            return conn.get_user("uid=%s" % self.manager.split(',')[0].split('=')[1])
         except exceptions.DoesNotExistException:
             return None
 
