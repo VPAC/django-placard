@@ -10,7 +10,7 @@ from django_common.util.filterspecs import Filter, FilterBar
 from placard import LDAPClient
 from placard import exceptions
 from placard.lgroups.forms import AddGroupForm
-from placard.lusers.forms import BasicLDAPUserForm
+from placard.lusers.forms import BasicLDAPUserForm, LDAPAdminPasswordForm, LDAPPasswordForm
 
 def user_list(request):
     conn = LDAPClient()
