@@ -1,9 +1,9 @@
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponseNotFound
-from django.contrib.auth.decorators import permission_required, login_required
+from django.contrib.auth.decorators import permission_required
 from placard.lusers.forms import AddMemberForm
 
 from placard import LDAPClient
@@ -12,9 +12,9 @@ from placard import exceptions
 
 def group_list(request):
     conn = LDAPClient()
-    group_list = conn.get_groups()
+    groups = conn.get_groups()
 
-    return render_to_response('lgroups/group_list.html', locals(), context_instance=RequestContext(request))
+    return render_to_response('lgroups/group_list.html', {'group_list': groups }, context_instance=RequestContext(request))
 
 
 def group_detail(request, group_id):
