@@ -426,8 +426,6 @@ class LDAPClient(object):
     
         self.ldap_modify(ldap_user.dn, old, new)
 
-
-
             
     def get_new_uid(self):
         """Return the next available user id"""
