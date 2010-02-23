@@ -1,4 +1,3 @@
-from django.core.mail import mail_admins
 from django.conf import settings
 from django.template.defaultfilters import dictsort
 
