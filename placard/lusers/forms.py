@@ -37,10 +37,10 @@ class LDAPAdminPasswordForm(forms.Form):
     def save(self, username):        
         data = self.cleaned_data
         conn = LDAPClient()
-        conn.change_password(username, data['new1'])
+        conn.change_password('uid=%s' % username, data['new1'])
         ldap_user = conn.get_user('uid=%s' % username)
         if hasattr(ldap_user, 'sambaPwdLastSet'):
-            conn.update_user(username, sambaPwdLastSet=str(int(time.mktime(datetime.datetime.now().timetuple()))))
+            conn.update_user('uid=%s' % username, sambaPwdLastSet=str(int(time.mktime(datetime.datetime.now().timetuple()))))
 
         
 class LDAPPasswordForm(LDAPAdminPasswordForm):
@@ -50,7 +50,7 @@ class LDAPPasswordForm(LDAPAdminPasswordForm):
     def clean_old(self):
         user = get_current_user()
         conn = LDAPClient()
-        if not conn.check_password(user.username, self.cleaned_data['old']):
+        if not conn.check_password('uid=%s' % user.username, self.cleaned_data['old']):
             raise forms.ValidationError(u'Your old password was incorrect')
         return self.cleaned_data['old']
 
@@ -61,4 +61,4 @@ class AddMemberForm(forms.Form):
 
     def save(self, gidNumber):
         conn = LDAPClient()
-        conn.add_group_member(gidNumber, self.cleaned_data['add_user'])
+        conn.add_group_member('gidNumber=%s' % gidNumber, self.cleaned_data['add_user'])

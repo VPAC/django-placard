@@ -8,6 +8,7 @@ from django.core.urlresolvers import reverse
 from django_common.util.filterspecs import Filter, FilterBar
 
 from placard import LDAPClient
+from placard import exceptions
 from placard.lgroups.forms import AddGroupForm
 from placard.lusers.forms import BasicLDAPUserForm
 
@@ -15,7 +16,7 @@ def user_list(request):
     conn = LDAPClient()
     if request.REQUEST.has_key('group'):
         group_id = str(request.GET['group'])
-        user_list = conn.get_group_members(group_id)
+        user_list = conn.get_group_members("gidNumber=%s" % group_id)
     else:
         user_list = conn.get_users()
 
@@ -38,9 +39,9 @@ def user_list(request):
 
 def user_detail(request, username):
     conn = LDAPClient()
-    luser = conn.get_user("uid=%s" % username)
-
-    if luser is None:
+    try:
+        luser = conn.get_user("uid=%s" % username)
+    except exceptions.DoesNotExistException:
         return HttpResponseNotFound()
 
     if request.method == 'POST':
@@ -51,8 +52,6 @@ def user_detail(request, username):
 
     else:
         form = AddGroupForm()
-    #photo = conn.get_ldap_pic(username)
-
 
     return render_to_response('lusers/user_detail.html', locals(), context_instance=RequestContext(request))
 
@@ -135,7 +134,7 @@ def delete_user(request, username):
 
     if request.method == 'POST':
         conn = LDAPClient()
-        conn.delete_user(username)
+        conn.delete_user('uid=%s' % username)
         return HttpResponseRedirect(reverse('plac_user_list'))
     
     

@@ -5,8 +5,10 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponseNotFound
 from django.contrib.auth.decorators import permission_required, login_required
 from placard.lusers.forms import AddMemberForm
-from placard.client import *
-from forms import BasicLDAPGroupForm
+
+from placard import LDAPClient
+from placard.lgroups.forms import BasicLDAPGroupForm
+from placard import exceptions
 
 def group_list(request):
     conn = LDAPClient()
@@ -17,9 +19,9 @@ def group_list(request):
 
 def group_detail(request, group_id):
     conn = LDAPClient()
-    group = conn.get_group(group_id)
-
-    if group is None:
+    try:
+        group = conn.get_group("gidNumber=%s" % group_id)
+    except exceptions.DoesNotExistException:
         return HttpResponseNotFound()
 
     if request.method == 'POST':
@@ -31,13 +33,17 @@ def group_detail(request, group_id):
     else:
         form = AddMemberForm()
 
-    member_list = conn.get_group_members(group_id)
+    member_list = conn.get_group_members("gidNumber=%s" % group_id)
 
     return render_to_response('lgroups/group_detail.html', locals(), context_instance=RequestContext(request))
 
+
 def remove_member(request, group_id, user_id):
     conn = LDAPClient()
-    group = conn.get_group(group_id)
+    try:
+        group = conn.get_group("gidNumber=%s" % group_id)
+    except exceptions.DoesNotExistException:
+        return HttpResponseNotFound()
 
     if request.method == 'POST':
         conn.remove_group_member(group_id, user_id)
@@ -66,7 +72,10 @@ def add_edit_group(request, group_id=None, form=BasicLDAPGroupForm):
  
 def delete_group(request, group_id):
     conn = LDAPClient()
-    group = conn.get_group(group_id)
+    try:
+        group = conn.get_group("gidNumber=%s" % group_id)
+    except exceptions.DoesNotExistException:
+        return HttpResponseNotFound()
 
     if request.method == 'POST':
         conn.delete_group(group_id)

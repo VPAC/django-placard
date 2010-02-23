@@ -65,7 +65,6 @@ class LDAPUserTest(unittest.TestCase):
         u = c.get_user('uid=testuser1')
         self.failUnlessEqual(u.sn, 'User')
 
-
     def test_user_search(self):
         c = LDAPClient()
         users = c.search_users(['User',])
