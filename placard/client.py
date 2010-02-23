@@ -461,3 +461,25 @@ class LDAPClient(object):
                     groups.append(LDAPGroup(i))
 
         return groups
+
+    def search_users(self, term_list):
+        
+        search_fields = ldap_attrs.REQUIRED_USER_ATTRS + ldap_attrs.OPTIONAL_USER_ATTRS
+        no_search_fields = ['objectClass', 'userPassword', 'raw_password']
+        for s in no_search_fields:
+            try:
+                search_fields.remove(s)
+            except keyError:
+                pass
+
+        filter = '(&(uid=*)'
+        
+        for t in term_list:
+            filter += '(|'
+            for s in search_fields:
+                filter += '(%s=*%s*)' % (s, t)
+            filter += ')'
+                
+        filter += ')'
+        return self.get_users(filter)
+
