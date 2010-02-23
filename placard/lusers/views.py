@@ -93,14 +93,10 @@ def change_password(request, username):
     if request.method == 'POST':
         
         form = LDAPAdminPasswordForm(request.POST)
-
         if form.is_valid():
-            form.save(username)
-            
-            return HttpResponseRedirect(reverse('plac_user_detail', args=[username]))
-                
+            form.save(username)           
+            return HttpResponseRedirect(reverse('plac_user_detail', args=[username]))              
     else:
-
         form = LDAPAdminPasswordForm()
 
     return render_to_response('lusers/password_form.html', locals(), context_instance=RequestContext(request))
@@ -127,7 +123,7 @@ def user_password_change(request, redirect_url=None):
 
         form = LDAPPasswordForm()
 
-        return render_to_response('lusers/user_password_form.html', locals(), context_instance=RequestContext(request))
+    return render_to_response('lusers/user_password_form.html', locals(), context_instance=RequestContext(request))
 
 
 def delete_user(request, username):
