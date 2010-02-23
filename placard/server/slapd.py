@@ -4,7 +4,7 @@ Utilities for starting up a test slapd server
 and talking to it with ldapsearch/ldapadd.
 """
 from django.conf import settings
-
+from os import path as os_path
 import sys, os, socket, time, subprocess, logging, tempfile
 
 _log = logging.getLogger("slapd")
@@ -54,10 +54,13 @@ class Slapd:
     _log = logging.getLogger("Slapd")
 
     # Use /var/tmp to placate apparmour on Ubuntu:
+    TEST_UTILS_DIR = os_path.abspath(os_path.split(__file__)[0])
+    print TEST_UTILS_DIR
+    print 'ssssddss'
     PATH_TMPDIR = tempfile.mkdtemp()  
     PATH_SBINDIR = "/usr/sbin"
     PATH_BINDIR = "/usr/bin"
-    PATH_SCHEMA_DIR = settings.PROJECT_DIR + "/test_utils/ldap_schemas/"
+    PATH_SCHEMA_DIR = TEST_UTILS_DIR + "/ldap_schemas/"
     PATH_LDAPADD = os.path.join(PATH_BINDIR, "ldapadd")
     PATH_LDAPSEARCH = os.path.join(PATH_BINDIR, "ldapsearch")
     PATH_SLAPD = os.path.join(PATH_SBINDIR, "slapd")

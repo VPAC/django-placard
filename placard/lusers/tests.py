@@ -4,7 +4,7 @@ from django.conf import settings
 
 import unittest
 
-from placard import slapd
+from placard.server import slapd
 from placard.client import LDAPClient
 from placard.misc.test_data import test_ldif
 
