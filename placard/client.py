@@ -284,7 +284,7 @@ class LDAPClient(object):
         self.ldap_add(dn, attrs)
         
         if has_raw_password:
-            self.change_password(attrs['uid'], raw_password)
+            self.change_password("uid=%s" % attrs['uid'], raw_password)
 
         return "Added"
 
@@ -300,9 +300,10 @@ class LDAPClient(object):
             self.remove_group_member('gidNumber=%s' % g.gidNumber, user.uid)
         
 
-    def change_password(self, username, raw_password):
+    def change_password(self, search_string, raw_password):
         # The dn of our existing entry/object
-        dn = "uid=%s,%s" % (username, self.user_base)
+        user = self.get_user(search_string)
+        dn = user.dn
         
         up = UserPassword(l=self.conn, dn=dn)
         up.changePassword(newPassword=raw_password, scheme=settings.LDAP_PASSWD_SCHEME)
