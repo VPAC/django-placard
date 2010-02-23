@@ -6,7 +6,7 @@ class LDAPGroup(object):
     def __init__(self, data):
         self.dn = data[0]
         data_dict = data[1]
-        for k,v in data_dict.items():
+        for k, v in data_dict.items():
             if len(v) == 1 and k != 'memberUid':
                 setattr(self, k, v[0])
             else:
@@ -28,12 +28,6 @@ class LDAPGroup(object):
     def name(self):
         try:
             return self.description
-        except:
+        except AttributeError:
             return self.cn
-
-
-    def update(self, **kwargs):
-        
-        conn = LDAPClient()
-        conn.update_group(self.gidNumber, **kwargs)
 

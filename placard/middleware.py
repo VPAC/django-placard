@@ -1,8 +1,9 @@
 from django.contrib.auth.middleware import RemoteUserMiddleware
 from django.contrib.auth.models import User
+from django.core.exceptions import ImproperlyConfigured
 from django.contrib import auth
 
-from placard.client import LDAPclient
+from placard import LDAPClient
 
 
 class LDAPRemoteUserMiddleware(RemoteUserMiddleware):

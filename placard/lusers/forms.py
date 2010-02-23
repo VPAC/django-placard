@@ -1,17 +1,21 @@
+""" placard.lusers.forms """
+
 from django import forms
 from django_common.middleware.threadlocals import get_current_user
-from django.conf import settings
 
-import os, datetime, time
-from placard.client import LDAPClient
+import datetime, time
+
+from placard import LDAPClient
 
 class BasicLDAPUserForm(forms.Form):
+    """ Basic form used for sub classing """
     givenName = forms.CharField(label='First Name')
     sn = forms.CharField(label='Last Name')
     
 
 
 class LDAPAdminPasswordForm(forms.Form):
+    """ Password change form for admin. No old password needed. """
     new1 = forms.CharField(widget=forms.PasswordInput(), label=u'New Password')
     new2 = forms.CharField(widget=forms.PasswordInput(), label=u'New Password (again)')
 
@@ -35,17 +39,19 @@ class LDAPAdminPasswordForm(forms.Form):
 
         
 class LDAPPasswordForm(LDAPAdminPasswordForm):
+    """ Password change form for user. Muse specify old password. """
     old = forms.CharField(widget=forms.PasswordInput(), label='Old password')
 
     def clean_old(self):
         user = get_current_user()
-	conn = LDAPClient()
+        conn = LDAPClient()
         if not conn.check_password(user.username, self.cleaned_data['old']):
             raise forms.ValidationError(u'Your old password was incorrect')
         return self.cleaned_data['old']
 
 
 class AddMemberForm(forms.Form):
+    """ Add a user to a group form """
     add_user = forms.ChoiceField(choices=[('','-------------')]+[(x.uid, x.cn) for x in LDAPClient().get_users()])
 
     def save(self, gidNumber):

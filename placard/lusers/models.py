@@ -1,12 +1,13 @@
 from django.db import models
 
+from placard import exceptions
 
 class LDAPUser(object):
 
     def __init__(self, data):
         self.dn = data[0]
         data_dict = data[1]
-        for k,v in data_dict.items():
+        for k, v in data_dict.items():
             if len(v) == 1:
                 setattr(self, k, v[0])
             else:
@@ -22,27 +23,26 @@ class LDAPUser(object):
         return self.__str__()
 
     def photo_url(self):
-        from placard.client import LDAPClient
+        from placard import LDAPClient
         conn = LDAPClient()
         return conn.get_ldap_pic(self.uid)
 
     def primary_group(self):
-        from placard.client import LDAPClient
+        from placard import LDAPClient
         conn = LDAPClient()
-        return conn.get_group(self.gidNumber)
+        return conn.get_group("gidNumber=%s" % self.gidNumber)
 
     def secondary_groups(self):
-        from placard.client import LDAPClient
+        from placard import LDAPClient
         conn = LDAPClient()
-        return conn.get_group_memberships(self.uid)
+        return conn.get_group_memberships("uid=%s" % self.uid)
 
     def get_manager(self):
-        from placard.client import LDAPClient
+        from placard import LDAPClient
         conn = LDAPClient()
         try:
-            manager_uid = self.manager.split(',')[0].split('=')[1]
-            return conn.get_user("uid=%s" % manager_uid)
-        except:
+            return conn.get_user("dn=%s" % self.manager)
+        except exceptions.DoesNotExistException:
             return None
 
     @models.permalink  
