@@ -4,10 +4,11 @@ from django.conf import settings
 from django.http import HttpResponseRedirect, HttpResponseNotFound, Http404
 from django.contrib.auth.decorators import permission_required, login_required
 from django.core.urlresolvers import reverse
+
 from django_common.util.filterspecs import Filter, FilterBar
 
-from placard.lgroups.forms import AddGroupForm
 from placard import LDAPClient
+from placard.lgroups.forms import AddGroupForm
 from placard.lusers.forms import BasicLDAPUserForm
 
 def user_list(request):
@@ -17,6 +18,11 @@ def user_list(request):
         user_list = conn.get_group_members(group_id)
     else:
         user_list = conn.get_users()
+
+    if request.REQUEST.has_key('q'):
+        siteterms = request.REQUEST['q'].lower()
+        term_list = siteterms.split(' ')
+        user_list = conn.search_users(term_list)
 
     filter_list = []
     group_list = {}
@@ -103,7 +109,7 @@ def change_password(request, username):
 change_password = permission_required('auth.delete_user')(change_password)
 
 @login_required
-def user_password_change(request):
+def user_password_change(request, redirect_url=None):
 
     user = request.user
     
@@ -113,14 +119,16 @@ def user_password_change(request):
 
         if form.is_valid():
             form.save(user.username)
-            
+            request.user.message_set.create(message='Password changed successfully')
+            if redirect_url:
+                return HttpResponseRedirect(redirect_url)
             return HttpResponseRedirect(reverse('plac_user_detail', args=[user.username]))
                 
     else:
 
         form = LDAPPasswordForm()
 
-    return render_to_response('lusers/user_password_form.html', locals(), context_instance=RequestContext(request))
+        return render_to_response('lusers/user_password_form.html', locals(), context_instance=RequestContext(request))
 
 
 def delete_user(request, username):
