@@ -36,7 +36,7 @@ OPTIONAL_GROUP_ATTRS = [
 # Must take one argument which is a dictionary of the currently resolved attributes (attributes are resolved in the order above)
 
 def get_next_gid(data):
-    from placard import LDAPClient
+    from placard.client import LDAPClient
     conn = LDAPClient()
     gid = conn.get_next_gid()
     return [str(gid)]
