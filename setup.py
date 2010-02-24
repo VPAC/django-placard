@@ -72,7 +72,7 @@ if len(sys.argv) > 1 and sys.argv[1] == 'bdist_wininst':
 
 setup(
     name = "django-placard",
-    version = "1.0",
+    version = "1.0.3",
     url = 'http://code.arcs.org.au/gitorious/django/django-placard/',
     author = 'Sam Morrison',
     author_email = 'sam@vpac.org',

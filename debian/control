@@ -1,5 +1,5 @@
 Source: django-placard
-Section: shells
+Section: python
 Priority: optional
 Maintainer: Sam Morrison
 Build-Depends: debhelper (>=7.0.0), python-support (>= 0.6), cdbs (>= 0.4.49)

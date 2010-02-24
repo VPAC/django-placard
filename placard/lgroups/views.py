@@ -14,7 +14,7 @@ def group_list(request):
     conn = LDAPClient()
     groups = conn.get_groups()
 
-    return render_to_response('lgroups/group_list.html', {'group_list': groups, 'request', request }, context_instance=RequestContext(request))
+    return render_to_response('lgroups/group_list.html', {'group_list': groups, 'request': request }, context_instance=RequestContext(request))
 
 
 def group_detail(request, group_id):

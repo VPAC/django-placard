@@ -1,3 +1,16 @@
+django-placard (1.0.3) testing; urgency=low
+
+  * Fixed syntax error 
+
+ -- Sam Morrison <sam@vpac.org>  Wed, 24 Feb 2010 14:22:34 +1100
+
+django-placard (1.0.2) testing; urgency=low
+
+  * Fixed check_password method
+  * Other minor fixes
+
+ -- Sam Morrison <sam@vpac.org>  Wed, 24 Feb 2010 12:19:35 +1100
+
 django-placard (1.0) testing; urgency=low
 
   * Initial release.
