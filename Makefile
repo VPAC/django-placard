@@ -2,7 +2,7 @@ PYTHON=`which python`
 DESTDIR=/
 BUILDIR=$(CURDIR)/debian/django-placard
 PROJECT=django-placard
-VERSION=1.0.3
+VERSION=$(python -c "from placard import get_version; print get_version()")
 
 all:
 		@echo "make source - Create source package"
