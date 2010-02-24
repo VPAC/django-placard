@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect, HttpResponseNotFound
 from django.contrib.auth.decorators import permission_required
 from placard.lusers.forms import AddMemberForm
 
-from placard import LDAPClient
+from placard.client import LDAPClient
 from placard.lgroups.forms import BasicLDAPGroupForm
 from placard import exceptions
 

@@ -3,7 +3,7 @@ from django.contrib.auth.forms import PasswordResetForm as BasePasswordResetForm
 from django.contrib.auth.forms import SetPasswordForm as BaseSetPasswordForm
 from django.contrib.auth.models import User
 
-from placard import LDAPClient
+from placard.client import LDAPClient
 from placard.utils import is_password_strong
 
 

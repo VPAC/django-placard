@@ -17,8 +17,8 @@ __version__ = '0.1.0'
 import random, ldap
 import md5
 import string
-  
-  
+
+
 # Alphabet for encrypted passwords (see module crypt)
 CRYPT_ALPHABET = './0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
 

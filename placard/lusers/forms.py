@@ -5,7 +5,7 @@ from django_common.middleware.threadlocals import get_current_user
 
 import datetime, time
 
-from placard import LDAPClient
+from placard.client import LDAPClient
 from placard.utils import is_password_strong
 
 

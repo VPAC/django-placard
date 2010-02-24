@@ -5,7 +5,7 @@ from django.conf import settings
 import unittest
 
 from placard.server import slapd
-from placard import LDAPClient
+from placard.client import LDAPClient
 from placard.misc.test_data import test_ldif
 from placard import exceptions
 

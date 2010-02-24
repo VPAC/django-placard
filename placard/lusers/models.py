@@ -1,6 +1,6 @@
 from django.db import models
 
-from placard import exceptions
+from placard.client import exceptions
 
 class LDAPUser(object):
 
@@ -23,22 +23,22 @@ class LDAPUser(object):
         return self.__str__()
 
     def photo_url(self):
-        from placard import LDAPClient
+        from placard.client import LDAPClient
         conn = LDAPClient()
         return conn.get_ldap_pic(self.uid)
 
     def primary_group(self):
-        from placard import LDAPClient
+        from placard.client import LDAPClient
         conn = LDAPClient()
         return conn.get_group("gidNumber=%s" % self.gidNumber)
 
     def secondary_groups(self):
-        from placard import LDAPClient
+        from placard.client import LDAPClient
         conn = LDAPClient()
         return conn.get_group_memberships("uid=%s" % self.uid)
 
     def get_manager(self):
-        from placard import LDAPClient
+        from placard.client import LDAPClient
         conn = LDAPClient()
         try:
             return conn.get_user("uid=%s" % self.manager.split(',')[0].split('=')[1])

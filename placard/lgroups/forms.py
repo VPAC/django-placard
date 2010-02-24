@@ -1,6 +1,6 @@
 from django import forms
 
-from placard import LDAPClient
+from placard.client import LDAPClient
 
 class BasicLDAPGroupForm(forms.Form):
     cn = forms.CharField(label='CN')
