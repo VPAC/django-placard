@@ -1,0 +1,13 @@
+Source: django-placard
+Section: shells
+Priority: optional
+Maintainer: Sam Morrison
+Build-Depends: debhelper (>=7.0.0), python-support (>= 0.6), python-ldap (>= 2.2)
+Standards-Version: 3.8.3.0
+
+Package: django-placard
+Architecture: all
+Homepage: http://code.arcs.org.au/gitorious/django/django-placard/
+Depends: ${misc:Depends}, ${python:Depends}
+Description: Django LDAP client library.
+ Django LDAP client library.
