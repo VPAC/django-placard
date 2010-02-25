@@ -1,7 +1,7 @@
 .. _ref-lgroups:
 
-LDAP Group object
-=================
+:class:`LDAPGroup` --- LDAP Group object
+========================================
 
 .. module:: placard.lgroups.models
 .. moduleauthor:: Sam Morrison <sam@vpac.org>

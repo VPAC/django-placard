@@ -6,16 +6,31 @@
 Welcome to Placard's documentation!
 ===================================
 
-Contents:
+Main API
+--------
+.. toctree::
+   :maxdepth: 2
 
+   ref/client
+
+Objects
+-------
 .. toctree::
    :maxdepth: 1
 
-   ref/client
-   ref/settings
    ref/lusers
    ref/lgroups
    ref/ldap_passwd
+   ref/exceptions
+   ref/utils
+
+Settings
+--------
+.. toctree::
+   :maxdepth: 1
+
+   ref/settings
+   ref/ldap_attrs_settings
 
    glossary
    

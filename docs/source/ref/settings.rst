@@ -63,7 +63,7 @@ LDAP_ATTRS
 
 Required: True
 
-Module of LDAP attributes definition file. See :ref:`ldap_attrs_settings`
+Module of LDAP attributes definition file. See :ref:`ref-ldap_attrs_settings`
 Example::
 
 	LDAP_ATTRS = "demo.ldap_attrs"
