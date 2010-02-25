@@ -6,7 +6,9 @@ LDAP Attributes
 Each Django project need to have an LDAP Attributes definition File. The location of this file is specified by the 
 
 
-Example::
+Example
+
+.. code-block:: python
 
   from django.conf import settings
 

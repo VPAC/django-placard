@@ -6,6 +6,13 @@
 Welcome to Placard's documentation!
 ===================================
 
+Getting Started
+---------------
+.. toctree::
+   :maxdepth: 2
+
+   install
+
 Main API
 --------
 .. toctree::

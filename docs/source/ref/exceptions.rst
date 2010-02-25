@@ -15,5 +15,3 @@
 
 .. autoexception:: RequiredAttributeNotGiven
 
-
-

@@ -9,7 +9,20 @@
 .. moduleauthor:: Sam Morrison <sam@vpac.org>
 
 .. class:: LDAPClient
+
+Takes the following optional settings. By default these options are pulled from your settings file.
+ 
+ * url=settings.LDAP_URL
+ * username=settings.LDAP_ADMIN_USER
+ * password=settings.LDAP_ADMIN_PASSWORD
+ * base=settings=LDAP_BASE
+ * user_base=settings.LDAP_USER_BASE
+ * group_base=settings.LDAP_GROUP_BASE
+
+.. seealso::
    
+   :ref:`ref-settings`
+ 
 User methods
 ------------
 .. automethod:: LDAPClient.get_users
