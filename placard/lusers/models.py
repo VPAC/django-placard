@@ -1,6 +1,6 @@
 from django.db import models
 
-from placard.client import exceptions
+from placard import exceptions
 
 class LDAPUser(object):
 
