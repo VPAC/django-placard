@@ -1,8 +1,13 @@
 
 INSTALLED_APPS = (
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
     'placard',
     'placard.lusers',
     'placard.lgroups',
+    'django_common',
+    'django_common.layout',
 )
 
 LDAP_USE_TLS=False
@@ -18,3 +23,5 @@ LDAP_ATTRS = 'demo.ldap_attrs'
 
 TEST_RUNNER='test_utils.xmlrunner.run_tests'
 DATABASE_ENGINE = 'sqlite3'
+
+ROOT_URLCONF = 'demo.urls'
