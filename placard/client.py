@@ -77,6 +77,9 @@ class LDAPClient(object):
         
     
     def get_groups(self, search_filter='cn=*'):
+        """ 
+        Returns a :func:`list` of :class:`~placard.lgroups.models.LDAPGroup` objects
+        """
         result_data = self.ldap_search(self.group_base, search_filter) 
         groups = []
     
@@ -123,6 +126,9 @@ class LDAPClient(object):
         return int(groups[len(groups) - 1]) + 1
 
     def delete_group(self, search_string):
+        """
+        Deletes a group based on search_string.
+        """
         group = self.get_group(search_string)
         self.ldap_delete(group.dn)
             
@@ -156,16 +162,20 @@ class LDAPClient(object):
 
 
     def get_group(self, search_string):
-        """ Returns a LDAPGroup object
-        raises MulitpleResultsException if more than one entry exists
-        raises DoesNotExistException if no group exists
+        """ Returns a :class:`~placard.lgroups.models.LDAPGroup` based
+        on search_string.
+        
+        Raises :exc:`~placard.exceptions.DoesNotExistException` if no groups exists.
+
+        Raises :exc:`~placard.exceptions.MultipleResultsException` if more than one group
+        exists for the search_string.
         """
         result_data = self.ldap_search(self.group_base, search_string)
 
         if len(result_data) == 1:       
             return LDAPGroup(result_data[0])
         elif len(result_data) > 1:
-            raise exceptions.MulitpleResultsException("""Multiple groups exist for the given search string""")
+            raise exceptions.MultipleResultsException("""Multiple groups exist for the given search string""")
         
         raise exceptions.DoesNotExistException("""Group "%s" does not exist""" % search_string)
 

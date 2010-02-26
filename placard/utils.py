@@ -1,7 +1,7 @@
 
 
 def is_password_strong(password, old_password=None):
-    """Return True if password valid"""
+    """Return ``True`` if password strong"""
     from crack import VeryFascistCheck
     try:
         VeryFascistCheck(password, old=old_password)
