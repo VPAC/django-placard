@@ -328,7 +328,7 @@ class LDAPClient(object):
 
 
     def check_password(self, search_string, raw_password):
-        from django_common.backends.auth import LDAPBackend
+        from placard.backends import LDAPBackend
         ldap_backend = LDAPBackend()
         ldap_user = self.get_user(search_string)
         user = ldap_backend.authenticate(ldap_user.uid, raw_password)
