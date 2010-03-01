@@ -6,8 +6,8 @@ INSTALLED_APPS = (
     'placard',
     'placard.lusers',
     'placard.lgroups',
-    'django_common',
-    'django_common.layout',
+    'andsome',
+    'andsome.layout',
 )
 
 LDAP_USE_TLS=False

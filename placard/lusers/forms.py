@@ -1,7 +1,7 @@
 """ placard.lusers.forms """
 
 from django import forms
-from django_common.middleware.threadlocals import get_current_user
+from andsome.middleware.threadlocals import get_current_user
 
 import datetime, time
 

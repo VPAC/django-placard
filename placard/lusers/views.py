@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect, HttpResponseNotFound, Http404
 from django.contrib.auth.decorators import permission_required, login_required
 from django.core.urlresolvers import reverse
 
-from django_common.util.filterspecs import Filter, FilterBar
+from andsome.util.filterspecs import Filter, FilterBar
 
 from placard.client import LDAPClient
 from placard import exceptions
