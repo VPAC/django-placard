@@ -52,13 +52,13 @@ class LDAPBackend(ModelBackend):
                 return None
 
             # Attempt to bind to the user's DN
-            l.simple_bind_s(result_data[0][0],password)
+            l.simple_bind_s(result_data[0][0], password)
 
             # The user existed and authenticated. Get the user
             # record or create one with no privileges.
             try:
                 user = User.objects.get(username__exact=username)
-            except:
+            except User.DoesNotExist:
                 # Theoretical backdoor could be input right here. We don't
                 # want that, so input an unused random password here.
                 # The reason this is a backdoor is because we create a
@@ -74,7 +74,7 @@ class LDAPBackend(ModelBackend):
                 temp_pass = ""
                 for i in range(16):
                     temp_pass = temp_pass + choice(string.letters)
-                user = User.objects.create_user(username,'',temp_pass)
+                user = User.objects.create_user(username, '', temp_pass)
                 user.is_staff = False
                 user.save()
             # Success.
