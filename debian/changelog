@@ -1,3 +1,15 @@
+django-placard (1.0.5) testing; urgency=low
+
+  * Minor change, added GPLv3 to source files
+
+ -- Sam Morrison <sam@vpac.org>  Mon, 01 Mar 2010 17:01:47 +1100
+
+django-placard (1.0.4) testing; urgency=low
+
+  * Now requires django-andsome library
+
+ -- Sam Morrison <sam@vpac.org>  Mon, 01 Mar 2010 16:49:10 +1100
+
 django-placard (1.0.3) testing; urgency=low
 
   * Fixed syntax error 
