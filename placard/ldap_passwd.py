@@ -451,4 +451,4 @@ if __debug__:
 
 
 def create_password_hash(raw_password):
-        return '{crypt}%s' % md5crypt(raw_password)
+    return '{crypt}%s' % md5crypt(raw_password)
