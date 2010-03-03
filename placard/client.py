@@ -210,7 +210,7 @@ class LDAPClient(object):
                 try:
                     u = self.get_user("uid=%s" % m)
                     members.append(u)
-                except exceptions.DoesNotExist:
+                except exceptions.DoesNotExistException:
                     self.remove_group_member(gid, m)
         gid = self.get_group(search_string).gidNumber
         primary_members = self.ldap_search(self.user_base, 'gidNumber=%s' % gid)
