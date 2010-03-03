@@ -242,7 +242,7 @@ class LDAPClient(object):
         except AttributeError:
             old_members = []
 
-        old = {'memberUid': old_members,}
+        old = {'memberUid': old_members }
         new = {'memberUid': members }
         
         self.ldap_modify(dn, old, new)
