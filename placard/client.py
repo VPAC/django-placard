@@ -205,6 +205,7 @@ class LDAPClient(object):
         members = []
         
         result_data = self.ldap_search(self.group_base, search_string) 
+        gid = self.get_group(search_string).gidNumber
         if 'memberUid' in result_data[0][1]:
             for m in result_data[0][1]['memberUid']:
                 try:
@@ -212,7 +213,6 @@ class LDAPClient(object):
                     members.append(u)
                 except exceptions.DoesNotExistException:
                     self.remove_group_member(gid, m)
-        gid = self.get_group(search_string).gidNumber
         primary_members = self.ldap_search(self.user_base, 'gidNumber=%s' % gid)
         for m in primary_members:
             members.append(LDAPUser(m))
