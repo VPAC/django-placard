@@ -57,26 +57,26 @@ def _remove_dict_items(l, rl):
 try:
     import base64
 except ImportError:
-    _remove_dict_items(AVAIL_USERPASSWORD_SCHEMES, ['md5','smd5','sha','ssha'])
-    _remove_dict_items(AVAIL_AUTHPASSWORD_SCHEMES, ['md5','sha1'])
+    _remove_dict_items(AVAIL_USERPASSWORD_SCHEMES, ['md5', 'smd5', 'sha', 'ssha'])
+    _remove_dict_items(AVAIL_AUTHPASSWORD_SCHEMES, ['md5', 'sha1'])
 else:
     try:
         # random is needed for salted hashs
         import random
     except ImportError:
-        _remove_dict_items(AVAIL_USERPASSWORD_SCHEMES, ['crypt','smd5','ssha'])
-        _remove_dict_items(AVAIL_AUTHPASSWORD_SCHEMES, ['md5','sha1'])
+        _remove_dict_items(AVAIL_USERPASSWORD_SCHEMES, ['crypt', 'smd5', 'ssha'])
+        _remove_dict_items(AVAIL_AUTHPASSWORD_SCHEMES, ['md5', 'sha1'])
     else:
         random.seed()
     try:    
         import sha
     except ImportError:
-        _remove_dict_items(AVAIL_USERPASSWORD_SCHEMES, ['sha','ssha'])
+        _remove_dict_items(AVAIL_USERPASSWORD_SCHEMES, ['sha', 'ssha'])
         _remove_dict_items(AVAIL_AUTHPASSWORD_SCHEMES, ['sha1'])
     try:
         import md5
     except ImportError:
-        _remove_dict_items(AVAIL_USERPASSWORD_SCHEMES, ['md5','smd5'])
+        _remove_dict_items(AVAIL_USERPASSWORD_SCHEMES, ['md5', 'smd5'])
         _remove_dict_items(AVAIL_AUTHPASSWORD_SCHEMES, ['md5'])
     try:
         import crypt
