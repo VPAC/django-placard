@@ -23,7 +23,7 @@ def is_password_strong(password, old_password=None):
     from crack import VeryFascistCheck
     try:
         VeryFascistCheck(password, old=old_password)
-    except Exception, e:
+    except Exception:
         return False
      
     return True
