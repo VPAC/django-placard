@@ -58,6 +58,25 @@ Base for Group tree. Example::
 
      LDAP_GROUP_BASE = "ou=Group, %s" % LDAP_BASE
 
+
+LDAP_PASSWD_SCHEME
+------------------
+
+Required: True
+
+What message digest to use when storing passwords in LDAP.
+Valid options are:
+      * sha       - SHA-1
+      * ssha      - Salted SHA-1
+      * md5       - MD5
+      * md5-crypt - MD5 Crypt
+      * smd5      - Salted MD5
+      * crypt     - Unix Crypt
+      * ''	  - Plain text
+Example::
+	
+	LDAP_PASSWD_SCHEME = 'md5-crypt'
+
 LDAP_ATTRS
 ----------
 
