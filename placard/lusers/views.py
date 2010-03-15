@@ -33,20 +33,18 @@ from placard.lusers.forms import BasicLDAPUserForm, LDAPAdminPasswordForm, LDAPP
 def user_list(request):
     conn = LDAPClient()
     if request.REQUEST.has_key('group'):
-        group_id = str(request.GET['group'])
-        user_list = conn.get_group_members("gidNumber=%s" % group_id)
+        user_list = conn.get_group_members("gidNumber=%s" % request.GET['group'])
     else:
         user_list = conn.get_users()
 
     if request.REQUEST.has_key('q'):
-        siteterms = request.REQUEST['q'].lower()
-        term_list = siteterms.split(' ')
+        term_list = request.REQUEST['q'].lower().split(' ')
         user_list = conn.search_users(term_list)
 
     filter_list = []
     group_list = {}
-    for x in conn.get_groups():
-        group_list[x.gidNumber] = x.name()
+    for group in conn.get_groups():
+        group_list[group.gidNumber] = group.name()
 
     filter_list.append(Filter(request, 'group', group_list))
     filter_bar = FilterBar(request, filter_list)
@@ -66,7 +64,6 @@ def user_detail(request, username):
         if form.is_valid():
             form.save(username)
             return HttpResponseRedirect(luser.get_absolute_url())
-
     else:
         form = AddGroupForm()
 
