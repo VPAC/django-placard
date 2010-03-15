@@ -20,8 +20,16 @@ LDAP_USER_BASE='ou=VHO, %s' % LDAP_BASE
 LDAP_GROUP_BASE='ou=Group, %s' % LDAP_BASE
 LDAP_ATTRS = 'demo.ldap_attrs'
 
-
-TEST_RUNNER='andsome.test_utils.xmlrunner.run_tests'
+LDAP_PASSWD_SCHEME = 'ssha'
+#TEST_RUNNER='andsome.test_utils.xmlrunner.run_tests'
 DATABASE_ENGINE = 'sqlite3'
 
 ROOT_URLCONF = 'demo.urls'
+
+MIDDLEWARE_CLASSES = (
+    'django.middleware.common.CommonMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'andsome.middleware.threadlocals.ThreadLocals',
+    'django.middleware.doc.XViewMiddleware',
+)
