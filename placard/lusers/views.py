@@ -77,70 +77,50 @@ def add_edit_user(request, username=None, form=BasicLDAPUserForm):
     UserForm = form
 
     if request.method == 'POST':
-        
         form = UserForm(request.POST, request.FILES)
-
         if form.is_valid():
             if username:
                 ldap_user = form.save(username)
             else:
                 ldap_user = form.save()
-
             return HttpResponseRedirect(ldap_user.get_absolute_url())
-                
     else:
-
         if username:
             form = UserForm()
             conn = LDAPClient()
             ldap_user = conn.get_user("uid=%s" % username)
             form.initial = ldap_user.__dict__
-
         else:
             form = UserForm()
     
     return render_to_response('lusers/user_form.html', locals(), context_instance=RequestContext(request))
-
  
 add_edit_user = permission_required('auth.add_user')(add_edit_user)
 
 
-def change_password(request, username):
+def change_password(request, username, password_form=LDAPAdminPasswordForm, template='lusers/password_form.html', redirect_url=None):
+    PasswordForm = password_form
 
     if request.method == 'POST':
         
-        form = LDAPAdminPasswordForm(request.POST)
+        form = PasswordForm(request.POST)
         if form.is_valid():
-            form.save(username)           
+            form.save(username)
+            request.user.message_set.create(message='Password changed successfully')
+            if redirect_url:
+                return HttpResponseRedirect(redirect_url)
             return HttpResponseRedirect(reverse('plac_user_detail', args=[username]))              
     else:
-        form = LDAPAdminPasswordForm()
+        form = PasswordForm()
 
-    return render_to_response('lusers/password_form.html', locals(), context_instance=RequestContext(request))
+    return render_to_response(template, locals(), context_instance=RequestContext(request))
 
 change_password = permission_required('auth.delete_user')(change_password)
 
 @login_required
 def user_password_change(request, redirect_url=None):
 
-    user = request.user
-    
-    if request.method == 'POST':
-        
-        form = LDAPPasswordForm(request.POST)
-
-        if form.is_valid():
-            form.save(user.username)
-            request.user.message_set.create(message='Password changed successfully')
-            if redirect_url:
-                return HttpResponseRedirect(redirect_url)
-            return HttpResponseRedirect(reverse('plac_user_detail', args=[user.username]))
-                
-    else:
-
-        form = LDAPPasswordForm()
-
-    return render_to_response('lusers/user_password_form.html', locals(), context_instance=RequestContext(request))
+    return change_password(request, request.user.username, LDAPPasswordForm, 'lusers/user_password_form.html', redirect_url)
 
 
 def delete_user(request, username):
@@ -150,10 +130,10 @@ def delete_user(request, username):
         conn.delete_user('uid=%s' % username)
         return HttpResponseRedirect(reverse('plac_user_list'))
     
-    
     return render_to_response('lusers/user_confirm_delete.html', locals(), context_instance=RequestContext(request))
 
 delete_user = permission_required('auth.delete_user')(delete_user)
+
 
 def user_detail_verbose(request, username):
     conn = LDAPClient()
@@ -168,8 +148,6 @@ def user_detail_verbose(request, username):
     except:
         pass
     luser = luser.items()
-    
-
     return render_to_response('lusers/user_detail_verbose.html', locals(), context_instance=RequestContext(request))
 
 user_detail_verbose = permission_required('auth.delete_user')(user_detail_verbose)
