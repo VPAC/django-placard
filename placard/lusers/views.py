@@ -16,7 +16,7 @@
 # along with django-placard  If not, see <http://www.gnu.org/licenses/>.
 
 
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.conf import settings
 from django.http import HttpResponseRedirect, HttpResponseNotFound, Http404
@@ -50,7 +50,6 @@ def user_list(request):
 
     filter_list.append(Filter(request, 'group', group_list))
     filter_bar = FilterBar(request, filter_list)
-
 
     return render_to_response('lusers/user_list.html', locals(), context_instance=RequestContext(request))
 
