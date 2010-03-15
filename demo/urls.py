@@ -1,11 +1,12 @@
 from django.conf.urls.defaults import *
+
 from placard.forms import SetPasswordForm, PasswordResetForm
 
 
 urlpatterns = patterns('',
      (r'^users/', include('placard.lusers.urls')),    
      (r'^groups/', include('placard.lgroups.urls')),    
-
+  url(r'^change_password/$', 'placard.lusers.views.user_password_change', name='plac_user_password'),
 )
 
 set_password_dict = {

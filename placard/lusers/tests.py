@@ -30,8 +30,7 @@ from placard.misc.test_data import test_ldif
 
 server = None
 
-
-class LDAPUsersTest(unittest.TestCase):
+class UserAPITest(unittest.TestCase):
     def setUp(self):
         global server
         server = slapd.Slapd()
@@ -152,5 +151,69 @@ class UserViewsTests(TestCase):
         self.client.login(username='super', password='aq12ws')
         response = self.client.get(reverse('plac_user_detail_verbose', args=['testuser2']))
         self.failUnlessEqual(response.status_code, 200)
+
+        
+
+class PasswordTests(TestCase):
+
+    def setUp(self):
+        global server
+        server = slapd.Slapd()
+        server.set_port(38911)
+        server.start()
+        base = server.get_dn_suffix()
+        
+        server.ldapadd("\n".join(test_ldif)+"\n")
+
+        self.server = server
+
+        try:
+            super_user = User.objects.create_user('super', 'sam@vpac.org', 'aq12ws')
+            super_user.is_superuser = True
+            super_user.save()
+        except:
+            pass
+
+            
+    def tearDown(self):
+        self.server.stop()
+
+
+    def test_api(self):
+        c = LDAPClient()      
+        c.change_password('uid=testuser3', raw_password='aq12ws')
+        self.assertTrue(c.check_password('uid=testuser3', 'aq12ws'), True)
+        c.change_password('uid=testuser3', raw_password='qwerty')
+        self.assertTrue(c.check_password('uid=testuser3', 'qwerty'), True)
+
+    def test_admin_view(self):
+        c = LDAPClient()      
+        response = self.client.get(reverse('plac_change_password', args=['testuser1']))
+        self.failUnlessEqual(response.status_code, 302)
+        self.client.login(username='super', password='aq12ws')
+        response = self.client.get(reverse('plac_change_password', args=['testuser1']))
+        self.failUnlessEqual(response.status_code, 200)
+        
+        response = self.client.post(reverse('plac_change_password', args=['testuser1']), {'new1': 'aq12ws222', 'new2': 'aq12ws222'})
+        self.failUnlessEqual(response.status_code, 302)
+        self.assertTrue(c.check_password('uid=testuser1', 'aq12ws222'), True)
+
+    def test_user_view(self):
+        c = LDAPClient()
+        c.change_password('uid=testuser2', raw_password='aq12ws')
+        luser = c.get_user('uid=testuser2')
+        user = User.objects.create_user(luser.uid, luser.mail, 'aq12ws')
+
+        response = self.client.get(reverse('plac_user_password'))
+        self.failUnlessEqual(response.status_code, 302)
+
+        self.client.login(username='testuser2', password='aq12ws')
+
+        response = self.client.get(reverse('plac_user_password'))
+        self.failUnlessEqual(response.status_code, 200)
+
+        response = self.client.post(reverse('plac_user_password'), {'old': 'aq12ws', 'new1': 'aq12ws222', 'new2': 'aq12ws222'})
+        self.failUnlessEqual(response.status_code, 302)
+        self.assertTrue(c.check_password('uid=testuser2', 'aq12ws222'), True)
 
         
