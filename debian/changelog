@@ -1,3 +1,9 @@
+django-placard (1.0.6) testing; urgency=low
+
+  * Minor change, fixed remove_group_member bug, more tests, docs and general cody clean up
+
+ -- Sam Morrison <sam@vpac.org>  Tue, 16 Mar 2010 12:39:13 +1100
+
 django-placard (1.0.5) testing; urgency=low
 
   * Minor change, added GPLv3 to source files
