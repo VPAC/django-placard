@@ -19,7 +19,7 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.conf import settings
-from django.http import HttpResponseRedirect, HttpResponseNotFound, Http404
+from django.http import HttpResponseRedirect, Http404, HttpResponseForbidden
 from django.contrib.auth.decorators import permission_required, login_required
 from django.core.urlresolvers import reverse
 
@@ -57,7 +57,7 @@ def user_detail(request, username):
     try:
         luser = conn.get_user("uid=%s" % username)
     except exceptions.DoesNotExistException:
-        return HttpResponseNotFound()
+        raise Http404
 
     if request.method == 'POST':
         form = AddGroupForm(request.POST)
@@ -94,8 +94,12 @@ def add_edit_user(request, username=None, form=BasicLDAPUserForm):
  
 add_edit_user = permission_required('auth.add_user')(add_edit_user)
 
-
+@login_required
 def change_password(request, username, password_form=LDAPAdminPasswordForm, template='lusers/password_form.html', redirect_url=None):
+
+    if (request.user.username != username) and (not request.user.has_perm('auth.delete_user')):
+        return HttpResponseForbidden()
+
     PasswordForm = password_form
 
     if request.method == 'POST':
@@ -112,7 +116,7 @@ def change_password(request, username, password_form=LDAPAdminPasswordForm, temp
 
     return render_to_response(template, locals(), context_instance=RequestContext(request))
 
-change_password = permission_required('auth.delete_user')(change_password)
+#change_password = permission_required('auth.delete_user')(change_password)
 
 @login_required
 def user_password_change(request, redirect_url=None):

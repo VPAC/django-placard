@@ -209,6 +209,9 @@ class PasswordTests(TestCase):
 
         self.client.login(username='testuser2', password='aq12ws')
 
+        response = self.client.get(reverse('plac_change_password', args=['testuser1']))
+        self.failUnlessEqual(response.status_code, 403)
+
         response = self.client.get(reverse('plac_user_password'))
         self.failUnlessEqual(response.status_code, 200)
 
