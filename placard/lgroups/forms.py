@@ -34,4 +34,4 @@ class AddGroupForm(forms.Form):
 
     def save(self, uid):
         conn = LDAPClient()
-        conn.add_group_member(self.cleaned_data['add_group'], uid)
+        conn.add_group_member('gidNumber=%s' % self.cleaned_data['add_group'], uid)
