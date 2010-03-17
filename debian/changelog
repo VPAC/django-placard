@@ -1,3 +1,9 @@
+django-placard (1.0.8) testing; urgency=high
+
+  * Fixed remove group member bug
+
+ -- Sam Morrison <sam@vpac.org>  Thu, 18 Mar 2010 10:51:30 +1100
+
 django-placard (1.0.7) testing; urgency=high
 
   * Fixed issue where secondary groups didn't show up in user_detail view
