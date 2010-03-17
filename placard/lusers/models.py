@@ -53,7 +53,7 @@ class LDAPUser(object):
     def secondary_groups(self):
         from placard.client import LDAPClient
         conn = LDAPClient()
-        return conn.get_group_memberships("uid=%s" % self.uid)
+        return conn.get_group_memberships(self.uid)
 
     def get_manager(self):
         from placard.client import LDAPClient

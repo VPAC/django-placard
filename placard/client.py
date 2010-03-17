@@ -324,7 +324,7 @@ class LDAPClient(object):
         user = self.get_user(search_string)
         self.ldap_delete(user.dn)
 
-        for g in self.get_group_memberships(user):
+        for g in self.get_group_memberships(user.uid):
             self.remove_group_member('gidNumber=%s' % g.gidNumber, user.uid)
         
 
@@ -475,18 +475,18 @@ class LDAPClient(object):
         return id_list[0] + 1
 
 
-    def get_group_memberships(self, user):
+    def get_group_memberships(self, uid):
         """
         Gets all groups person is in
         """
         
-        result_data = self.ldap_search(self.group_base, 'memberUid=*%s*' % user.uid) 
+        result_data = self.ldap_search(self.group_base, 'memberUid=*%s*' % uid) 
         
         groups = []
         for i in result_data:
             group = i[1]
             if 'memberUid' in i[1]:
-                if user.uid in i[1]['memberUid']:
+                if uid in i[1]['memberUid']:
                     groups.append(LDAPGroup(i))
 
         return groups
