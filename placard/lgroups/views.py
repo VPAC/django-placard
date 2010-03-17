@@ -64,7 +64,7 @@ def remove_member(request, group_id, user_id):
         return HttpResponseNotFound()
 
     if request.method == 'POST':
-        conn.remove_group_member(group_id, user_id)
+        conn.remove_group_member('gidNumber=%s' % group_id, user_id)
         return HttpResponseRedirect(group.get_absolute_url())
 
     return render_to_response('lgroups/remove_member.html', locals(), context_instance=RequestContext(request))
