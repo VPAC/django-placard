@@ -87,8 +87,12 @@ class LDAPClient(object):
     def ldap_modify(self, dn, old, new):
         # Convert place-holders for modify-operation using modlist-module
         ldif = modlist.modifyModlist(old, new)
-        # Do the actual modification 
-        self.conn.modify_s(dn, ldif)
+        # Do the actual modification
+        try:
+            self.conn.modify_s(dn, ldif)
+        except ldap.PROTOCOL_ERROR, excp:
+            if not excp[0]['info'] == 'no modifications specified':
+                raise ldap.PROTOCOL_ERROR
         
     def ldap_delete(self, dn):
         self.conn.delete_s(dn)
@@ -452,7 +456,7 @@ class LDAPClient(object):
                 new[k] = i
             else:
                 new[k] = str(i)
-    
+        
         self.ldap_modify(ldap_user.dn, old, new)
 
             
