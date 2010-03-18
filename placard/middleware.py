@@ -80,6 +80,7 @@ class LDAPRemoteUserMiddleware(RemoteUserMiddleware):
     
         # User is valid.  Set request.user and persist user in the session
         # by logging the user in.
+        user.backend = 'placard.backends.LDAPBackend'
         request.user = user
         auth.login(request, user)
 
