@@ -1,3 +1,9 @@
+django-placard (1.1.1) stable; urgency=high
+
+  * Must specify backend when logging user in
+
+ -- Sam Morrison <sam@vpac.org>  Thu, 18 Mar 2010 15:18:12 +1100
+
 django-placard (1.1) stable; urgency=low
 
   * Fixed middleware
