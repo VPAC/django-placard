@@ -61,8 +61,9 @@ class LDAPRemoteUserMiddleware(RemoteUserMiddleware):
                 return
         # We are seeing this user for the first time in this session, attempt
         # to authenticate the user.
-        user = auth.authenticate(remote_user=username)
-        if not user:
+        try:
+            user = User.objects.get(username__exact=username)
+        except User.DoesNotExist:
             # Create user
             conn = LDAPClient()
             ldap_user = conn.get_user("uid=%s" % username)
