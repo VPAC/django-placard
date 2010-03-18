@@ -69,12 +69,8 @@ class LDAPBackend(ModelBackend):
                 # random password that is not given to them. In this way,
                 # static users that don't go through ldap can still login
                 # properly, and LDAP users still have a User object.
-                from random import choice
-                import string
-                temp_pass = ""
-                for i in range(16):
-                    temp_pass = temp_pass + choice(string.letters)
-                user = User.objects.create_user(username, '', temp_pass)
+                user = User.objects.create_user(username, '')
+                user.set_unusable_password()
                 user.is_staff = False
                 user.save()
             # Success.
