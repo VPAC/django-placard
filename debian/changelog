@@ -1,3 +1,9 @@
+django-placard (1.1) stable; urgency=low
+
+  * Fixed middleware
+
+ -- Sam Morrison <sam@vpac.org>  Thu, 18 Mar 2010 15:12:11 +1100
+
 django-placard (1.0.9) testing; urgency=low
 
   * Suppress exception ldap.PROTOCOL_ERROR('no modifications specified') 
