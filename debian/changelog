@@ -1,3 +1,10 @@
+django-placard (1.0.9) testing; urgency=low
+
+  * Suppress exception ldap.PROTOCOL_ERROR('no modifications specified') 
+    as we don't care
+
+ -- Sam Morrison <sam@vpac.org>  Thu, 18 Mar 2010 13:46:39 +1100
+
 django-placard (1.0.8) testing; urgency=high
 
   * Fixed remove group member bug
