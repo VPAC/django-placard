@@ -66,6 +66,7 @@ Required: True
 
 What message digest to use when storing passwords in LDAP.
 Valid options are:
+
       * sha       - SHA-1
       * ssha      - Salted SHA-1
       * md5       - MD5
@@ -73,6 +74,7 @@ Valid options are:
       * smd5      - Salted MD5
       * crypt     - Unix Crypt
       * ''	  - Plain text
+
 Example::
 	
 	LDAP_PASSWD_SCHEME = 'md5-crypt'
@@ -101,7 +103,7 @@ LAP_TLS_CA
 
 Required: If LDAP_USE_TLS = True
 
-Location of CA certificate used for TLS. Example:
+Location of CA certificate used for TLS. Example::
 	 
 	 LAP_TLS_CA = "/etc/ldap/ssl/CA.pem"
 
