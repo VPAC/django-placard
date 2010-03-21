@@ -1,0 +1,13 @@
+Document: django-placard
+Title: Django Placard Documentation
+Author: Sam Morrison
+Abstract: Placard documentation including settings
+ install and APIs
+Section: Programming/Python
+
+Format: HTML
+Index: /usr/share/doc/django-placard/html/index.html
+Files: /usr/share/doc/django-placard/html/*.html
+ /usr/share/doc/django-placard/html/ref/*.html
+
+

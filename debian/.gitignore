@@ -1,3 +1,7 @@
-django-placard*
 files
 python-module-stampdir/
+django-placard.debhelper.log
+django-placard.postinst.debhelper
+django-placard.prerm.debhelper
+django-placard.substvars
+django-placard/
