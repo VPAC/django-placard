@@ -25,6 +25,9 @@ import ldap
 import ldap.filter
 
 
+if settings.LDAP_USE_TLS:
+    ldap.set_option(ldap.OPT_X_TLS_CACERTFILE, settings.LDAP_TLS_CA)
+
 class LDAPBackend(ModelBackend):
     def authenticate(self, username=None, password=None):
         
@@ -42,6 +45,12 @@ class LDAPBackend(ModelBackend):
             l = ldap.initialize(settings.LDAP_URL)
         except ldap.LDAPError:
             return None
+
+        if settings.LDAP_USE_TLS:
+            l.set_option(ldap.OPT_X_TLS,ldap.OPT_X_TLS_DEMAND)
+            l.start_tls_s()
+            
+        l.simple_bind_s(settings.LDAP_ADMIN_USER, settings.LDAP_ADMIN_PASSWORD)
 
         try:
             result_id = l.search(settings.LDAP_BASE, scope, filter, ret)
