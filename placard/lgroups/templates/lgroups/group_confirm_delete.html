@@ -1,10 +1,8 @@
 {% extends "base_site.html" %}
 
 {% block content %}
-
-<h1>Are you sure?</h1> 
-
-<p>Are you sure you want to delete {{ username }}'s user account? </p>
+<h1>Are you sure?</h1>    
+<p>Are you sure you want to delete the LDAP group '{{ group }}'? </p>
 <form action="" method="post">
   <div>
     <input type="hidden" name="post" value="yes" />

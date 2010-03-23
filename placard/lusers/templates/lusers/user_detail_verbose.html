@@ -13,18 +13,14 @@
 {% block content %}
 <div id="content-main">
 
-<div class="module">
-	<h3>{{ dn }}</h3>
-   	<table>
-   	{% for i in luser %}
-   		<tr>
-				<td>{{ i.0 }}</td><td>{{ i.1 }}</td>
-			</tr>
-			<tr>
+  <div class="module">
+    <h3>{{ dn }}</h3>
+    <table>
+      {% for i in luser %}
+      <tr>
+	<td>{{ i.0 }}</td><td>{{ i.1 }}</td>
+      </tr>
    	{% endfor %}
-			
-		
-
-	</div>
+  </div>
 </div>
 {% endblock %}

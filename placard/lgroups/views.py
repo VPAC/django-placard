@@ -99,7 +99,7 @@ def delete_group(request, group_id):
         conn.delete_group(group_id)
         return HttpResponseRedirect(reverse('plac_grp_list'))
     
-    return render_to_response('lgroups/group_confirm_delete.html.html', locals(), context_instance=RequestContext(request))
+    return render_to_response('lgroups/group_confirm_delete.html', locals(), context_instance=RequestContext(request))
 
 
 def group_detail_verbose(request, group_id):
