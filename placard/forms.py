@@ -50,8 +50,8 @@ class PasswordResetForm(BasePasswordResetForm):
         sync_users()
         
         email = self.cleaned_data["email"]
-        users_cache = User.objects.filter(email__iexact=email)
-        if len(users_cache) == 0:
+        self.users_cache = User.objects.filter(email__iexact=email)
+        if len(self.users_cache) == 0:
             raise forms.ValidationError("That e-mail address doesn't have an associated user account. Are you sure you've registered?")
 
 

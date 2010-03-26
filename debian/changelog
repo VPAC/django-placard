@@ -1,3 +1,9 @@
+django-placard (1.1.5) testing; urgency=high
+
+  * Fixed password reset form.
+
+ -- Sam Morrison <sam@vpac.org>  Fri, 26 Mar 2010 11:16:42 +1100
+
 django-placard (1.1.4) testing; urgency=low
 
   * Support TLS connections in auth backend
