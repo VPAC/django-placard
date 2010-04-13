@@ -33,9 +33,9 @@ class LDAPBackend(ModelBackend):
         
         try:
             test = settings.LDAP_URL
-            test = settings.LDAP_BASE
+            test = settings.LDAP_USER_BASE
         except:
-            raise ImproperlyConfigured("LDAP_URL and LDAP_BASE must be specified in settings.py")
+            raise ImproperlyConfigured("LDAP_URL and LDAP_USER_BASE must be specified in settings.py")
         
         scope = ldap.SCOPE_SUBTREE
         filter = ldap.filter.filter_format("(&(objectclass=person) (uid=%s))", [username])
@@ -53,7 +53,7 @@ class LDAPBackend(ModelBackend):
         l.simple_bind_s(settings.LDAP_ADMIN_USER, settings.LDAP_ADMIN_PASSWORD)
 
         try:
-            result_id = l.search(settings.LDAP_BASE, scope, filter, ret)
+            result_id = l.search(settings.LDAP_USER_BASE, scope, filter, ret)
             result_type, result_data = l.result(result_id, 0)
 
             # If the user does not exist in LDAP, Fail.

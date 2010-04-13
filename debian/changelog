@@ -1,3 +1,10 @@
+django-placard (1.1.6) stable; urgency=low
+
+  * Make sure auth backend uses LDAP_USER_BASE as base search
+  * Moved to stable
+
+ -- Sam Morrison <sam@vpac.org>  Tue, 13 Apr 2010 16:10:49 +1000
+
 django-placard (1.1.5) testing; urgency=high
 
   * Fixed password reset form.
