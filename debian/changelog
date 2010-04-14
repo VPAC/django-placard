@@ -1,3 +1,15 @@
+django-placard (1.1.8) stable; urgency=high
+
+  * Actually fixed the samba syncing bug.
+
+ -- Sam Morrison <sam@vpac.org>  Wed, 14 Apr 2010 12:08:36 +1000
+
+django-placard (1.1.7) stable; urgency=low
+
+  * Fixed samba syncing bug.
+
+ -- Sam Morrison <sam@vpac.org>  Wed, 14 Apr 2010 12:02:27 +1000
+
 django-placard (1.1.6) stable; urgency=low
 
   * Make sure auth backend uses LDAP_USER_BASE as base search

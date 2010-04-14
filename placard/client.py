@@ -340,13 +340,10 @@ class LDAPClient(object):
         up = UserPassword(l=self.conn, dn=dn)
         up.changePassword(newPassword=raw_password, scheme=settings.LDAP_PASSWD_SCHEME)
         
-        try:
-            if 'sambaNTPassword' in ldap_attrs.PASSWORD_ATTRS:
-                self.update_user(username, sambaNTPassword=smbpasswd.nthash(raw_password), sambaPwdMustChange='')
-            if 'sambaLMPassword' in ldap_attrs.PASSWORD_ATTRS:
-                self.update_user(username, sambaLMPassword=smbpasswd.lmhash(raw_password), sambaPwdMustChange='')
-        except:
-            pass
+        if 'sambaNTPassword' in ldap_attrs.PASSWORD_ATTRS:
+            self.update_user(search_string, sambaNTPassword=smbpasswd.nthash(raw_password), sambaPwdMustChange='')
+        if 'sambaLMPassword' in ldap_attrs.PASSWORD_ATTRS:
+            self.update_user(search_string, sambaLMPassword=smbpasswd.lmhash(raw_password), sambaPwdMustChange='')
 
 
     def check_password(self, search_string, raw_password):
