@@ -1,3 +1,9 @@
+django-placard (1.1.9) stable; urgency=high
+
+  * Fixed delete group view bug
+
+ -- Sam Morrison <sam@vpac.org>  Thu, 15 Apr 2010 14:36:43 +1000
+
 django-placard (1.1.8) stable; urgency=high
 
   * Actually fixed the samba syncing bug.
