@@ -1,3 +1,9 @@
+django-placard (1.1.10) testing; urgency=low
+
+  * Removed print user list link
+
+ -- Sam Morrison <sam@vpac.org>  Wed, 21 Apr 2010 11:17:05 +1000
+
 django-placard (1.1.9) stable; urgency=high
 
   * Fixed delete group view bug
