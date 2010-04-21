@@ -11,7 +11,9 @@
 
 {% block objecttools %}
 <ul class="object-tools">
+{% comment %}
 <li><a href="pdf/">Print version</a></li>
+{% endcomment %}
 {% if perms.auth.add_user %}
 <li><a href="add/" class="addlink">Add User</a></li>
 {% endif %}
