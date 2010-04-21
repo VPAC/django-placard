@@ -18,6 +18,7 @@
 
 VERSION = (1, 1, 10, 'final', 0)
 
+
 def get_version():
     """ Return the current version"""
     version = '%s.%s' % (VERSION[0], VERSION[1])
