@@ -38,7 +38,7 @@ class LDAPBackend(ModelBackend):
             raise ImproperlyConfigured("LDAP_URL and LDAP_USER_BASE must be specified in settings.py")
         
         scope = ldap.SCOPE_SUBTREE
-        filter = ldap.filter.filter_format("(&(objectclass=person) (uid=%s))", [username])
+        filter = ldap.filter.filter_format("(uid=%s)", [username])
         ret = ['dn']
 
         try:
