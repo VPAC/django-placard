@@ -79,9 +79,7 @@ class LDAPClient(object):
         ldif = modlist.addModlist(attrs)
         self.conn.add_s(dn, ldif)
 
-    def ldap_search(self, base_dn, search_filter):
-        search_scope = ldap.SCOPE_SUBTREE
-        retrieve_attributes = None
+    def ldap_search(self, base_dn, search_filter, retrieve_attributes=None, search_scope=ldap.SCOPE_SUBTREE):
         return self.conn.search_s(base_dn, search_scope, search_filter, retrieve_attributes)
 
     def ldap_modify(self, dn, old, new):
