@@ -1,7 +1,12 @@
+django-placard (1.1.12) stable; urgency=low
+
+  * Allow override on ldap searches.
+
+ -- Sam Morrison <sam@vpac.org>  Wed, 05 May 2010 14:17:00 +1000
+
 django-placard (1.1.11) stable; urgency=low
 
-  * Don't expect a user to have objectClass=person when trying 
-	to authenticate
+  * Don't expect a user to have objectClass=person when trying to authenticate
 
  -- Sam Morrison <sam@vpac.org>  Mon, 03 May 2010 16:40:51 +1000
 
