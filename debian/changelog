@@ -1,3 +1,9 @@
+django-placard (1.1.13) testing; urgency=low
+
+  * Added user edit form view
+
+ -- Sam Morrison <sam@vpac.org>  Thu, 06 May 2010 12:05:08 +1000
+
 django-placard (1.1.12) stable; urgency=low
 
   * Allow override on ldap searches.
