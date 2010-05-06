@@ -95,7 +95,7 @@ def add_edit_user(request, username=None, form=BasicLDAPUserForm, template_name=
     
     return render_to_response(template_name, locals(), context_instance=RequestContext(request))
  
-add_edit_user = permission_required('auth.add_user')(add_edit_user)
+#add_edit_user = permission_required('auth.add_user')(add_edit_user)
 
 @login_required
 def user_edit(request, form, template_name):
