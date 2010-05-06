@@ -73,7 +73,7 @@ def user_detail(request, username):
 def add_edit_user(request, username=None, form=BasicLDAPUserForm, template_name='lusers/user_form.html'):
     UserForm = form
 
-    if (request.user.username != username) and (not request.user.has_perm('auth.delete_user')):
+    if (request.user.username != username) and (not request.user.has_perm('auth.add_user')):
         return HttpResponseForbidden()
 
     if request.method == 'POST':
@@ -106,7 +106,7 @@ def user_edit(request, form, template_name):
 @login_required
 def change_password(request, username, password_form=LDAPAdminPasswordForm, template='lusers/password_form.html', redirect_url=None):
 
-    if (request.user.username != username) and (not request.user.has_perm('auth.delete_user')):
+    if (request.user.username != username) and (not request.user.has_perm('auth.change_user')):
         return HttpResponseForbidden()
 
     PasswordForm = password_form
@@ -160,4 +160,4 @@ def user_detail_verbose(request, username):
     luser = luser.items()
     return render_to_response('lusers/user_detail_verbose.html', locals(), context_instance=RequestContext(request))
 
-user_detail_verbose = permission_required('auth.delete_user')(user_detail_verbose)
+user_detail_verbose = permission_required('auth.change_user')(user_detail_verbose)
