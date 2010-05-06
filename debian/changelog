@@ -1,3 +1,9 @@
+django-placard (1.1.14) testing; urgency=low
+
+  * Fixed auth bug in new change user view" 
+
+ -- Sam Morrison <sam@vpac.org>  Thu, 06 May 2010 12:15:20 +1000
+
 django-placard (1.1.13) testing; urgency=low
 
   * Added user edit form view
