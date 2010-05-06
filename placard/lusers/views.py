@@ -70,8 +70,11 @@ def user_detail(request, username):
     return render_to_response('lusers/user_detail.html', locals(), context_instance=RequestContext(request))
 
 
-def add_edit_user(request, username=None, form=BasicLDAPUserForm):
+def add_edit_user(request, username=None, form=BasicLDAPUserForm, template_name='lusers/user_form.html'):
     UserForm = form
+
+    if (request.user.username != username) and (not request.user.has_perm('auth.delete_user')):
+        return HttpResponseForbidden()
 
     if request.method == 'POST':
         form = UserForm(request.POST, request.FILES)
@@ -90,9 +93,15 @@ def add_edit_user(request, username=None, form=BasicLDAPUserForm):
         else:
             form = UserForm()
     
-    return render_to_response('lusers/user_form.html', locals(), context_instance=RequestContext(request))
+    return render_to_response(template_name, locals(), context_instance=RequestContext(request))
  
 add_edit_user = permission_required('auth.add_user')(add_edit_user)
+
+@login_required
+def user_edit(request, form, template_name):
+
+    return add_edit_user(request, request.user.username, form, template_name)
+    
 
 @login_required
 def change_password(request, username, password_form=LDAPAdminPasswordForm, template='lusers/password_form.html', redirect_url=None):
