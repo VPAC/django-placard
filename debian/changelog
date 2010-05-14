@@ -1,3 +1,9 @@
+django-placard (1.1.16) stable; urgency=low
+
+  * Made it easier for third party apps to test intergration
+
+ -- Sam Morrison <sam@vpac.org>  Fri, 14 May 2010 11:50:24 +1000
+
 django-placard (1.1.15) testing; urgency=low
 
   * Fixed permissions on user views
