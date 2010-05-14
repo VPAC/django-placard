@@ -18,15 +18,20 @@
 
 from django.conf import settings
 
+GROUP_DN = settings.LDAP_GROUP_BASE
+GROUP_OU = GROUP_DN.split(',')[0].split('=')[1]
+USER_DN = settings.LDAP_USER_BASE
+USER_OU = USER_DN.split(',')[0].split('=')[1]
 
+settings.LDAP_GROUP_BASE.split(',')[0].split('=')[1]
 test_ldif = [
-    "dn: " + settings.LDAP_GROUP_BASE,
+    "dn: " + GROUP_DN,
     "objectClass: organizationalUnit",
-    "ou: Group",
+    "ou: " + GROUP_OU,
     "",
-    "dn: " + settings.LDAP_USER_BASE,
+    "dn: " + USER_DN,
     "objectClass: organizationalUnit",
-    "ou: VHO",
+    "ou: " + USER_OU,
     "",
     'dn: uid=testuser1, ' + settings.LDAP_USER_BASE,
     'cn: Test User',
