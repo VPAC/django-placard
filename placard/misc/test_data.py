@@ -23,7 +23,6 @@ GROUP_OU = GROUP_DN.split(',')[0].split('=')[1]
 USER_DN = settings.LDAP_USER_BASE
 USER_OU = USER_DN.split(',')[0].split('=')[1]
 
-settings.LDAP_GROUP_BASE.split(',')[0].split('=')[1]
 test_ldif = [
     "dn: " + GROUP_DN,
     "objectClass: organizationalUnit",
