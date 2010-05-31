@@ -3,6 +3,7 @@ DESTDIR=/
 BUILDIR=$(CURDIR)/debian/django-placard
 PROJECT=django-placard
 VERSION=$(python -c "from placard import get_version; print get_version()")
+DJANGO_SETTINGS_MODULE=demo.settings
 
 all:
 		@echo "make source - Create source package"
