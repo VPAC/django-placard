@@ -152,6 +152,10 @@ class Slapd:
         cfg.append("rootdn " + quote(self.get_root_dn()))
         cfg.append("rootpw " + quote(self.get_root_password()))
 
+        cfg.append("moduleload ppolicy")
+        cfg.append("overlay ppolicy")
+
+
     def _write_config(self):
         """Writes the slapd.conf file out, and returns the path to it."""
         path = os.path.join(self._tmpdir, "slapd.conf")
