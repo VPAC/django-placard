@@ -454,7 +454,20 @@ class LDAPClient(object):
         
         self.ldap_modify(ldap_user.dn, old, new)
 
-            
+
+    def lock_user(self, search_string):
+        self.update_user(search_string, pwdAccountLockedTime='000001010000Z')
+
+    def unlock_user(self, search_string):
+        self.update_user(search_string, pwdAccountLockedTime='')
+
+    def is_locked(self, search_string):
+        ldap_user = self.get_user(search_string)
+        
+        if 'pwdAccountLockedTime' in ldap_user.__dict__:
+            return True
+        return False
+        
     def get_new_uid(self):
         """Return the next available user id"""
         

@@ -83,6 +83,14 @@ class UserAPITest(unittest.TestCase):
         u = c.get_user('uid=testuser1')
         self.failUnlessEqual(u.sn, 'User')
 
+    def test_lock_unlock(self):
+        c = LDAPClient()
+        self.failUnlessEqual(c.is_locked('uid=testuser1'), False)
+        c.lock_user('uid=testuser1')
+        self.failUnlessEqual(c.is_locked('uid=testuser1'), True)
+        c.unlock_user('uid=testuser1')
+        self.failUnlessEqual(c.is_locked('uid=testuser1'), False)
+
     def test_user_search(self):
         c = LDAPClient()
         users = c.search_users(['User',])
