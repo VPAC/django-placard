@@ -1,3 +1,15 @@
+django-placard (1.2) testing; urgency=low
+
+  * Added ability to lock/unlock accounts using ppolicy
+
+ -- Sam Morrison <sam@vpac.org>  Tue, 01 Jun 2010 14:08:57 +1000
+
+django-placard (1.1.18) stable; urgency=low
+
+  * Return operational attributes by default
+
+ -- Sam Morrison <sam@vpac.org>  Mon, 31 May 2010 12:47:40 +1000
+
 django-placard (1.1.17) stable; urgency=low
 
   * Added management command to init ldap db
