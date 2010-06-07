@@ -15,7 +15,7 @@ string module.
 __version__ = '0.1.0'
 
 import random, ldap
-import md5
+import hashlib
 import string
 
 
@@ -69,13 +69,10 @@ else:
     else:
         random.seed()
     try:    
-        import sha
+        import hashlib
     except ImportError:
         _remove_dict_items(AVAIL_USERPASSWORD_SCHEMES, ['sha', 'ssha'])
         _remove_dict_items(AVAIL_AUTHPASSWORD_SCHEMES, ['sha1'])
-    try:
-        import md5
-    except ImportError:
         _remove_dict_items(AVAIL_USERPASSWORD_SCHEMES, ['md5', 'smd5'])
         _remove_dict_items(AVAIL_AUTHPASSWORD_SCHEMES, ['md5'])
     try:
@@ -267,9 +264,9 @@ class UserPassword(Password):
         if scheme=='crypt':
             return crypt.crypt(password, salt)
         elif scheme in ['md5', 'smd5']:
-            return base64.encodestring(md5.new(password+salt).digest()+salt).strip()
+            return base64.encodestring(hashlib.md5(password+salt).digest()+salt).strip()
         elif scheme in ['sha', 'ssha']:
-            return base64.encodestring(sha.new(password+salt).digest()+salt).strip()
+            return base64.encodestring(hashlib.sha(password+salt).digest()+salt).strip()
         else:
             return password
 
@@ -333,11 +330,11 @@ def md5crypt(password, salt=None, magic='$1$'):
     if salt is None:
         salt = _salt(saltLen=8, saltAlphabet=string.letters + string.digits)
         # /* The password first, since that is what is most unknown */ /* Then our magic string */ /* Then the raw salt        
-    m = md5.md5()
+    m = hashlib.md5()
     m.update(password + magic + salt)
 
     # /* Then just as many characters of the MD5(pw, salt, pw) */
-    mixin = md5.md5(password + salt + password).digest()
+    mixin = hashlib.md5(password + salt + password).digest()
     for i in range(0, len(password)):
         m.update(mixin[i % 16])
 
@@ -355,7 +352,7 @@ def md5crypt(password, salt=None, magic='$1$'):
 
     # /* and now, just to make sure things don't run too fast */
     for i in range(1000):
-        m2 = md5.md5()
+        m2 = hashlib.md5()
         if i & 1:
             m2.update(password)
         else:
