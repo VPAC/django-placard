@@ -160,7 +160,20 @@ class UserViewsTests(TestCase):
         response = self.client.get(reverse('plac_user_detail_verbose', args=['testuser2']))
         self.failUnlessEqual(response.status_code, 200)
 
+    def test_lock_user_view(self):
+        response = self.client.get(reverse('plac_user_detail_verbose', args=['testuser2']))
         
+    def test_lock_unlock_user_view(self):
+        c = LDAPClient()
+        self.failUnlessEqual(c.is_locked('uid=testuser2'), False)
+
+        self.client.login(username='super', password='aq12ws')        
+        response = self.client.get(reverse('plac_lock_user', args=['testuser2']))
+        self.failUnlessEqual(c.is_locked('uid=testuser2'), True)
+
+        response = self.client.get(reverse('plac_unlock_user', args=['testuser2']))
+        self.failUnlessEqual(c.is_locked('uid=testuser2'), False)
+
 
 class PasswordTests(TestCase):
 

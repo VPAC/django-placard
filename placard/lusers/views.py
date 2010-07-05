@@ -95,7 +95,6 @@ def add_edit_user(request, username=None, form=BasicLDAPUserForm, template_name=
     
     return render_to_response(template_name, locals(), context_instance=RequestContext(request))
  
-#add_edit_user = permission_required('auth.add_user')(add_edit_user)
 
 @login_required
 def user_edit(request, form, template_name):
@@ -125,14 +124,12 @@ def change_password(request, username, password_form=LDAPAdminPasswordForm, temp
 
     return render_to_response(template, locals(), context_instance=RequestContext(request))
 
-#change_password = permission_required('auth.delete_user')(change_password)
-
 @login_required
 def user_password_change(request, redirect_url=None):
 
     return change_password(request, request.user.username, LDAPPasswordForm, 'lusers/user_password_form.html', redirect_url)
 
-
+@permission_required('auth.delete_user')
 def delete_user(request, username):
 
     if request.method == 'POST':
@@ -142,9 +139,24 @@ def delete_user(request, username):
     
     return render_to_response('lusers/user_confirm_delete.html', locals(), context_instance=RequestContext(request))
 
-delete_user = permission_required('auth.delete_user')(delete_user)
 
+@permission_required('auth.change_user')
+def lock_user(request, username):
+    conn = LDAPClient()
+    conn.lock_user('uid=%s' % username)
+    request.user.message_set.create(message="%s's has been locked" % username)
+    luser = conn.get_user('uid=%s' % username)
+    return HttpResponseRedirect(luser.get_absolute_url())
 
+@permission_required('auth.change_user')
+def unlock_user(request, username):
+    conn = LDAPClient()
+    conn.unlock_user('uid=%s' % username)
+    request.user.message_set.create(message="%s's has been unlocked" % username)
+    luser = conn.get_user('uid=%s' % username)
+    return HttpResponseRedirect(luser.get_absolute_url())
+
+@permission_required('auth.change_user')
 def user_detail_verbose(request, username):
     conn = LDAPClient()
     try:
@@ -160,4 +172,3 @@ def user_detail_verbose(request, username):
     luser = luser.items()
     return render_to_response('lusers/user_detail_verbose.html', locals(), context_instance=RequestContext(request))
 
-user_detail_verbose = permission_required('auth.change_user')(user_detail_verbose)
