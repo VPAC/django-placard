@@ -1,3 +1,15 @@
+django-placard (1.2.2) testing; urgency=low
+
+  * Added is_locked method to user
+
+ -- Sam Morrison <sam@vpac.org>  Mon, 05 Jul 2010 11:02:48 +1000
+
+django-placard (1.2.1) testing; urgency=low
+
+  * Added lock and unlock user views and tests 
+
+ -- Sam Morrison <sam@vpac.org>  Mon, 05 Jul 2010 10:55:33 +1000
+
 django-placard (1.2) testing; urgency=low
 
   * Added ability to lock/unlock accounts using ppolicy
