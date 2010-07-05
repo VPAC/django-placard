@@ -63,6 +63,11 @@ class LDAPUser(object):
         except exceptions.DoesNotExistException:
             return None
 
+    def is_locked(self):
+        from placard.client import LDAPClient
+        conn = LDAPClient()
+        return conn.is_locked("uid=%s" % self.uid)
+
     @models.permalink  
     def get_absolute_url(self):
         return ('plac_user_detail', [self.uid])
