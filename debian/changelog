@@ -1,3 +1,10 @@
+django-placard (1.2.4-1) testing; urgency=low
+
+  * Use newer hashlib if available
+  * Check to see if group exists in group add form
+
+ -- Sam Morrison <sam@dell-laptop.arcs.org.au>  Fri, 30 Jul 2010 16:12:30 +1000
+
 django-placard (1.2.3-1) testing; urgency=low
 
   * Django 1.2.1 support
@@ -13,7 +20,7 @@ django-placard (1.2.2) stable; urgency=low
 
 django-placard (1.2.1) testing; urgency=low
 
-  * Added lock and unlock user views and tests 
+  * Added lock and unlock user views and tests
 
  -- Sam Morrison <sam@vpac.org>  Mon, 05 Jul 2010 10:55:33 +1000
 
@@ -49,7 +56,7 @@ django-placard (1.1.15) testing; urgency=low
 
 django-placard (1.1.14) testing; urgency=low
 
-  * Fixed auth bug in new change user view" 
+  * Fixed auth bug in new change user view"
 
  -- Sam Morrison <sam@vpac.org>  Thu, 06 May 2010 12:15:20 +1000
 
@@ -140,7 +147,7 @@ django-placard (1.1) stable; urgency=low
 
 django-placard (1.0.9) testing; urgency=low
 
-  * Suppress exception ldap.PROTOCOL_ERROR('no modifications specified') 
+  * Suppress exception ldap.PROTOCOL_ERROR('no modifications specified')
     as we don't care
 
  -- Sam Morrison <sam@vpac.org>  Thu, 18 Mar 2010 13:46:39 +1100
@@ -178,7 +185,7 @@ django-placard (1.0.4) testing; urgency=low
 
 django-placard (1.0.3) testing; urgency=low
 
-  * Fixed syntax error 
+  * Fixed syntax error
 
  -- Sam Morrison <sam@vpac.org>  Wed, 24 Feb 2010 14:22:34 +1100
 
