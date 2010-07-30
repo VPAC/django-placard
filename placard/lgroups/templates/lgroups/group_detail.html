@@ -43,7 +43,7 @@
     <p><a href="verbose/">Verbose</a></p>
     {% endif %}
     {% if perms.auth.change_group %}
-    <form method="post" action=".">
+    <form method="post" action=".">{% csrf_token %}
       <div>
 	{% load forms %}
 	<fieldset class="module aligned ()">
