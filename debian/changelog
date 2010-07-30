@@ -1,4 +1,11 @@
-django-placard (1.2.2) testing; urgency=low
+django-placard (1.2.3-1) testing; urgency=low
+
+  * Django 1.2.1 support
+  * Changed to debian non-native version
+
+ -- Sam Morrison <sam@dell-laptop.arcs.org.au>  Fri, 30 Jul 2010 11:39:40 +1000
+
+django-placard (1.2.2) stable; urgency=low
 
   * Added is_locked method to user
 
