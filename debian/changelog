@@ -3,7 +3,7 @@ django-placard (1.2.4-1) testing; urgency=low
   * Use newer hashlib if available
   * Check to see if group exists in group add form
 
- -- Sam Morrison <sam@dell-laptop.arcs.org.au>  Fri, 30 Jul 2010 16:12:30 +1000
+ -- Sam Morrison <sam@vpac.org>  Fri, 30 Jul 2010 16:12:30 +1000
 
 django-placard (1.2.3-1) testing; urgency=low
 
