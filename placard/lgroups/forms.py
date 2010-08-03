@@ -23,6 +23,14 @@ from placard.client import LDAPClient
 class BasicLDAPGroupForm(forms.Form):
     cn = forms.CharField(label='CN')
 
+    def clean_cn(self):
+        cn = self.cleaned_data['cn']
+        conn = LDAPClient()
+        groups = conn.get_groups("cn=%s" % cn)
+        if len(groups) > 0:
+            raise forms.ValidationError("This group already exists!")
+        return cn
+
     def save(self):
         data = self.cleaned_data
         conn = LDAPClient()
