@@ -1,3 +1,9 @@
+django-placard (1.2.7-1) testing; urgency=low
+
+  * Fix pytohn2.4 bug
+
+ -- Sam Morrison <sam@vpac.org>  Tue, 17 Aug 2010 14:15:29 +1000
+
 django-placard (1.2.6-1) testing; urgency=low
 
   * Fixed bug in password reset form
