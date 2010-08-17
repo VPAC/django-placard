@@ -78,10 +78,19 @@ else:
     try:    
         import hashlib
     except ImportError:
-        _remove_dict_items(AVAIL_USERPASSWORD_SCHEMES, ['sha', 'ssha'])
-        _remove_dict_items(AVAIL_AUTHPASSWORD_SCHEMES, ['sha1'])
-        _remove_dict_items(AVAIL_USERPASSWORD_SCHEMES, ['md5', 'smd5'])
-        _remove_dict_items(AVAIL_AUTHPASSWORD_SCHEMES, ['md5'])
+        try:
+            import sha
+        except ImportError:
+            _remove_dict_items(AVAIL_USERPASSWORD_SCHEMES, ['sha', 'ssha'])
+            _remove_dict_items(AVAIL_AUTHPASSWORD_SCHEMES, ['sha1'])
+    try:
+        import hashlib
+    except ImportError:
+        try:
+            import md5
+        except ImportError:
+            _remove_dict_items(AVAIL_USERPASSWORD_SCHEMES, ['md5', 'smd5'])
+            _remove_dict_items(AVAIL_AUTHPASSWORD_SCHEMES, ['md5'])
     try:
         import crypt
     except ImportError:
