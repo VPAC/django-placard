@@ -1,3 +1,21 @@
+django-placard (1.2.7-1) testing; urgency=low
+
+  * Fix pytohn2.4 bug
+
+ -- Sam Morrison <sam@vpac.org>  Tue, 17 Aug 2010 14:15:29 +1000
+
+django-placard (1.2.6-1) testing; urgency=low
+
+  * Fixed bug in password reset form
+
+ -- Sam Morrison <sam@vpac.org>  Tue, 17 Aug 2010 10:31:37 +1000
+
+django-placard (1.2.5-1) testing; urgency=low
+
+  * Added gen_shadow mgnt command
+
+ -- Sam Morrison <sam@vpac.org>  Tue, 03 Aug 2010 11:38:05 +1000
+
 django-placard (1.2.4-1) testing; urgency=low
 
   * Use newer hashlib if available

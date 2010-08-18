@@ -48,9 +48,10 @@ class PasswordResetForm(BasePasswordResetForm):
         Validates that a user exists with the given e-mail address.
         """
         sync_users()
-        
+        conn = LDAPClient()
         email = self.cleaned_data["email"]
-        self.users_cache = User.objects.filter(email__iexact=email)
+        luser_list = conn.get_users('mail=%s' % email)
+        self.users_cache = User.objects.filter(username__in=[x.uid for x in luser_list])
         if len(self.users_cache) == 0:
             raise forms.ValidationError("That e-mail address doesn't have an associated user account. Are you sure you've registered?")
 

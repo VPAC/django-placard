@@ -15,19 +15,22 @@
 # You should have received a copy of the GNU General Public License
 # along with django-placard  If not, see <http://www.gnu.org/licenses/>.
 
+from django.core.management.base import BaseCommand
 
-VERSION = (1, 2, 7, 'final', 0)
+class Command(BaseCommand):
+    help = "Generates a shadow file from all LDAP users"
+    
+    def handle(self, **options):        
+        verbose = int(options.get('verbosity'))
+        
+        from placard.client import LDAPClient
 
-
-def get_version():
-    """ Return the current version"""
-    version = '%s.%s' % (VERSION[0], VERSION[1])
-    if VERSION[2]:
-        version = '%s.%s' % (version, VERSION[2])
-    if VERSION[3:] == ('alpha', 0):
-        version = '%s pre-alpha' % version
-    else:
-        if VERSION[3] != 'final':
-            version = '%s %s %s' % (version, VERSION[3], VERSION[4])
-    return version
-
+        conn = LDAPClient()
+        user_list = conn.get_users()
+        for u in user_list:
+            p = u.userPassword
+            try:
+                password = p[p.index('}')+1:]
+            except:
+                password = p
+            print '%s:%s' % (u.uid, password)
