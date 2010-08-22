@@ -79,7 +79,7 @@ else:
         import hashlib
     except ImportError:
         try:
-            import sha
+            from sha import sha
         except ImportError:
             _remove_dict_items(AVAIL_USERPASSWORD_SCHEMES, ['sha', 'ssha'])
             _remove_dict_items(AVAIL_AUTHPASSWORD_SCHEMES, ['sha1'])
@@ -87,7 +87,7 @@ else:
         import hashlib
     except ImportError:
         try:
-            import md5
+            from md5 import md5
         except ImportError:
             _remove_dict_items(AVAIL_USERPASSWORD_SCHEMES, ['md5', 'smd5'])
             _remove_dict_items(AVAIL_AUTHPASSWORD_SCHEMES, ['md5'])
