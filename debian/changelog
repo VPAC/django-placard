@@ -1,3 +1,9 @@
+django-placard (1.2.8-1) testing; urgency=low
+
+  * Another python2.4 bug fix
+
+ -- Sam Morrison <sam@vpac.org>  Mon, 23 Aug 2010 08:54:46 +1000
+
 django-placard (1.2.7-1) testing; urgency=low
 
   * Fix pytohn2.4 bug
