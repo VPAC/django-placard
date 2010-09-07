@@ -71,3 +71,8 @@ class LDAPUser(object):
     @models.permalink  
     def get_absolute_url(self):
         return ('plac_user_detail', [self.uid])
+
+    def __cmp__(self, other):
+        if self.dn == other.dn:
+            return 0
+        return 1
