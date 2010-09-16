@@ -49,3 +49,7 @@ class LDAPGroup(object):
         except AttributeError:
             return self.cn
 
+    def __cmp__(self, other):
+        if self.dn == other.dn:
+            return 0
+        return 1
