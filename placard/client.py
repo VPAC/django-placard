@@ -124,7 +124,12 @@ class LDAPClient(object):
                 pass
         new = {}
         for k, i in kwargs.items():
-            new[k] = str(i)
+            if i == '':
+                continue
+            if k == 'objectClass' or k == 'memberUid':
+                new[k] = i
+            else:
+                new[k] = str(i)
             
         self.ldap_modify(group.dn, old, new)
 
