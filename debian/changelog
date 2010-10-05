@@ -1,3 +1,9 @@
+django-placard (1.2.10-1) testing; urgency=low
+
+  * add_group now returns new group GID number as an int
+
+ -- Sam Morrison <sam@vpac.org>  Tue, 05 Oct 2010 11:36:13 +1100
+
 django-placard (1.2.9-1) testing; urgency=low
 
   * Ability to compare LDAPUsers and LDAPGroups
