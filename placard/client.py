@@ -183,7 +183,7 @@ class LDAPClient(object):
 
         self.ldap_add(dn, attrs)
 
-        return attrs['gidNumber']
+        return int(attrs['gidNumber'][0])
 
 
     def get_group(self, search_string):
