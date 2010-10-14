@@ -28,9 +28,10 @@ class Command(BaseCommand):
         conn = LDAPClient()
         user_list = conn.get_users()
         for u in user_list:
-            p = u.userPassword
-            try:
-                password = p[p.index('}')+1:]
-            except:
-                password = p
-            print '%s:%s' % (u.uid, password)
+            if hasattr(u, 'userPassword'):
+                p = u.userPassword
+                try:
+                    password = p[p.index('}')+1:]
+                except:
+                    password = p
+                print '%s:%s' % (u.uid, password)
