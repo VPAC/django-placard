@@ -22,7 +22,7 @@ from django.contrib.auth.forms import SetPasswordForm as BaseSetPasswordForm
 from django.contrib.auth.models import User
 
 from placard.client import LDAPClient
-from placard.utils import is_password_strong
+from andsome.util import is_password_strong
 
 
 def sync_users():
