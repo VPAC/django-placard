@@ -1,3 +1,9 @@
+django-placard (1.2.12-1) stable; urgency=low
+
+  * Use django-andsome is_password_strong method
+
+ -- Sam Morrison <sam@vpac.org>  Fri, 10 Dec 2010 14:32:18 +1100
+
 django-placard (1.2.11-1) testing; urgency=low
 
   * Fixes bug in gen_shadow command when user has no password.
