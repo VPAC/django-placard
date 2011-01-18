@@ -34,7 +34,7 @@ class LDAPGroup(object):
         return u'%s' % self.__str__()
 
     def __str__(self):
-        return self.name()
+        return self.cn
 
     def __repr__(self):
         return self.__str__()
@@ -42,12 +42,6 @@ class LDAPGroup(object):
     @models.permalink
     def get_absolute_url(self):
         return ('plac_grp_detail', [self.gidNumber])
-
-    def name(self):
-        try:
-            return self.description
-        except AttributeError:
-            return self.cn
 
     def __cmp__(self, other):
         if self.dn == other.dn:

@@ -44,7 +44,7 @@ def user_list(request):
     filter_list = []
     group_list = {}
     for group in conn.get_groups():
-        group_list[group.gidNumber] = group.name()
+        group_list[group.gidNumber] = str(group)
 
     filter_list.append(Filter(request, 'group', group_list))
     filter_bar = FilterBar(request, filter_list)
