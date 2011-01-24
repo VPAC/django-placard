@@ -348,7 +348,10 @@ class LDAPClient(object):
             self.update_user(search_string, sambaNTPassword=smbpasswd.nthash(raw_password), sambaPwdMustChange='')
         if 'sambaLMPassword' in ldap_attrs.PASSWORD_ATTRS:
             self.update_user(search_string, sambaLMPassword=smbpasswd.lmhash(raw_password), sambaPwdMustChange='')
-
+        if 'unicodePwd' in ldap_attrs.PASSWORD_ATTRS:
+            unicode_password = unicode("\"" + raw_password + "\"", "iso-8859-1").encode("utf-16-le")
+            mod_attrs = [( ldap.MOD_REPLACE, 'unicodePwd', unicode_password),( ldap.MOD_REPLACE, 'unicodePwd', unicode_password)]
+            self.conn.modify_s(dn, mod_attrs)
 
     def check_password(self, search_string, raw_password):
         from placard.backends import LDAPBackend
