@@ -96,7 +96,7 @@ class LDAPClient(object):
         self.conn.delete_s(dn)
         
     
-    def get_groups(self, search_filter='(&(cn=*)(objectClass=posixGroup))'):
+    def get_groups(self, search_filter='(&(cn=*)(|(objectClass=posixGroup)(objectClass=group)))'):
         """ 
         Returns a :func:`list` of :class:`~placard.lgroups.models.LDAPGroup` objects
         """
@@ -224,7 +224,7 @@ class LDAPClient(object):
         for m in primary_members:
             members.append(LDAPUser(m))
     
-        return dictsort(members, "givenName")
+        return dictsort(members, "cn")
 
 
     def remove_group_member(self, search_string, uid):
@@ -416,7 +416,7 @@ class LDAPClient(object):
             raise exceptions.DoesNotExistException("""User "%s" does not exist""" % search_string)
 
 
-    def get_users(self, search_filter='(&(objectClass=person)(uid=*)(!(uid=nobody))(!(uid=administrator)))'):
+    def get_users(self, search_filter='(&(objectClass=person)(%s=*)(!(uid=nobody))(!(uid=administrator)))' % getattr(settings, 'LDAP_USER_RDN', 'uid')):
         """
         Returns a list of LDAPUser objects based on search_filter
         """
@@ -424,7 +424,7 @@ class LDAPClient(object):
         user_list = []
         for i in result_data:
             user_list.append(LDAPUser(i))
-        return dictsort(user_list, "givenName")
+        return dictsort(user_list, "cn")
         
     def in_ldap(self, search_string):
         """
