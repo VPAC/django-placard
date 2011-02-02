@@ -96,7 +96,7 @@ class LDAPClient(object):
         self.conn.delete_s(dn)
         
     
-    def get_groups(self, search_filter='(&(cn=*)(|(objectClass=posixGroup)(objectClass=group)))'):
+    def get_groups(self, search_filter='(&(gidNumber=*)(|(objectClass=posixGroup)(objectClass=group)))'):
         """ 
         Returns a :func:`list` of :class:`~placard.lgroups.models.LDAPGroup` objects
         """
@@ -322,7 +322,7 @@ class LDAPClient(object):
         if has_raw_password:
             self.change_password("uid=%s" % attrs['uid'], raw_password)
 
-        return "Added"
+        return dn
 
 
     def delete_user(self, search_string):
@@ -349,7 +349,7 @@ class LDAPClient(object):
         if 'sambaLMPassword' in ldap_attrs.PASSWORD_ATTRS:
             self.update_user(search_string, sambaLMPassword=smbpasswd.lmhash(raw_password), sambaPwdMustChange='')
         if 'unicodePwd' in ldap_attrs.PASSWORD_ATTRS:
-            unicode_password = unicode("\"" + raw_password + "\"", "iso-8859-1").encode("utf-16-le")
+            unicode_password = unicode("\"" + str(raw_password) + "\"", "iso-8859-1").encode("utf-16-le")
             mod_attrs = [( ldap.MOD_REPLACE, 'unicodePwd', unicode_password),( ldap.MOD_REPLACE, 'unicodePwd', unicode_password)]
             self.conn.modify_s(dn, mod_attrs)
 
