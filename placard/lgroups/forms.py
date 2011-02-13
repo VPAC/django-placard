@@ -38,7 +38,7 @@ class BasicLDAPGroupForm(forms.Form):
 
 
 class AddGroupForm(forms.Form):
-    add_group = forms.ChoiceField(choices=[('','--------------------')]+[(x.gidNumber, str(x)) for x in LDAPClient().get_groups()])
+    add_group = forms.ChoiceField(choices=[('','--------------------')]+[(x.gidNumber, x.cn) for x in LDAPClient().get_groups()])
 
     def save(self, uid):
         conn = LDAPClient()
