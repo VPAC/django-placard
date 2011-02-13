@@ -84,6 +84,15 @@ class LDAPClient(object):
 
     def ldap_modify(self, dn, old, new):
         # Convert place-holders for modify-operation using modlist-module
+        for i in old.values():
+            if type(i) == list:
+                i.sort()
+        for i in new.values():
+            if type(i) == list:
+                i.sort()
+        if old == new:
+            return
+
         ldif = modlist.modifyModlist(old, new)
         # Do the actual modification
         try:
