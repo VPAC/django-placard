@@ -349,15 +349,16 @@ class LDAPClient(object):
         # The dn of our existing entry/object
         user = self.get_user(search_string)
         dn = user.dn
-        
-        up = UserPassword(l=self.conn, dn=dn)
-        up.changePassword(newPassword=raw_password, scheme=settings.LDAP_PASSWD_SCHEME)
-        
-        if 'sambaNTPassword' in ldap_attrs.PASSWORD_ATTRS:
+        password_attrs = getattr(ldap_attrs, 'PASSWORD_ATTRS', ['userPassword',])
+
+        if 'userPassword' in password_attrs:
+            up = UserPassword(l=self.conn, dn=dn)
+            up.changePassword(newPassword=raw_password, scheme=settings.LDAP_PASSWD_SCHEME)
+        if 'sambaNTPassword' in password_attrs:
             self.update_user(search_string, sambaNTPassword=smbpasswd.nthash(raw_password), sambaPwdMustChange='')
-        if 'sambaLMPassword' in ldap_attrs.PASSWORD_ATTRS:
+        if 'sambaLMPassword' in password_attrs:
             self.update_user(search_string, sambaLMPassword=smbpasswd.lmhash(raw_password), sambaPwdMustChange='')
-        if 'unicodePwd' in ldap_attrs.PASSWORD_ATTRS:
+        if 'unicodePwd' in password_attrs:
             unicode_password = unicode("\"" + str(raw_password) + "\"", "iso-8859-1").encode("utf-16-le")
             mod_attrs = [( ldap.MOD_REPLACE, 'unicodePwd', unicode_password),( ldap.MOD_REPLACE, 'unicodePwd', unicode_password)]
             self.conn.modify_s(dn, mod_attrs)
