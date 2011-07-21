@@ -17,16 +17,20 @@
 
 
 from django.shortcuts import render_to_response
-from django.template import RequestContext
+from django.template import RequestContext, Context, Template
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponseNotFound
 from django.contrib.auth.decorators import permission_required
-from placard.lusers.forms import AddMemberForm
+from django.template.loader import render_to_string
+from django.core.mail import send_mass_mail
 
+from andsome.forms import EmailForm
+from placard.lusers.forms import AddMemberForm
 from placard.client import LDAPClient
 from placard.lgroups.forms import BasicLDAPGroupForm
 from placard import exceptions
+
 
 def group_list(request):
     conn = LDAPClient()
@@ -56,6 +60,7 @@ def group_detail(request, group_id):
     return render_to_response('lgroups/group_detail.html', locals(), context_instance=RequestContext(request))
 
 
+@permission_required('auth.change_group')
 def remove_member(request, group_id, user_id):
     conn = LDAPClient()
     try:
@@ -68,8 +73,6 @@ def remove_member(request, group_id, user_id):
         return HttpResponseRedirect(group.get_absolute_url())
 
     return render_to_response('lgroups/remove_member.html', locals(), context_instance=RequestContext(request))
-
-remove_member = permission_required('auth.change_group')(remove_member)
 
 
 def add_edit_group(request, group_id=None, form=BasicLDAPGroupForm):
@@ -102,6 +105,7 @@ def delete_group(request, group_id):
     return render_to_response('lgroups/group_confirm_delete.html', locals(), context_instance=RequestContext(request))
 
 
+@permission_required('auth.delete_group')
 def group_detail_verbose(request, group_id):
     conn = LDAPClient()
     lgroup = conn.ldap_search(settings.LDAP_GROUP_BASE, 'gidNumber=%s' % group_id)[0]
@@ -111,4 +115,31 @@ def group_detail_verbose(request, group_id):
     
     return render_to_response('lgroups/group_detail_verbose.html', locals(), context_instance=RequestContext(request))
 
-group_detail_verbose = permission_required('auth.delete_group')(group_detail_verbose)
+
+
+def send_members_email(request, group_id):
+    group = conn.get_group("gidNumber=%s" % group_id)
+
+    if form.method == 'POST':
+        form = EmailForm(request.POST)
+        if form.is_valid():
+            subject_t, body_t = form.get_data()
+            conn = LDAPClient()
+            members = conn.get_group_members('gidNumber=%s' % group_id)
+            emails = []
+            for member in members:
+                if hasattr(member, 'mail'):
+                    ctx = Context({
+                            'first_name': member.givenName,
+                            'last_name': member.sn,
+                            })
+                    subject = Template(subject_t).render(ctx)
+                    body = Template(body_t).render(ctx)
+                    emails.append((subject, body, settings.DEFAULT_FROM_EMAIL, [member.mail]))
+            if emails:
+                send_mass_mail(emails)
+            return HttpResponseRedirect(group.get_absolute_url())
+    else:
+        form = EmailForm()
+
+    return render_to_response('lgroups/send_email_form.html', {'form': form}, context_instance=RequestContext(request))
