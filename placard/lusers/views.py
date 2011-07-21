@@ -30,12 +30,15 @@ from placard import exceptions
 from placard.lgroups.forms import AddGroupForm
 from placard.lusers.forms import BasicLDAPUserForm, LDAPAdminPasswordForm, LDAPPasswordForm
 
-def user_list(request):
+def user_list(request, default_filter=None):
     conn = LDAPClient()
     if request.REQUEST.has_key('group'):
         user_list = conn.get_group_members("gidNumber=%s" % request.GET['group'])
     else:
-        user_list = conn.get_users()
+        if default_filter:
+            user_list = conn.get_users(default_filter)
+        else:
+            user_list = conn.get_users()
 
     if request.REQUEST.has_key('q'):
         term_list = request.REQUEST['q'].lower().split(' ')
