@@ -317,6 +317,7 @@ class LDAPClient(object):
                 
         if has_raw_password:
             raw_password = attrs['raw_password']
+        if 'raw_password' in attrs:
             del attrs['raw_password']
           
         for k, v in attrs.items():
