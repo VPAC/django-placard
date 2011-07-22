@@ -118,13 +118,13 @@ def group_detail_verbose(request, group_id):
 
 
 def send_members_email(request, group_id):
+    conn = LDAPClient()
     group = conn.get_group("gidNumber=%s" % group_id)
 
-    if form.method == 'POST':
+    if request.method == 'POST':
         form = EmailForm(request.POST)
         if form.is_valid():
             subject_t, body_t = form.get_data()
-            conn = LDAPClient()
             members = conn.get_group_members('gidNumber=%s' % group_id)
             emails = []
             for member in members:
@@ -142,4 +142,4 @@ def send_members_email(request, group_id):
     else:
         form = EmailForm()
 
-    return render_to_response('lgroups/send_email_form.html', {'form': form}, context_instance=RequestContext(request))
+    return render_to_response('lgroups/send_email_form.html', {'form': form, 'group': group}, context_instance=RequestContext(request))

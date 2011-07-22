@@ -41,6 +41,7 @@
     </table>
     {% if perms.auth.delete_group %}
     <p><a href="verbose/">Verbose</a></p>
+    <p><a href="{% url plac_group_email group.gidNumber %}">Sends members an Email</a></p>
     {% endif %}
     {% if perms.auth.change_group %}
     <form method="post" action=".">{% csrf_token %}

@@ -1,0 +1,38 @@
+{% extends "forms.html" %}
+
+{% block title %}LDAP Groups{% endblock %}
+
+{% block content_title %}Send email to members of the {{ group }} group{% endblock %}
+
+{% block bread_crumbs_1 %}
+&rsaquo; <a href="{% url plac_grp_list %}">LDAP Groups</a>
+&rsaquo; <a href="{% url plac_grp_detail group.gidNumber %}">{{ group }}</a>
+&rsaquo; Send Email
+{% endblock %}   
+
+
+{% block content %}
+<form method="post" action=".">{% csrf_token %}
+<div>
+{% load forms %}
+{% if form.errors  or form.non_field_errors %}
+	<p class="errornote">Please correct the error{{ form.errors|pluralize }} below.</p>
+{% endif %}
+<fieldset class="module aligned ()">
+
+{% form_as_div form %}
+
+</fieldset>
+<p>The following variables exist to use in the email body:</p>
+<ul>
+<li>{% templatetag openvariable %} first_name {% templatetag closevariable %}: Users givenName</li>
+<li>{% templatetag openvariable %} last_name {% templatetag closevariable %}: Users sn</li>
+</ul>
+<p>Eg. "Hello {% templatetag openvariable %} first_name {% templatetag closevariable %} 
+{% templatetag openvariable %} last_name {% templatetag closevariable %}, how is your day going"</p>
+</div>
+<div class="submit-row">
+		<input type="submit" value="Send" class="default" />
+	</div>
+</form>
+{% endblock %}
