@@ -1,3 +1,11 @@
+django-placard (1.3.2-1) stable; urgency=low
+
+  * Allow different default filters on the user list
+  * Send group members an email
+  * Never allow raw_password to be sent to LDAP
+
+ -- Sam Morrison <sam@vpac.org>  Fri, 22 Jul 2011 14:34:08 +1000
+
 django-placard (1.3.1-1) stable; urgency=low
 
   * Only set userPassword value if needed
