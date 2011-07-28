@@ -342,6 +342,11 @@ class LDAPClient(object):
 
         for g in self.get_group_memberships(user.uid):
             self.remove_group_member('gidNumber=%s' % g.gidNumber, user.uid)
+  
+      
+    def change_uid(self, search_string, new_uid):
+        user = self.get_user(search_string)
+        self.conn.rename_s(user.dn, 'uid=%s' % new_uid)
         
 
     def change_password(self, search_string, raw_password):
