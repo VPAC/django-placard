@@ -190,7 +190,11 @@ class LDAPClient(object):
         # Do the actual synchronous add-operation to the ldapserver
         dn = 'cn=%s, %s' % (attrs['cn'], self.group_base)
         self.ldap_add(dn, attrs)
-        return int(attrs['gidNumber'])
+        if type(attrs['gidNumber']) == list:
+            return int(attrs['gidNumber'][0])
+        else:
+            return int(attrs['gidNumber'])
+            
 
 
     def get_group(self, search_string):
