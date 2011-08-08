@@ -175,3 +175,14 @@ def user_detail_verbose(request, username):
     luser = luser.items()
     return render_to_response('lusers/user_detail_verbose.html', locals(), context_instance=RequestContext(request))
 
+@permission_required('auth.change_user')   
+def users_groups(request, username):
+    conn = LDAPClient()
+    try:
+        luser = conn.get_user('uid=%s' % username)
+    except:
+        raise Http404
+
+    return render_to_response('lusers/users_groups.html', {'luser': luser}, context_instance=RequestContext(request))
+
+    
