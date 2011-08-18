@@ -67,8 +67,8 @@ def user_detail(request, username):
         form = AddGroupForm(request.POST)
         if form.is_valid():
             group_id = form.save(username)
-            group = conn.get_group("gidNumber=%s" % group_id)
-            messages.info(request, "User %s has been added to group %s." % (username, group)) 
+            group = conn.get_group('gidNumber=%s' % group_id)
+            messages.info(request, 'User %s has been added to group %s.' % (username, group)) 
             return HttpResponseRedirect(luser.get_absolute_url())
     else:
         form = AddGroupForm()
@@ -121,7 +121,7 @@ def change_password(request, username, password_form=LDAPAdminPasswordForm, temp
         form = PasswordForm(request.POST)
         if form.is_valid():
             form.save(username)
-            request.user.message_set.create(message='Password changed successfully')
+            messages.info(request,'Password changed successfully')
             if redirect_url:
                 return HttpResponseRedirect(redirect_url)
             return HttpResponseRedirect(reverse('plac_user_detail', args=[username]))              
@@ -150,7 +150,7 @@ def delete_user(request, username):
 def lock_user(request, username):
     conn = LDAPClient()
     conn.lock_user('uid=%s' % username)
-    request.user.message_set.create(message="%s's has been locked" % username)
+    messages.info("%s's has been locked" % username)
     luser = conn.get_user('uid=%s' % username)
     return HttpResponseRedirect(luser.get_absolute_url())
 
@@ -158,7 +158,7 @@ def lock_user(request, username):
 def unlock_user(request, username):
     conn = LDAPClient()
     conn.unlock_user('uid=%s' % username)
-    request.user.message_set.create(message="%s's has been unlocked" % username)
+    messages.info(request, "%s's has been unlocked" % username)
     luser = conn.get_user('uid=%s' % username)
     return HttpResponseRedirect(luser.get_absolute_url())
 
