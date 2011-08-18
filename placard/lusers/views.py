@@ -22,6 +22,7 @@ from django.conf import settings
 from django.http import HttpResponseRedirect, Http404, HttpResponseForbidden
 from django.contrib.auth.decorators import permission_required, login_required
 from django.core.urlresolvers import reverse
+from django.contrib import messages
 
 from andsome.util.filterspecs import Filter, FilterBar
 
@@ -65,7 +66,9 @@ def user_detail(request, username):
     if request.method == 'POST':
         form = AddGroupForm(request.POST)
         if form.is_valid():
-            form.save(username)
+            group_id = form.save(username)
+            group = conn.get_group("gidNumber=%s" % group_id)
+            messages.info(request, "User %s has been added to group %s." % (username, group)) 
             return HttpResponseRedirect(luser.get_absolute_url())
     else:
         form = AddGroupForm()
