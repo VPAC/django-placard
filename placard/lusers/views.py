@@ -150,7 +150,7 @@ def delete_user(request, username):
 def lock_user(request, username):
     conn = LDAPClient()
     conn.lock_user('uid=%s' % username)
-    messages.info("%s's has been locked" % username)
+    messages.info(request, "%s's has been locked" % username)
     luser = conn.get_user('uid=%s' % username)
     return HttpResponseRedirect(luser.get_absolute_url())
 
