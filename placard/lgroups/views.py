@@ -66,14 +66,14 @@ def remove_member(request, group_id, user_id):
     conn = LDAPClient()
     try:
         group = conn.get_group("gidNumber=%s" % group_id)
-        user = conn.get_user("uid=%s" % user_id)
+        luser = conn.get_user("uid=%s" % user_id)
     except exceptions.DoesNotExistException:
         return HttpResponseNotFound()
 
     if request.method == 'POST':
         conn.remove_group_member('gidNumber=%s' % group_id, user_id)
-        messages.info(request, "User %s removed from group %s" % (user, group))
-        return HttpResponseRedirect(user.get_absolute_url())
+        messages.info(request, "User %s removed from group %s" % (luser, group))
+        return HttpResponseRedirect(luser.get_absolute_url())
 
     return render_to_response('lgroups/remove_member.html', locals(), context_instance=RequestContext(request))
 
