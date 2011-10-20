@@ -349,13 +349,24 @@ class LDAPClient(object):
   
       
     def change_uid(self, search_string, new_uid):
-        user = self.get_user(search_string)
-        groups = self.get_group_memberships(user.uid)
+        olduser = self.get_user(search_string)
+        groups = self.get_group_memberships(olduser.uid)
         for group in groups:
-            self.remove_group_member('cn=%s' % group.cn, user.uid)
-        self.conn.rename_s(user.dn, 'uid=%s' % new_uid)
+            self.remove_group_member('cn=%s' % group.cn, olduser.uid)
+
+        self.conn.rename_s(olduser.dn, 'uid=%s' % new_uid)
+        newuser = self.get_user('uid=%s' % new_uid)
+
         for group in groups:
-            self.add_group_member('cn=%s' % group.cn, new_uid)
+            self.add_group_member('cn=%s' % group.cn, newuser.uid)
+  
+        kwargs = {}
+        for attr_name in ['sAMAccountName', 'homeDirectory', 'unixHomeDirectory']:
+            if hasattr(newuser, attr_name):
+                new_value = getattr(olduser, attr_name).replace(olduser.uid, newuser.uid)
+                kwargs[attr_name] = new_value
+        self.update_user('uid=%s' % newuser.uid, **kwargs)
+            
 
     def change_password(self, search_string, raw_password):
         # The dn of our existing entry/object
