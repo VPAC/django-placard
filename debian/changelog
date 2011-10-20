@@ -1,3 +1,13 @@
+django-placard (1.4-1) stable; urgency=low
+
+  * New view to show all users groups
+  * Redirect remove_member back to member
+  * Use django messages framework
+  * When change uid migrate groups over and other attributes
+  * Don't assume user has a group and a manager
+
+ -- Sam Morrison <sam@vpac.org>  Thu, 20 Oct 2011 13:31:49 +1100
+
 django-placard (1.3.4-1) stable; urgency=low
 
   * New method to change a users username (uid)
