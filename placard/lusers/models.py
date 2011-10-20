@@ -46,9 +46,10 @@ class LDAPUser(object):
         return conn.get_ldap_pic(self.uid)
 
     def primary_group(self):
-        from placard.client import LDAPClient
-        conn = LDAPClient()
-        return conn.get_group("gidNumber=%s" % self.gidNumber)
+        if hasattr(self, 'gidNumber'):
+            from placard.client import LDAPClient
+            conn = LDAPClient()
+            return conn.get_group("gidNumber=%s" % self.gidNumber)
 
     def secondary_groups(self):
         from placard.client import LDAPClient
@@ -56,12 +57,13 @@ class LDAPUser(object):
         return conn.get_group_memberships(self.uid)
 
     def get_manager(self):
-        from placard.client import LDAPClient
-        conn = LDAPClient()
-        try:
-            return conn.get_user("uid=%s" % self.manager.split(',')[0].split('=')[1])
-        except exceptions.DoesNotExistException:
-            return None
+        if hasattr(self, 'manager'):
+            from placard.client import LDAPClient
+            conn = LDAPClient()
+            try:
+                return conn.get_user("uid=%s" % self.manager.split(',')[0].split('=')[1])
+            except exceptions.DoesNotExistException:
+                return None
 
     def is_locked(self):
         from placard.client import LDAPClient
