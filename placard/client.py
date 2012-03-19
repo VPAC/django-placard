@@ -233,7 +233,9 @@ class LDAPClient(object):
                     self.remove_group_member('gidNumber=%s' % gid, m)
         primary_members = self.ldap_search(self.user_base, 'gidNumber=%s' % gid)
         for m in primary_members:
-            members.append(LDAPUser(m))
+            g = LDAPUser(m)
+            if g not in members:
+                members.append(g)
     
         return dictsort(members, "cn")
 
