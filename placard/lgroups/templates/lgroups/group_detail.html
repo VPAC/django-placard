@@ -44,6 +44,7 @@
     <p><a href="{% url plac_group_email group.gidNumber %}">Sends members an Email</a></p>
     {% endif %}
     {% if perms.auth.change_group %}
+    <p><a href="{% url plac_grp_rename group.gidNumber %}">Rename Group</a></p>
     <form method="post" action=".">{% csrf_token %}
       <div>
 	{% load forms %}

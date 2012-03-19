@@ -45,3 +45,21 @@ class AddGroupForm(forms.Form):
         group = int(self.cleaned_data['add_group'])
         conn.add_group_member('gidNumber=%s' % group, uid)
         return group
+
+
+class RenameGroupForm(forms.Form):
+    name = forms.CharField()
+
+    def __init__(self, *args, **kwargs):
+        self.group = kwargs.pop('group')
+        super(RenameGroupForm, self).__init__(*args, **kwargs)
+    
+    def clean_name(self):
+        name = self.cleaned_data['name']
+        return name
+        
+    def save(self):
+        name = self.cleaned_data['name']
+        conn = LDAPClient()
+        group = self.group
+        conn.rename_group('gidNumber=%s' % group.gidNumber, name)

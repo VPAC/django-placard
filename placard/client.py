@@ -287,7 +287,10 @@ class LDAPClient(object):
         new = {'memberUid': members }
     
         self.ldap_modify(dn, old, new)
-            
+
+    def rename_group(self, search_string, new_cn):
+        oldgroup = self.get_group(search_string)
+        self.conn.rename_s(oldgroup.dn, 'cn=%s' % new_cn)
 
     def add_user(self, has_raw_password=False, **kwargs):
         """Creates an LDAP user"""

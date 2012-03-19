@@ -29,7 +29,7 @@ from django.contrib import messages
 from andsome.forms import EmailForm
 from placard.lusers.forms import AddMemberForm
 from placard.client import LDAPClient
-from placard.lgroups.forms import BasicLDAPGroupForm
+from placard.lgroups.forms import BasicLDAPGroupForm, RenameGroupForm
 from placard import exceptions
 
 
@@ -78,6 +78,7 @@ def remove_member(request, group_id, user_id):
     return render_to_response('lgroups/remove_member.html', locals(), context_instance=RequestContext(request))
 
 
+@permission_required('auth.add_group')
 def add_edit_group(request, group_id=None, form=BasicLDAPGroupForm):
     Form = form
 
@@ -93,7 +94,8 @@ def add_edit_group(request, group_id=None, form=BasicLDAPGroupForm):
 
     return render_to_response('lgroups/group_form.html', locals(), context_instance=RequestContext(request))
    
- 
+
+@permission_required('auth.delete_group')
 def delete_group(request, group_id):
     conn = LDAPClient()
     try:
@@ -146,3 +148,22 @@ def send_members_email(request, group_id):
         form = EmailForm()
 
     return render_to_response('lgroups/send_email_form.html', {'form': form, 'group': group}, context_instance=RequestContext(request))
+
+
+@permission_required('auth.change_group')
+def rename_group(request, group_id):
+    conn = LDAPClient()
+    try:
+        group = conn.get_group("gidNumber=%s" % group_id)
+    except exceptions.DoesNotExistException:
+        return HttpResponseNotFound()
+
+    if request.method == 'POST':
+        form = RenameGroupForm(request.POST, group=group)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(group.get_absolute_url())
+    else:
+        form = RenameGroupForm(group=group)
+        form.initial = {'name': group.cn}
+    return render_to_response('lgroups/group_rename.html', {'form': form}, context_instance=RequestContext(request))

@@ -1,0 +1,27 @@
+{% extends "forms.html" %}
+
+{% block title %}LDAP Groups{% endblock %}
+
+{% block content_title %}Rename Group{% endblock %}
+
+{% block bread_crumbs_1 %}
+ &rsaquo; <a href="{% url plac_grp_list %}">LDAP Groups</a>
+ &rsaquo; Rename Group
+{% endblock %}   
+
+{% block content %}
+<form method="post" action=".">{% csrf_token %}
+  <div>
+    {% load forms %}
+    {% if form.errors  or form.non_field_errors %}
+	<p class="errornote">Please correct the error{{ form.errors|pluralize }} below.</p>
+    {% endif %}
+    <fieldset class="module aligned ()">
+      {% form_as_div form %}
+    </fieldset>
+  </div>
+  <div class="submit-row">	
+	<input type="submit" value="Save" class="default" />
+  </div>
+</form>
+{% endblock %}
