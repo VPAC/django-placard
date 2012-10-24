@@ -18,7 +18,9 @@
     <table>
       {% for i,j in luser.get_fields %}
       <tr>
+        {% if j %}
 	<td>{{ i }}</td><td>{{ j }}</td>
+        {% endif %}
       </tr>
    	{% endfor %}
   </div>
