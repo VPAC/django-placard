@@ -1,0 +1,92 @@
+{% extends "main.html" %}
+
+{% block title %}LDAP Groups{% endblock %}
+
+{% block content_title %}{% endblock %}
+
+{% block bread_crumbs_1 %}
+&rsaquo; <a href="../">LDAP Groups</a>
+&rsaquo; {{ group }}
+{% endblock %}   
+
+{% block content %}
+<div id="content-main">
+  
+  <div class="module">
+    <h2>LDAP Groups</h2>
+    
+    <h3>{{ group.cn }}</h3>
+    {% if perms.auth.change_user %}
+    <p><a href="{% url plac_grp_edit group.gidNumber %}">Edit details</a></p>
+    {% endif %}
+    <table>
+      <tr>
+	<td>cn</td><td>{{ group.cn }}</td>
+      </tr>
+      <tr>
+	<td>description</td><td>{{ group.description }}</td>
+      </tr>
+      <tr>	
+	<td>displayName</td><td>{{ group.displayName }}</td>
+      </tr>
+      <tr>	
+	<td>gidNumber</td><td>{{ group.gidNumber }}</td>
+      </tr>
+      <tr>
+	<td>objectClass</td><td>{{ group.objectClass }}</td>
+      </tr>
+      <tr>	
+	<td>sambaGroupType</td><td>{{ group.sambaGroupType }}</td>
+      </tr>
+      <tr>
+	<td>sambaSID</td><td>{{ group.sambaSID }}</td>
+      </tr>
+    </table>
+    {% if perms.auth.delete_group %}
+    <p><a href="verbose/">Verbose</a></p>
+    <p><a href="{% url plac_group_email group.gidNumber %}">Sends members an Email</a></p>
+    {% endif %}
+    <table cellspacing="0">
+      <thead>
+	<tr>
+	  <th>Primary Users</th>
+	</tr>
+      </thead>   	
+      <tbody>
+   	{% for m in group.primary_accounts.all %}
+	<tr class="{% cycle row1,row2 %}">
+	  <td><a href="{% url plac_user_detail m.uid %}" >{{ m }}</a></td>
+	</tr>
+	{% endfor %}
+      </tbody>  	
+      <thead>
+	<tr>
+	  <th>Secondary Users</th>
+	</tr>
+      </thead>   	
+      <tbody>
+   	{% for m in group.secondary_accounts.all %}
+	<tr class="{% cycle row1,row2 %}">
+	  <td><a href="{% url plac_user_detail m.uid %}" >{{ m }}</a></td>
+	  {% if perms.auth.change_group %}<td><a href="{% url plac_grp_rm_member group.gidNumber m.uid %}" class="deletelink">Remove</a></td>{% endif %}
+	</tr>
+	{% endfor %}
+      </tbody>  	
+    </table>	
+    {% if perms.auth.change_group %}
+    <p><a href="{% url plac_grp_rename group.gidNumber %}">Rename Group</a></p>
+    <form method="post" action="{% url plac_grp_add_member group.gidNumber %}">{% csrf_token %}
+      <div>
+	<fieldset class="module aligned ()">
+	  {{ form }}<input type="submit" value="Add" class="default" />
+	</fieldset>
+      </div>
+    </form>
+    {% endif %}   	
+    
+    {% if perms.auth.delete_group %}
+    <p><a href="delete/" class="deletelink">Delete</a></p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "base_site.html" %}
+
+{% block content %}
+
+<h1>Are you sure?</h1> 
+
+<p>This operation will:</p>
+
+<ul>
+<li>Set the users primary group to visitors.</li>
+<li>Remove the users secondary groups.</li>
+<li>Lock the user's account.</li>
+<li>Not change password or shell.</li>
+<li>Not actually delete the user.</li>
+</ul>
+
+<p>Are you sure you want to delete {{ username }}'s user account? </p>
+<form method="post" action=".">{% csrf_token %}
+  <div>
+    <input type="hidden" name="post" value="yes" />
+    <input type="submit" value="Yes, I'm sure" />
+  </div>
+</form>
+{% endblock %}

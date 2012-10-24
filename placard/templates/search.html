@@ -1,0 +1,39 @@
+{% extends "main.html" %}
+
+{% block title %}Users{% endblock %}
+
+{% block content_title %}{% endblock %}
+
+{% block bread_crumbs_1 %}
+ &rsaquo; Users
+{% endblock %}   
+
+{% block content %}
+<div id="content-main">
+<div class="module">
+   	<h2>Users</h2>
+<table cellspacing="0">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Phone</th>
+			<th>Mobile</th>
+			<th>Email</th>
+		</tr>
+	</thead>   	
+   <tbody>
+   	{% for u in user_list %}
+	   	<tr class="{% cycle row1,row2  as rowcolours %}">
+	   		<td><a href="{{ u.get_absolute_url }}">{{ u.cn }}</a></td>
+	   		<td>{{ u.telephoneNumber }}</td>
+	   		<td>{{ u.mobile }}</td>
+	   		<td>{{ u.mail }}</td>
+			</tr>
+		{% endfor %}
+   </tbody>  	
+</table>
+   		
+   	
+	</div>
+</div>
+{% endblock %}
