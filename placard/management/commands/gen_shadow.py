@@ -17,16 +17,15 @@
 
 from django.core.management.base import BaseCommand
 
+import placard.models
+
 class Command(BaseCommand):
     help = "Generates a shadow file from all LDAP users"
     
     def handle(self, **options):        
         verbose = int(options.get('verbosity'))
         
-        from placard.client import LDAPClient
-
-        conn = LDAPClient()
-        user_list = conn.get_users()
+        user_list = placard.models.account.objects.all()
         for u in user_list:
             if hasattr(u, 'userPassword'):
                 p = u.userPassword

@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 # Copyright 2010 VPAC
 #
 # This file is part of django-placard.

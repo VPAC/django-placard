@@ -30,6 +30,9 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^lookup/', include(ajax_select.urls)),
 
+    url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
+    url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout'),
+
     url(r'^search/$', views.search, name='plac_search'),
     url(r'^change_password/$', views.UserChangePassword.as_view(), name='plac_user_password'),
 
