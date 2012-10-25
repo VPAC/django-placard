@@ -55,7 +55,7 @@ class AccountLookup(LookupChannel):
         """ (HTML) formatted item for display in the dropdown """
         result=[]
         if obj.jpegPhoto is not None:
-            result.append(u"<img src='%s' alt='' />" % (reverse("plac_user_photo", args=[obj.uid])))
+            result.append(u"<img width='50' src='%s' alt='' />" % (reverse("plac_user_photo", args=[obj.uid])))
         result.append(u"%s<div><i>%s</i></div>" % (escape(obj.cn), escape(obj.mail)))
         return u"".join(result)
 
