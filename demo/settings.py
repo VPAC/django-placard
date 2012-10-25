@@ -31,10 +31,17 @@ DATABASES = {
     }
 }
 
-LDAP_USE_TLS=False
-LDAP_URL = 'ldap://localhost:38911'
+LDAP = {
+    'default': {
+        'ENGINE': 'tldap.backend.transaction',
+        'URI': 'ldap://sys12.in.vpac.org/',
+        'USER': 'cn=admin,dc=nodomain',
+        'PASSWORD': 'j1pUXrz2Qj',
+        'USE_TLS': False,
+        'TLS_CA' : None,
+    }
+}
 
-LDAP_ADMIN_PASSWORD="password"
 LDAP_BASE="dc=python-ldap,dc=org"
 LDAP_ADMIN_USER="cn=Manager,dc=python-ldap,dc=org"
 LDAP_USER_BASE='ou=People, %s' % LDAP_BASE
