@@ -17,43 +17,39 @@
 
 
 from django.contrib.auth.models import User
-from django.conf import settings
 from django.contrib.auth.backends import ModelBackend
 from django.core.exceptions import ImproperlyConfigured
+
+import django.conf
 
 import ldap
 import ldap.filter
 
 
-if settings.LDAP_USE_TLS:
-    ldap.set_option(ldap.OPT_X_TLS_CACERTFILE, settings.LDAP_TLS_CA)
+settings = django.conf.settings.LDAP['default']
+
+if settings['USE_TLS']:
+    ldap.set_option(ldap.OPT_X_TLS_CACERTFILE, settings['TLS_CA'])
 
 class LDAPBackend(ModelBackend):
     def authenticate(self, username=None, password=None):
-        
-        try:
-            test = settings.LDAP_URL
-            test = settings.LDAP_USER_BASE
-        except:
-            raise ImproperlyConfigured("LDAP_URL and LDAP_USER_BASE must be specified in settings.py")
-        
         scope = ldap.SCOPE_SUBTREE
         filter = ldap.filter.filter_format("(uid=%s)", [username])
         ret = ['dn']
 
         try:
-            l = ldap.initialize(settings.LDAP_URL)
+            l = ldap.initialize(settings['URI'])
         except ldap.LDAPError:
             return None
 
-        if settings.LDAP_USE_TLS:
+        if settings['USE_TLS']:
             l.set_option(ldap.OPT_X_TLS,ldap.OPT_X_TLS_DEMAND)
             l.start_tls_s()
             
-        l.simple_bind_s(settings.LDAP_ADMIN_USER, settings.LDAP_ADMIN_PASSWORD)
+        l.simple_bind_s(settings['USER'], settings['PASSWORD'])
 
         try:
-            result_id = l.search(settings.LDAP_USER_BASE, scope, filter, ret)
+            result_id = l.search(django.conf.settings.LDAP_USER_BASE, scope, filter, ret)
             result_type, result_data = l.result(result_id, 0)
 
             # If the user does not exist in LDAP, Fail.

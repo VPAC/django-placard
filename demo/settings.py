@@ -43,7 +43,6 @@ LDAP = {
 }
 
 LDAP_BASE="dc=python-ldap,dc=org"
-LDAP_ADMIN_USER="cn=Manager,dc=python-ldap,dc=org"
 LDAP_USER_BASE='ou=People, %s' % LDAP_BASE
 LDAP_GROUP_BASE='ou=Group, %s' % LDAP_BASE
 
