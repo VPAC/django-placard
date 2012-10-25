@@ -60,8 +60,8 @@ class std_person(tldap.models.person, tldap.models.organizationalPerson, tldap.m
             self.cn = u"%s %s" % (self.givenName, self.sn)
         super(std_person, self).save(*args, **kwargs)
 
-    managed_by = tldap.manager.ManyToOneDescriptor('manager', 'tldap.models.std_person', 'dn')
-    manager_of = tldap.manager.OneToManyDescriptor('dn', 'tldap.models.std_person', 'manager')
+    managed_by = tldap.manager.ManyToOneDescriptor('manager', 'demo.models.std_person', 'dn')
+    manager_of = tldap.manager.OneToManyDescriptor('dn', 'demo.models.std_person', 'manager')
 
 class std_account(std_person, tldap.models.posixAccount, tldap.models.shadowAccount):
 
