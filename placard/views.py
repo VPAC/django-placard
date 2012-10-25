@@ -38,12 +38,14 @@ def search(request):
 
     if request.method == 'POST':
         term_list = request.REQUEST['sitesearch'].lower().split(' ')
-        user_list = placard.models.account.objects.all()
-        for term in term_list:
-            user_list = user_list.filter(tldap.Q(uid__contains=term) | tldap.Q(cn__contains=term))
 
-        if len(user_list) == 1:
-            return HttpResponseRedirect(reverse("plac_user_detail", args = [ user_list[0].uid ]))
+        user_list = placard.models.account.objects.all()
+        group_list = placard.models.group.objects.all()
+
+        for term in term_list:
+            if term != "":
+                user_list = user_list.filter(tldap.Q(uid__contains=term) | tldap.Q(cn__contains=term))
+                group_list = group_list.filter(tldap.Q(cn__contains=term) | tldap.Q(description__contains=term))
 
         return render_to_response('search.html', locals(), context_instance=RequestContext(request))
 

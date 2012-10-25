@@ -11,7 +11,7 @@
 {% block content %}
 <div id="content-main">
 <div class="module">
-   	<h2>Users</h2>
+   	<h2>LDAP Users</h2>
 <table cellspacing="0">
 	<thead>
 		<tr>
@@ -19,6 +19,7 @@
 			<th>Phone</th>
 			<th>Mobile</th>
 			<th>Email</th>
+			<th>Location</th>
 		</tr>
 	</thead>   	
    <tbody>
@@ -27,7 +28,8 @@
 	   		<td><a href="{{ u.get_absolute_url }}">{{ u.cn }}</a></td>
 	   		<td>{{ u.telephoneNumber }}</td>
 	   		<td>{{ u.mobile }}</td>
-	   		<td>{{ u.mail }}</td>
+	   		<td>{{ u.mail|urlize }}</td>
+	   		<td>{{ u.l }}</td>
 			</tr>
 		{% endfor %}
    </tbody>  	
@@ -35,5 +37,25 @@
    		
    	
 	</div>
+  <div class="module">
+    <h2>LDAP Groups</h2>
+    
+    <table cellspacing="0">
+      <thead>
+	<tr>
+	  <th>ID</th>
+	  <th>Name</th>
+	</tr>
+      </thead>   	
+      <tbody>
+   	{% for g in group_list|dictsort:"cn" %}
+	<tr class="{% cycle row1,row2  as rowcolours %}">
+	  <td><a href="{% url plac_grp_detail g.gidNumber %}">{{ g.gidNumber }}</a></td>
+	  <td>{{ g }}</td>
+	</tr>
+	{% endfor %}
+      </tbody>  	
+    </table>
+  </div>
 </div>
 {% endblock %}
