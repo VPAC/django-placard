@@ -21,7 +21,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ImproperlyConfigured
 from django.contrib import auth
 
-from placard.client import LDAPClient
+import placard.models
 
 
 class LDAPRemoteUserMiddleware(RemoteUserMiddleware):
@@ -65,17 +65,10 @@ class LDAPRemoteUserMiddleware(RemoteUserMiddleware):
             user = User.objects.get(username__exact=username)
         except User.DoesNotExist:
             # Create user
-            conn = LDAPClient()
-            ldap_user = conn.get_user("uid=%s" % username)
+            ldap_user = placard.account.objects.get(uid=username)
             user = User.objects.create_user(ldap_user.uid, ldap_user.mail)
-            try:
-                user.first_name = ldap_user.givenName
-            except AttributeError:
-                pass
-            try:
-                user.last_name = ldap_user.sn
-            except AttributeError:
-                pass
+            user.first_name = ldap_user.givenName
+            user.last_name = ldap_user.sn
             user.save()
     
         # User is valid.  Set request.user and persist user in the session
