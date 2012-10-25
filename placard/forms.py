@@ -96,13 +96,18 @@ class LDAPUserForm(LDAPForm):
         super(LDAPUserForm, self).__init__(*args, **kwargs)
 
         all_groups = placard.models.group.objects.none()
-        for cn in self.primary_groups:
-            all_groups = all_groups | placard.models.group.objects.filter(cn=cn)
-        self.fields['gidNumber'] = forms.ChoiceField(choices=[('','None')]+[(x.gidNumber, x.cn) for x in all_groups], label="Primary Group")
+        if getattr(self, 'primary_groups', None) is not None:
+            for cn in self.primary_groups:
+                all_groups = all_groups | placard.models.group.objects.filter(cn=cn)
+            self.fields['gidNumber'] = forms.ChoiceField(choices=[('','None')]+[(x.gidNumber, x.cn) for x in all_groups], label="Primary Group")
+        else:
+            self.fields['primary_group'] = AutoCompleteSelectField('group', required=True)
 
         if self.object is not None:
             if self.object.manager is not None:
                 self.initial['managed_by'] = self.object.managed_by.pk
+            if getattr(self, 'primary_groups', None) is None:
+                self.initial['primary_group'] = self.object.primary_group.pk
             self.initial['gidNumber'] = self.object.gidNumber
 
     def clean_jpegPhoto(self):
@@ -127,6 +132,8 @@ class LDAPUserForm(LDAPForm):
     def save(self, commit=True):
         self.object = super(LDAPUserForm, self).save(commit=False)
         self.object.managed_by = self.cleaned_data['managed_by']
+        if getattr(self, 'primary_groups', None) is None:
+            self.object.primary_group = self.cleaned_data['primary_group']
         if commit:
             self.object.save()
         return self.object
