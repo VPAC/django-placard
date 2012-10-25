@@ -158,11 +158,6 @@ class AccountList(ListView):
         else:
             user_list = self.get_default_queryset()
 
-        if request.GET.has_key('q'):
-            term_list = request.GET['q'].lower().split(' ')
-            for term in term_list:
-                user_list = user_list.filter(tldap.Q(uid__contains=term) | tldap.Q(cn__contains=term))
-
         return user_list
 
     def get_default_queryset(self):
