@@ -48,3 +48,4 @@ LDAP_GROUP_BASE='ou=Group, %s' % LDAP_BASE
 
 TEST_RUNNER='andsome.test_utils.xmlrunner.run_tests'
 
+PLACARD_MODELS = 'demo.models'

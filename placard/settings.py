@@ -33,7 +33,6 @@ AJAX_LOOKUP_CHANNELS = {
 AJAX_SELECT_BOOTSTRAP = True
 AJAX_SELECT_INLINES = 'staticfiles'
 
-PLACARD_MODELS = 'demo.models'
 LDAP_PASSWD_SCHEME = 'ssha'
 
 LOGIN_URL = "/login"
