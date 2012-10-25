@@ -42,10 +42,6 @@
 	<td>sambaSID</td><td>{{ group.sambaSID }}</td>
       </tr>
     </table>
-    {% if perms.auth.delete_group %}
-    <p><a href="verbose/">Verbose</a></p>
-    <p><a href="{% url plac_group_email group.gidNumber %}">Sends members an Email</a></p>
-    {% endif %}
     <table cellspacing="0">
       <thead>
 	<tr>
@@ -74,7 +70,6 @@
       </tbody>  	
     </table>	
     {% if perms.auth.change_group %}
-    <p><a href="{% url plac_grp_rename group.gidNumber %}">Rename Group</a></p>
     <form method="post" action="{% url plac_grp_add_member group.gidNumber %}">{% csrf_token %}
       <div>
 	<fieldset class="module aligned ()">
@@ -84,7 +79,12 @@
     </form>
     {% endif %}   	
     
+    {% if perms.auth.change_group %}
+    <p><a href="{% url plac_grp_rename group.gidNumber %}">Rename Group</a></p>
+    {% endif %}
     {% if perms.auth.delete_group %}
+    <p><a href="verbose/">Verbose</a></p>
+    <p><a href="{% url plac_group_email group.gidNumber %}">Sends members an Email</a></p>
     <p><a href="delete/" class="deletelink">Delete</a></p>
     {% endif %}
   </div>
