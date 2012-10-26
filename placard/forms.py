@@ -281,6 +281,7 @@ class LDAPGroupForm(LDAPForm):
 
     model = placard.models.group
     displayName = fields.CharField('Display name', required=False)
+    description = fields.CharField('Description', required=False)
     cn = fields.CharField(label='CN')
 
     def __init__(self, *args, **kwargs):
@@ -299,12 +300,6 @@ class LDAPGroupForm(LDAPForm):
             if self.object.cn != cn:
                 raise forms.ValidationError(u'Cannot change value of uid')
         return cn
-
-    def clean(self):
-        displayName = self.cleaned_data['displayName']
-        if displayName is None or displayName == '':
-            self.cleaned_data['displayName'] = self.cleaned_data['cn']
-        return self.cleaned_data
 
 
 class AddMemberForm(LDAPForm):
