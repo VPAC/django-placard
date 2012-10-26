@@ -20,8 +20,9 @@
     <h2>Users</h2>
     <h3>{{ luser.cn }}</h3>
     <p>
+    Actions:
     {% if perms.auth.change_user or perms.auth.hr_user %}
-    <a href="{% url plac_user_edit luser.uid %}">Edit details</a>
+    &nbsp;&nbsp;|&nbsp;&nbsp;<a href="{% url plac_user_edit luser.uid %}">Edit details</a>
     {% endif %}
     {% if perms.auth.change_user %}
     &nbsp;&nbsp;|&nbsp;&nbsp;<a href="{% url plac_change_password luser.uid %}">Change password</a>
@@ -30,6 +31,10 @@
     {% else %}
     &nbsp;&nbsp;|&nbsp;&nbsp;<a href="{% url plac_lock_user luser.uid %}">Lock</a>
     {% endif %}
+    {% endif %}
+    {% if perms.auth.delete_user %}
+    &nbsp;&nbsp;|&nbsp;&nbsp;<a href="{% url plac_user_detail_verbose luser.uid %}">Verbose output</a>
+    &nbsp;&nbsp;|&nbsp;&nbsp;<a href="{% url plac_user_delete luser.uid %}" class="deletelink">Delete</a>
     {% endif %}
     </p>
     <table>
@@ -139,9 +144,5 @@
   </form>
   </div>
   {% endif %}
-    {% if perms.auth.delete_user %}
-    <p><a href="{% url plac_user_detail_verbose luser.uid %}">Verbose output</a></p>	
-    <p><a href="{% url plac_user_delete luser.uid %}" class="deletelink">Delete</a></p>   
-    {% endif %}
 </div>
 {% endblock %}

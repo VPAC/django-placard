@@ -16,9 +16,20 @@
     <h2>LDAP Groups</h2>
     
     <h3>{{ group.cn }}</h3>
+    <p>
+    Actions:
     {% if perms.auth.change_user %}
-    <p><a href="{% url plac_grp_edit group.gidNumber %}">Edit details</a></p>
+    &nbsp;&nbsp;|&nbsp;&nbsp;<a href="{% url plac_grp_edit group.gidNumber %}">Edit details</a>
     {% endif %}
+    {% if perms.auth.change_group %}
+    &nbsp;&nbsp;|&nbsp;&nbsp;<a href="{% url plac_grp_rename group.gidNumber %}">Rename Group</a>
+    {% endif %}
+    {% if perms.auth.delete_group %}
+    &nbsp;&nbsp;|&nbsp;&nbsp;<a href="verbose/">Verbose</a>
+    &nbsp;&nbsp;|&nbsp;&nbsp;<a href="{% url plac_group_email group.gidNumber %}">Sends members an Email</a>
+    &nbsp;&nbsp;|&nbsp;&nbsp;<a href="delete/" class="deletelink">Delete</a>
+    {% endif %}
+    </p>
     <table>
       <tr>
 	<td>cn</td><td>{{ group.cn }}</td>
@@ -78,15 +89,6 @@
       </div>
     </form>
     {% endif %}   	
-    
-    {% if perms.auth.change_group %}
-    <p><a href="{% url plac_grp_rename group.gidNumber %}">Rename Group</a></p>
-    {% endif %}
-    {% if perms.auth.delete_group %}
-    <p><a href="verbose/">Verbose</a></p>
-    <p><a href="{% url plac_group_email group.gidNumber %}">Sends members an Email</a></p>
-    <p><a href="delete/" class="deletelink">Delete</a></p>
-    {% endif %}
   </div>
 </div>
 {% endblock %}
