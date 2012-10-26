@@ -190,6 +190,7 @@ class AccountDetail(DetailView):
     def get_context_data(self, **kwargs):
         context = super(AccountDetail, self).get_context_data(**kwargs)
         context['form'] = placard.forms.AddGroupForm(account=self.object)
+        context['username'] = self.object.uid
         return context
 
     def get_object(self):
