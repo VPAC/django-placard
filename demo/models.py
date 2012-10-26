@@ -53,7 +53,7 @@ class std_person(tldap.models.person, tldap.models.organizationalPerson, tldap.m
         #self.sambaPwdMustChange=None
         # unicode_password = unicode("\"" + str(password) + "\"", "iso-8859-1").encode("utf-16-le")
         # self.unicodePwd=unicode_password
-        self.sambaPwdLastSet=str(int(time.mktime(datetime.datetime.now().timetuple())))
+        #self.sambaPwdLastSet=str(int(time.mktime(datetime.datetime.now().timetuple())))
 
     def save(self, *args, **kwargs):
         if self.cn is None:
