@@ -145,18 +145,14 @@ class AccountList(ListView):
     def get_queryset(self):
         request = self.request
 
+        user_list = self.get_default_queryset()
+
         if request.GET.has_key('group'):
             try:
                 group = placard.models.group.objects.get(gidNumber=request.GET['group'])
+                user_list = user_list.filter(tldap.Q(primary_group=group) | tldap.Q(secondary_groups=group))
             except  placard.models.group.DoesNotExist:
-                group = None
-        else:
-            group = None
-
-        if group is not None:
-            user_list = group.secondary_accounts.all()
-        else:
-            user_list = self.get_default_queryset()
+                pass
 
         return user_list
 
