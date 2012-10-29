@@ -42,5 +42,5 @@ urlpatterns = patterns('',
     url(r'^staff/$', views.StaffList.as_view(), name='vpac_staff'),
 
     url(r'^users/', include(placard.user_urls)),
-    url(r'^groups/$', include(placard.group_urls)),
+    url(r'^groups/', include(placard.group_urls)),
 )
