@@ -99,16 +99,20 @@ class LDAPUserForm(LDAPForm):
         if getattr(self, 'primary_groups', None) is not None:
             for cn in self.primary_groups:
                 all_groups = all_groups | placard.models.group.objects.filter(cn=cn)
-            self.fields['gidNumber'] = forms.ChoiceField(choices=[('','None')]+[(x.gidNumber, x.cn) for x in all_groups], label="Primary Group")
+            self.fields['primary_group'] = forms.ChoiceField(choices=[('','None')]+[(x.gidNumber, x.cn) for x in all_groups], label="Primary Group")
         else:
             self.fields['primary_group'] = AutoCompleteSelectField('group', required=True)
 
         if self.object is not None:
-            if self.object.manager is not None:
-                self.initial['managed_by'] = self.object.managed_by.pk
-            if getattr(self, 'primary_groups', None) is None:
-                self.initial['primary_group'] = self.object.primary_group.pk
-            self.initial['gidNumber'] = self.object.gidNumber
+            managed_by = self.object.managed_by
+            if managed_by is not None:
+                self.initial['managed_by'] = managed_by.pk
+            primary_group = self.object.primary_group
+            if primary_group is not None:
+                if getattr(self, 'primary_groups', None) is not None:
+                    self.initial['primary_group'] = primary_group.gidNumber
+                else:
+                    self.initial['primary_group'] = primary_group.pk
 
     def clean_jpegPhoto(self):
         data = self.cleaned_data
@@ -129,11 +133,19 @@ class LDAPUserForm(LDAPForm):
 
         return jpegPhoto
 
+    def clean_primary_group(self):
+        pg = self.cleaned_data['primary_group']
+        if getattr(self, 'primary_groups', None) is not None:
+            try:
+                pg = placard.models.group.objects.get(gidNumber=pg)
+            except placard.models.group.DoesNotExist:
+                raise forms.ValidationError("The group does not exist")
+        return pg
+
     def save(self, commit=True):
         self.object = super(LDAPUserForm, self).save(commit=False)
         self.object.managed_by = self.cleaned_data['managed_by']
-        if getattr(self, 'primary_groups', None) is None:
-            self.object.primary_group = self.cleaned_data['primary_group']
+        self.object.primary_group = self.cleaned_data['primary_group']
         if commit:
             self.object.save()
         return self.object
@@ -158,7 +170,7 @@ class LDAPHrUserForm(LDAPForm):
 
         all_users =  placard.models.account.objects.all()
         if self.object.manager is not None:
-            self.initial['managed_by'] = self.object.manager
+            self.initial['managed_by'] = self.object.managed_by.pk
 
     def clean_jpegPhoto(self):
         data = self.cleaned_data
