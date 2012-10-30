@@ -394,8 +394,6 @@ class AddGroupForm(LDAPForm):
     def __init__(self, *args, **kwargs):
         self.object = kwargs.pop('account')
         super(AddGroupForm, self).__init__(*args, **kwargs)
-#        all_groups = placard.models.group.objects.all()
-#        self.fields['add_group'] = forms.ChoiceField(choices=[('','None')]+[(x.gidNumber, x.cn) for x in all_groups])
 
     def save(self, commit=True):
         group = self.cleaned_data['group']
