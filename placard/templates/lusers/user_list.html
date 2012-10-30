@@ -1,64 +1,53 @@
-{% extends "changelist.html" %}
+{% extends "main.html" %}
 
 {% block title %}Users{% endblock %}
-
-{% block content_title %}Users{% endblock %}
 
 {% block bread_crumbs_1 %}
  &rsaquo; Users
 {% endblock %}   
 
-
-{% block objecttools %}
-<ul class="object-tools">
-<li><a href="{% url plac_user_list_pdf %}pdf/?{{ request.META.QUERY_STRING }}">Print version</a></li>
-{% if perms.auth.add_user %}
-<li><a href="{% url plac_user_add %}" class="addlink">Add User</a></li>
-{% endif %}
-</ul>
-{% endblock %}
-
 {% block content %}
-<div class="module filtered" id="changelist">
-<h2>LDAP Users</h2>
+<div id="content-main">
+    <div class="module filtered">
+        <h2>Users</h2>
+
+        <script type="text/javascript">document.getElementById("searchbar").focus();</script>
 
 
-<script type="text/javascript">document.getElementById("searchbar").focus();</script>
+        <div id="changelist-filter">
+            <h2>Filter</h2>
+            {{ filter_bar|safe }}
+        </div>
 
 
-		<div id="changelist-filter">
-   				<h2>Filter</h2>
-   				{{ filter_bar|safe }}
-   	</div>
-   	
-   	
-   	
-<table cellspacing="0">
-	<thead>
-		<tr>
-			<th>Name</th>
-			<th>Phone</th>
-			<th>Mobile</th>
-			<th>Email</th>
-            <th>Location</th>
-		</tr>
-	</thead>   	
-   <tbody>
-   	{% for u in user_list %}
-	   	<tr class="{% cycle row1,row2  as rowcolours %}">
-	   		<td><a href="{% url plac_user_detail u.uid %}">{{ u.cn }}</a></td>
-	   		<td>{{ u.telephoneNumber }}</td>
-	   		<td>{{ u.mobile }}</td>
-	   		<td>{{ u.mail|urlize }}</td>
-	   		<td>{{ u.l }}</td>
-			</tr>
-		{% endfor %}
-   </tbody>  	
-</table>
+        <ul class="object-tools">
+            {% if perms.auth.add_group %}
+                <li><a href="{% url plac_user_add %}" class="addlink">Add User</a></li>
+            {% endif %}
+        </ul>
 
-<p class="paginator">
-{{ user_list|length }} users
-</p>	
-	
+        <table cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Mobile</th>
+                    <th>Email</th>
+                    <th>Location</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in user_list|dictsort:"cn" %}
+                    <tr class="{% cycle row1,row2  as rowcolours %}">
+                        <td><a href="{% url plac_user_detail u.uid %}">{{ u.cn }}</a></td>
+                        <td>{{ u.telephoneNumber }}</td>
+                        <td>{{ u.mobile }}</td>
+                        <td>{{ u.mail|urlize }}</td>
+                        <td>{{ u.l }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>  	
+        </table>
+    </div>
 </div>
 {% endblock %}

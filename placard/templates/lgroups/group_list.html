@@ -1,39 +1,38 @@
 {% extends "main.html" %}
 
-{% block title %}LDAP Groups{% endblock %}
-
-{% block content_title %}Group List{% endblock %}
+{% block title %}Groups{% endblock %}
 
 {% block bread_crumbs_1 %}
-&rsaquo; LDAP Groups
+&rsaquo; Groups
 {% endblock %}   
 
 {% block content %}
 <div id="content-main">
-  <ul class="object-tools">
-    {% if perms.auth.add_group %}
-    <li><a href="add/" class="addlink">Add Group</a></li>
-    {% endif %}
-  </ul>
-  <div class="module">
-    <h2>LDAP Groups</h2>
-    
-    <table cellspacing="0">
-      <thead>
-	<tr>
-	  <th>ID</th>
-	  <th>Name</th>
-	</tr>
-      </thead>   	
-      <tbody>
-   	{% for g in group_list|dictsort:"cn" %}
-	<tr class="{% cycle row1,row2  as rowcolours %}">
-	  <td><a href="{% url plac_grp_detail g.gidNumber %}">{{ g.gidNumber }}</a></td>
-	  <td>{{ g }}</td>
-	</tr>
-	{% endfor %}
-      </tbody>  	
-    </table>
-  </div>
+    <div class="module">
+        <h2>Groups</h2>
+
+        <ul class="object-tools">
+            {% if perms.auth.add_group %}
+                <li><a href="{% url plac_grp_add %}" class="addlink">Add Group</a></li>
+            {% endif %}
+        </ul>
+
+        <table cellspacing="0">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for g in group_list|dictsort:"cn" %}
+                    <tr class="{% cycle row1,row2  as rowcolours %}">
+                        <td><a href="{% url plac_grp_detail g.gidNumber %}">{{ g.gidNumber }}</a></td>
+                        <td>{{ g }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}

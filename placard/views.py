@@ -286,7 +286,7 @@ class AccountUnlock(AccountGeneric):
 
 
 class AccountAddGroup(AccountGeneric):
-    template_name = "lgroups/group_form.html"
+    template_name = "lgroups/group_add_member_form.html"
     form_class = placard.forms.AddGroupForm
     permissions = [ 'auth.change_user' ]
 
@@ -378,7 +378,7 @@ class GroupEdit(GroupGeneric):
 
 
 class GroupAddMember(GroupGeneric):
-    template_name = "lgroups/group_form.html"
+    template_name = "lgroups/group_add_member_form.html"
     form_class = placard.forms.AddMemberForm
     permissions = [ 'auth.change_group' ]
 

@@ -1,0 +1,9 @@
+{% extends "base_site.html" %}
+
+{% block bodyclass %}change-form{% endblock %}
+
+{% load admin_static %}
+{% block extrastyle %}
+<link rel="stylesheet" type="text/css" href="{% static "css/forms.css" %}" />
+{% endblock %}
+

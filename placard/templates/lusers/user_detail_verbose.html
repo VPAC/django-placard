@@ -13,16 +13,18 @@
 {% block content %}
 <div id="content-main">
 
-  <div class="module">
-    <h3>{{ luser.dn }}</h3>
-    <table>
-      {% for i,j in luser.get_fields %}
-      <tr>
-        {% if j %}
-	<td>{{ i }}</td><td>{{ j }}</td>
-        {% endif %}
-      </tr>
-   	{% endfor %}
-  </div>
+    <div class="module">
+        <h2> Users - verbose </h2>
+        <h3>{{ luser.dn }}</h3>
+        <table>
+            {% for i,j in luser.get_fields %}
+                <tr>
+                    {% if j %}
+                    <td>{{ i }}</td><td>{{ j }}</td>
+                    {% endif %}
+               </tr>
+            {% endfor %}
+        </table>
+    </div>
 </div>
 {% endblock %}

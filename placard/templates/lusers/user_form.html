@@ -2,45 +2,46 @@
 
 {% block title %}Users{% endblock %}
 
-{% block content_title %}{% if username %}Edit{% else %}Create{% endif %} User{% endblock %}
-
 {% block bread_crumbs_1 %}
  &rsaquo; <a href="{% url plac_user_list %}">Users</a>
  &rsaquo; {% if username %}Edit{% else %}Create{% endif %} User
 {% endblock %}   
 
 {% block content %}
-<form method="post" enctype="multipart/form-data" action=".">
-<div>
 {% load forms %}
 {% if form.errors  or form.non_field_errors %}
-	<p class="errornote">Please correct the error{{ form.errors|pluralize }} below.</p>
+    <p class="errornote">Please correct the error{{ form.errors|pluralize }} below.</p>
 {% endif %}
-<fieldset class="module aligned ()">
-{{ form.non_field_errors }}
-{% if not username %}
-{% formfield form.uid %}
-{% formfield form.raw_password %}
-{% formfield form.raw_password2 %}
-{% endif %}
-{% inlineformfield form.givenName form.sn %}
-{% formfield form.eduPersonAffiliation %}
-{% formfield form.primary_group %}
-{% formfield form.title %}
-{% formfield form.description %}
 
-{% inlineformfield form.telephoneNumber form.facsimileTelephoneNumber %}
-{% formfield form.mobile %}
-{% formfield form.managed_by %}
-{% formfield form.l %}
-{% formfield form.jpegPhoto %}
-{% formfield form.sshPublicKey %}
-</fieldset>
+<form method="post" action="." class="module" enctype="multipart/form-data">
+    <h2> Users - {% if username %}Edit{% else %}Create{% endif %} </h2>
 
-</div>
-<div class="submit-row">
-		
-		<input type="submit" value="Save" class="default" />
-	</div>
+    <fieldset class="aligned ()">
+        {{ form.non_field_errors }}
+        {% if not username %}
+        {% formfield form.uid %}
+        {% formfield form.raw_password %}
+        {% formfield form.raw_password2 %}
+        {% endif %}
+        {% inlineformfield form.givenName form.sn %}
+        {% formfield form.eduPersonAffiliation %}
+        {% formfield form.primary_group %}
+        {% formfield form.title %}
+        {% formfield form.description %}
+
+        {% inlineformfield form.telephoneNumber form.facsimileTelephoneNumber %}
+        {% formfield form.mobile %}
+        {% formfield form.managed_by %}
+        {% formfield form.l %}
+        {% formfield form.jpegPhoto %}
+        {% formfield form.sshPublicKey %}
+    </fieldset>
+
+    <div class="submit-row">
+        <input type="submit" value="Save" class="default" />
+        {% if username and perms.auth.delete_user %}
+        <p class="deletelink-box"><a href="{% url plac_user_delete username %}" class="deletelink">Delete</a></p>
+        {% endif %}
+    </div>
 </form>
 {% endblock %}

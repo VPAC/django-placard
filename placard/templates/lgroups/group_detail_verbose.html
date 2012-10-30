@@ -13,18 +13,18 @@
 {% block content %}
 <div id="content-main">
 
-<div class="module">
-	<h3>{{ group.dn }}</h3>
-   	<table>
-   	{% for i,j in group.get_fields %}
-   		<tr>
-				<td>{{ i }}</td><td>{{ j }}</td>
-			</tr>
-			<tr>
-   	{% endfor %}
-			
-		
-
-	</div>
+    <div class="module">
+        <h2> Groups - verbose </h2>
+        <h3>{{ group.dn }}</h3>
+        <table>
+            {% for i,j in group.get_fields %}
+                <tr>
+                    {% if j %}
+                    <td>{{ i }}</td><td>{{ j }}</td>
+                    {% endif %}
+               </tr>
+            {% endfor %}
+        </table>
+    </div>
 </div>
 {% endblock %}

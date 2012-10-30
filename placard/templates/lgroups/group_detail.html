@@ -1,94 +1,88 @@
 {% extends "main.html" %}
 
-{% block title %}LDAP Groups{% endblock %}
+{% block title %}Groups{% endblock %}
 
-{% block content_title %}{% endblock %}
+{% load admin_static %}
+{% block extrastyle %}
+<link rel="stylesheet" type="text/css" href="{% static "css/forms.css" %}" />
+{% endblock %}
 
 {% block bread_crumbs_1 %}
-&rsaquo; <a href="../">LDAP Groups</a>
+&rsaquo; <a href="../">Groups</a>
 &rsaquo; {{ group }}
 {% endblock %}   
 
 {% block content %}
 <div id="content-main">
-  
-  <div class="module">
-    <h2>LDAP Groups</h2>
-    
-    <h3>{{ group.cn }}</h3>
-    <p>
-    Actions:
-    {% if perms.auth.change_user %}
-    &nbsp;&nbsp;|&nbsp;&nbsp;<a href="{% url plac_grp_edit group.gidNumber %}">Edit details</a>
-    {% endif %}
-    {% if perms.auth.change_group %}
-    &nbsp;&nbsp;|&nbsp;&nbsp;<a href="{% url plac_grp_rename group.gidNumber %}">Rename Group</a>
-    {% endif %}
-    {% if perms.auth.delete_group %}
-    &nbsp;&nbsp;|&nbsp;&nbsp;<a href="verbose/">Verbose</a>
-    &nbsp;&nbsp;|&nbsp;&nbsp;<a href="{% url plac_group_email group.gidNumber %}">Sends members an Email</a>
-    &nbsp;&nbsp;|&nbsp;&nbsp;<a href="delete/" class="deletelink">Delete</a>
-    {% endif %}
-    </p>
-    <table>
-      <tr>
-	<td>cn</td><td>{{ group.cn }}</td>
-      </tr>
-      <tr>
-	<td>description</td><td>{{ group.description }}</td>
-      </tr>
-      <tr>	
-	<td>displayName</td><td>{{ group.displayName }}</td>
-      </tr>
-      <tr>	
-	<td>gidNumber</td><td>{{ group.gidNumber }}</td>
-      </tr>
-      <tr>
-	<td>objectClass</td><td>{{ group.objectClass }}</td>
-      </tr>
-      <tr>	
-	<td>sambaGroupType</td><td>{{ group.sambaGroupType }}</td>
-      </tr>
-      <tr>
-	<td>sambaSID</td><td>{{ group.sambaSID }}</td>
-      </tr>
-    </table>
-    <table cellspacing="0">
-      <thead>
-	<tr>
-	  <th>Primary Users</th>
-	</tr>
-      </thead>   	
-      <tbody>
-   	{% for m in group.primary_accounts.all %}
-	<tr class="{% cycle row1,row2 %}">
-	  <td><a href="{% url plac_user_detail m.uid %}" >{{ m }}</a></td>
-	</tr>
-	{% endfor %}
-      </tbody>  	
-      <thead>
-	<tr>
-	  <th>Secondary Users</th>
-	</tr>
-      </thead>   	
-      <tbody>
-   	{% for m in group.secondary_accounts.all %}
-	<tr class="{% cycle row1,row2 %}">
-	  <td><a href="{% url plac_user_detail m.uid %}" >{{ m }}</a></td>
-	  {% if perms.auth.change_group %}<td><a href="{% url plac_grp_rm_member group.gidNumber m.uid %}" class="deletelink">Remove</a></td>{% endif %}
-	</tr>
-	{% endfor %}
-      </tbody>  	
-    </table>	
-    {% if perms.auth.change_group %}
-    <form method="post" action="{% url plac_grp_add_member group.gidNumber %}">{% csrf_token %}
-      <div>
-	<fieldset class="module aligned ()">
-	  {{ form }}<input type="submit" value="Add" class="default" />
-	</fieldset>
-      </div>
-    </form>
-    {% endif %}   	
-  </div>
+
+    <div class="module">
+        <h2>Groups</h2>
+
+        <ul class="object-tools">
+            {% if perms.auth.change_user %}
+            <li><a href="{% url plac_grp_edit group.gidNumber %}">Edit details</a></li>
+            {% endif %}
+            {% if perms.auth.change_group %}
+            <li><a href="{% url plac_grp_rename group.gidNumber %}">Rename Group</a></li>
+            {% endif %}
+            {% if perms.auth.delete_group %}
+            <li><a href="verbose/">Verbose</a></li>
+            <li><a href="{% url plac_group_email group.gidNumber %}">Sends members an Email</a></li>
+            {% endif %}
+        </ul>
+
+        <h3>{{ group.cn }}</h3>
+        <table>
+            <tr>
+            <td>cn</td><td>{{ group.cn }}</td>
+            </tr>
+            <tr>
+            <td>description</td><td>{{ group.description }}</td>
+            </tr>
+            <tr>
+            <td>displayName</td><td>{{ group.displayName }}</td>
+            </tr>
+            <tr>
+            <td>gidNumber</td><td>{{ group.gidNumber }}</td>
+            </tr>
+            <tr>
+            <td>objectClass</td><td>{{ group.objectClass }}</td>
+            </tr>
+            <tr>
+            <td>sambaGroupType</td><td>{{ group.sambaGroupType }}</td>
+            </tr>
+            <tr>
+            <td>sambaSID</td><td>{{ group.sambaSID }}</td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <th>Primary Users</th>
+            </tr>
+            {% for m in group.primary_accounts.all %}
+                <tr class="{% cycle row1,row2 %}">
+                    <td><a href="{% url plac_user_detail m.uid %}" >{{ m }}</a></td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <th>Secondary Users</th>
+            </tr>
+            {% for m in group.secondary_accounts.all %}
+                <tr class="{% cycle row1,row2 %}">
+                    <td><a href="{% url plac_user_detail m.uid %}" >{{ m }}</a></td>
+                    {% if perms.auth.change_group %}
+                    <td><a href="{% url plac_grp_rm_member group.gidNumber m.uid %}" class="deletelink">Remove</a></td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </table>
+        {% if perms.auth.change_group %}
+            <form method="post" action="{% url plac_grp_add_member group.gidNumber %}" class="simple">{% csrf_token %}
+                <fieldset>
+                    {{ form }}<input type="submit" value="Add" class="default" />
+                </fieldset>
+            </form>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}

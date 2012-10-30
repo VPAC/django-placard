@@ -1,91 +1,78 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en-au" xml:lang="en-au">
+{% load admin_static %}{% load url from future %}<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
 <head>
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/{% block stylesheet %}base{% endblock %}.css"/>
-{% load adminmedia %}
-{% block extrastyle %}{% endblock %}
-<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
 <title>{% block title %}{% endblock %}&nbsp;|&nbsp;{% block site_name_title %}{% endblock %}</title>
-<meta name="author" content="{% block author %}Sam Morrison{% endblock %}"/>
-{% block favicon %}{% endblock %}
-<script type="text/javascript">window.__admin_media_prefix__ = "{% filter escapejs %}{% admin_media_prefix %}{% endfilter %}";</script>
-{% block site_extrahead %}{% endblock %}
+<link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "css/base.css" %}{% endblock %}" />
+{% block extrastyle %}{% endblock %}
+<!--[if lte IE 7]><link rel="stylesheet" type="text/css" href="{% block stylesheet_ie %}{% static "css/ie.css" %}{% endblock %}" /><![endif]-->
+{% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% static "css/rtl.css" %}{% endblock %}" />{% endif %}
+<script type="text/javascript">window.__admin_media_prefix__ = "{% filter escapejs %}{% static "admin/" %}{% endfilter %}";</script>
 {% block extrahead %}{% endblock %}
+{% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
 </head>
+{% load i18n %}
 
-<body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}" {% block bodyextra %}{% endblock %} >
+<body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}">
 
 <!-- Container -->
 <div id="container">
 
-    
- <!-- Header -->
+    {% if not is_popup %}
+    <!-- Header -->
     <div id="header">
         <div id="branding">
-        		 {% block site_logo %}{% endblock %}
-				 <h1 id="site-name">{% block site_name_header %}{% endblock %}</h1>
+        {% block branding %}{% endblock %}
         </div>
-        {% block usertools %}
-        {% if not is_popup %}
+        {% if user.is_active and user.is_staff %}
         <div id="user-tools">
-        {% if user.is_authenticated %}
-        Welcome, <strong>{{ user.first_name }}</strong> 
-        / <a href="{% url logout %}">Log out</a>
-			{% else %}
-			Welcome, <strong>Guest</strong> / 
-        <a href="{% url login %}">Log In</a>
-			{% endif %}
+            {% trans 'Welcome,' %}
+            <strong>{% filter force_escape %}{% firstof user.first_name user.username %}{% endfilter %}</strong>.
+            {% block userlinks %}
+                {% url 'django-admindocs-docroot' as docsroot %}
+                {% if docsroot %}
+                    <a href="{{ docsroot }}">{% trans 'Documentation' %}</a> /
+                {% endif %}
+                <a href="{% url 'admin:password_change' %}">{% trans 'Change password' %}</a> /
+                <a href="{% url 'admin:logout' %}">{% trans 'Log out' %}</a>
+            {% endblock %}
         </div>
         {% endif %}
-        {% endblock %}
+        {% block nav-global %}{% endblock %}
     </div>
     <!-- END Header -->
-    
-    <div class="breadcrumbs">{% block breadcrumbs %}<a href="{{ base_url|default:"/" }}">Home</a>{% block bread_crumbs_1 %}{% endblock %}{% endblock %}</div>
-    
-	{% block messagelist %}
-	{% if messages %}
-	<ul class="messagelist">
-   	{% for message in messages %}
-	<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-    	{% endfor %}
-	</ul>
-	{% endif %}
-	{% endblock %}
-	
+    {% block breadcrumbs %}
+    <div class="breadcrumbs">
+    <a href="{{ base_url|default:"/" }}">Home</a>
+    {% block bread_crumbs_1 %}{% endblock %}
+    {% if title %} &rsaquo; {{ title }}{% endif %}
+    </div>
+    {% endblock %}
+    {% endif %}
+
+    {% block messages %}
+        {% if messages %}
+        <ul class="messagelist">{% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}</ul>
+        {% endif %}
+    {% endblock messages %}
+
     <!-- Content -->
     <div id="content" class="{% block coltype %}colM{% endblock %}">
         {% block pretitle %}{% endblock %}
-        <!-- <h1>{% block content_title %}{% endblock %}</h1> -->
-        <div id="content-main">
-        {% block objecttools %}{% endblock %}
+        {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% endif %}{% endblock %}
+        {% block content %}
+        {% block object-tools %}{% endblock %}
+        {{ content }}
+        {% endblock %}
         {% block sidebar %}{% endblock %}
-        {% block content %}{{ content }}{% endblock %}
-        </div>
         <br class="clear" />
     </div>
     <!-- END Content -->
 
-    {% block footer %}
-    <div id="footer">
-    {% if debug %}
-    <p>{{ sql_queries|length }} sql queries</p>
-    
-    <table>
-    {% for q in sql_queries %}
-    <tr>
-    <td>{{ q.time }}</td>
-    <td>{{ q.sql }}</td>
-    </tr>
-    {% endfor %}
-    </table>
-    {% endif %}
-    </div>
-    {% endblock %}
+    {% block footer %}<div id="footer"></div>{% endblock %}
 </div>
 <!-- END Container -->
 
-{% block google_analytics %}{% endblock %}
 </body>
 </html>
-

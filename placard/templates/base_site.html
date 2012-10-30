@@ -1,4 +1,10 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block site_name_title %}Placard{% endblock %}
-{% block site_name_header %}Placard{% endblock %}
+{% block site_name_title %}{% trans 'Placard' %}{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">{% trans 'Placard' %}</h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}

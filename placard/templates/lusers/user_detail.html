@@ -2,7 +2,10 @@
 
 {% block title %}Users{% endblock %}
 
-{% block content_title %}{% endblock %}
+{% load admin_static %}
+{% block extrastyle %}
+<link rel="stylesheet" type="text/css" href="{% static "css/forms.css" %}" />
+{% endblock %}
 
 {% block bread_crumbs_1 %}
  &rsaquo; <a href="../">Users</a>
@@ -11,138 +14,142 @@
 
 {% block content %}
 <div id="content-main">
-  
-{% if luser.is_locked %}
-  <div class="module locked">
-{% else %}
-  <div class="module">
-{% endif %}
-    <h2>Users</h2>
-    <h3>{{ luser.cn }}</h3>
-    <p>
-    Actions:
-    {% if perms.auth.change_user or perms.auth.hr_user %}
-    &nbsp;&nbsp;|&nbsp;&nbsp;<a href="{% url plac_user_edit luser.uid %}">Edit details</a>
-    {% endif %}
-    {% if perms.auth.change_user %}
-    &nbsp;&nbsp;|&nbsp;&nbsp;<a href="{% url plac_change_password luser.uid %}">Change password</a>
+
     {% if luser.is_locked %}
-    &nbsp;&nbsp;|&nbsp;&nbsp;<a href="{% url plac_unlock_user luser.uid %}">Unlock</a>
+    <div class="module locked">
     {% else %}
-    &nbsp;&nbsp;|&nbsp;&nbsp;<a href="{% url plac_lock_user luser.uid %}">Lock</a>
+    <div class="module">
     {% endif %}
-    {% endif %}
-    {% if perms.auth.delete_user %}
-    &nbsp;&nbsp;|&nbsp;&nbsp;<a href="{% url plac_user_detail_verbose luser.uid %}">Verbose output</a>
-    &nbsp;&nbsp;|&nbsp;&nbsp;<a href="{% url plac_user_delete luser.uid %}" class="deletelink">Delete</a>
-    {% endif %}
-    </p>
-    <table>
-    {% if luser.is_locked %}
-      <tr>
-	<td>Status</td><td>LOCKED</td>
-      </tr>
-    {% else %}
-      <tr>
-	<td>Status</td><td>Unlocked</td>
-      </tr>
-    {% endif %}
-      <tr>
-	<td>Username</td><td>{{ luser.uid }}</td>
-      </tr>
-      <tr>
-	<td>Title</td><td>{{ luser.title }}</td>
-      </tr>
-      <tr>
-	<td>Email</td><td>{{ luser.mail|urlize }}</td>
-      </tr>
-      <tr>
-	<td>Phone</td><td>{{ luser.telephoneNumber }}</td>
-      </tr>
-      <tr>
-	<td>Mobile</td><td>{{ luser.mobile }}</td>
-      </tr>	
-      <tr>
-	<td>Fax</td><td>{{ luser.facsimileTelephoneNumber }}</td>
-      </tr>
-    {% if luser.jpegPhoto %}
-      <tr>
-	<td>Photo</td><td><img src="{% url plac_user_photo luser.uid %}" /></td>
-      </tr>
-    {% endif %}
-      <tr>
-	<td>Description</td><td>{{ luser.description }}</td>
-      </tr>
-      <tr>
-	<td>dn</td><td>{{ luser.dn }}</td>
-      </tr>
-      <tr>
-        <td>uidNumber</td><td>{{ luser.uidNumber }}</td>
-      </tr>
-      <tr>
-	<td>gidNumber</td><td>{{ luser.gidNumber }}</td>
-      </tr>
-      <tr>
-	<td>homeDirectory</td><td>{{ luser.homeDirectory }}</td>
-      </tr>
-      <tr>
-	<td>loginShell</td><td>{{ luser.loginShell }}</td>
-      </tr>
-    {% with luser.managed_by as manager %}
-    {% if manager %}
-      <tr>
-	<td>Manager</td><td><a href="{% url plac_user_detail manager.uid %}">{{ manager }}</a></td>
-      </tr>
-    {% endif %}
-    {% endwith %}
-    {% with luser.manager_of as manager_of %}
-    {% if manager_of %}
-      {% for p in manager_of.all %}
-      <tr>
-	<td>Manager of</td><td><a href="{% url plac_user_detail p.uid %}">{{ p }}</a></td>
-      </tr>
-      {% endfor %}
-    {% endif %}
-    {% endwith %}
-      <tr>
-	<td>objectClass</td><td>{{ luser.objectClass }}</td>
-      </tr>
-      <tr>
-	<td>givenName</td><td>{{ luser.givenName }}</td>
-      </tr>
-      <tr>
-	<td>sn</td><td>{{ luser.sn }}</td>
-      </tr>	
-      </table>
-  </div>
-  <div class="module">
-    <h2>Groups</h2>
-    <table>
-    {% with luser.primary_group as primary_group %}
-    {% if primary_group %}
-      <tr>
-	<td>Primary Group:</td><td><a href="{% url plac_grp_detail primary_group.gidNumber %}">{{ primary_group }}</a></td>
-      </tr>
-    {% endif %}
-    {% endwith %}
-      {% for g in luser.secondary_groups.all %}
-      <tr>
-	<td>Secondary Groups:</td><td><a href="{% url plac_grp_detail g.gidNumber %}">{{ g }}</a></td>
-	{% if perms.auth.change_user %}
-	<td><a href="{% url plac_user_rm_group luser.uid,g.gidNumber %}" class="deletelink">remove</a></td>		
-	{% endif %}
-      </tr>			
-      {% endfor %}
-    </table>
-  {% if perms.auth.change_group %}
-  <form method="post" action="{% url plac_user_add_group luser.uid %}">{% csrf_token %}
-    <div>
-      <fieldset class="module aligned ()">
-        {{ form }}<input type="submit" value="Add" class="default" />
-      </fieldset>
+        <h2>Users</h2>
+
+        <ul class="object-tools">
+            {% if perms.auth.change_user or perms.auth.hr_user %}
+            <li><a href="{% url plac_user_edit luser.uid %}">Edit details</a></li>
+            {% endif %}
+            {% if perms.auth.change_user %}
+            <li><a href="{% url plac_change_password luser.uid %}">Change password</a></li>
+            {% if luser.is_locked %}
+            <li><a href="{% url plac_unlock_user luser.uid %}">Unlock</a></li>
+            {% else %}
+            <li><a href="{% url plac_lock_user luser.uid %}">Lock</a></li>
+            {% endif %}
+            {% endif %}
+            {% if perms.auth.delete_user %}
+            <li><a href="{% url plac_user_detail_verbose luser.uid %}">Verbose output</a></li>
+            {% endif %}
+        </ul>
+
+        <h3>{{ luser.cn }}</h3>
+        <table>
+            {% if luser.is_locked %}
+            <tr>
+            <td>Status</td><td>LOCKED</td>
+            </tr>
+            {% else %}
+            <tr>
+            <td>Status</td><td>Unlocked</td>
+            </tr>
+            {% endif %}
+            <tr>
+            <td>Username</td><td>{{ luser.uid }}</td>
+            </tr>
+            <tr>
+            <td>Title</td><td>{{ luser.title }}</td>
+            </tr>
+            <tr>
+            <td>Email</td><td>{{ luser.mail|urlize }}</td>
+            </tr>
+            <tr>
+            <td>Phone</td><td>{{ luser.telephoneNumber }}</td>
+            </tr>
+            <tr>
+            <td>Mobile</td><td>{{ luser.mobile }}</td>
+            </tr>	
+            <tr>
+            <td>Fax</td><td>{{ luser.facsimileTelephoneNumber }}</td>
+            </tr>
+            {% if luser.jpegPhoto %}
+            <tr>
+            <td>Photo</td><td><img src="{% url plac_user_photo luser.uid %}" /></td>
+            </tr>
+            {% endif %}
+            <tr>
+            <td>Description</td><td>{{ luser.description }}</td>
+            </tr>
+            <tr>
+            <td>dn</td><td>{{ luser.dn }}</td>
+            </tr>
+            <tr>
+            <td>uidNumber</td><td>{{ luser.uidNumber }}</td>
+            </tr>
+            <tr>
+            <td>gidNumber</td><td>{{ luser.gidNumber }}</td>
+            </tr>
+            <tr>
+            <td>homeDirectory</td><td>{{ luser.homeDirectory }}</td>
+            </tr>
+            <tr>
+            <td>loginShell</td><td>{{ luser.loginShell }}</td>
+            </tr>
+            {% with luser.managed_by as manager %}
+            {% if manager %}
+            <tr>
+            <td>Manager</td><td><a href="{% url plac_user_detail manager.uid %}">{{ manager }}</a></td>
+            </tr>
+            {% endif %}
+            {% endwith %}
+            {% with luser.manager_of as manager_of %}
+            {% if manager_of %}
+            {% for p in manager_of.all %}
+            <tr>
+            <td>Manager of</td><td><a href="{% url plac_user_detail p.uid %}">{{ p }}</a></td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+            <tr>
+            <td>objectClass</td><td>{{ luser.objectClass }}</td>
+            </tr>
+            <tr>
+            <td>givenName</td><td>{{ luser.givenName }}</td>
+            </tr>
+            <tr>
+            <td>sn</td><td>{{ luser.sn }}</td>
+            </tr>	
+        </table>
+        </div>
+        <div class="module">
+        <h2>Groups</h2>
+        <table>
+            {% with luser.primary_group as primary_group %}
+            {% if primary_group %}
+            <tr>
+                <th>Primary Group:</th>
+            </tr>
+            <tr>
+                <td><a href="{% url plac_grp_detail primary_group.gidNumber %}">{{ primary_group }}</a></td>
+            </tr>
+            {% endif %}
+            {% endwith %}
+            <tr>
+                <th>Secondary Groups:</th>
+            </tr>
+            {% for g in luser.secondary_groups.all %}
+                <tr class="{% cycle row1,row2 %}">
+                    <td><a href="{% url plac_grp_detail g.gidNumber %}">{{ g }}</a></td>
+                    {% if perms.auth.change_user %}
+                    <td><a href="{% url plac_user_rm_group luser.uid,g.gidNumber %}" class="deletelink">remove</a></td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </table>
+        {% if perms.auth.change_group %}
+            <form method="post" action="{% url plac_user_add_group luser.uid %}" class="simple">{% csrf_token %}
+                <fieldset>
+                    {{ form }}<input type="submit" value="Add" class="default" />
+                </fieldset>
+            </form>
+        {% endif %}
     </div>
-  </form>
-  </div>
-  {% endif %}
 </div>
 {% endblock %}
