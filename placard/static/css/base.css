@@ -834,3 +834,7 @@ table#change-history tbody th {
     color: #666;
 }
 
+.locked {
+    color: #f00;
+}
+
