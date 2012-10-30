@@ -172,12 +172,6 @@ class AccountList(ListView):
         return context
 
 
-class StaffList(AccountList):
-
-    def get_default_queryset(self):
-        return super(StaffList, self).get_default_queryset().filter(eduPersonAffiliation='staff')
-
-
 class AccountDetail(DetailView):
     model = placard.models.account
     template_name = "lusers/user_detail.html"

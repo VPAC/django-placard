@@ -39,8 +39,6 @@ urlpatterns = patterns('',
     url(r'^search/$', views.search, name='plac_search'),
     url(r'^change_password/$', views.UserChangePassword.as_view(), name='plac_user_password'),
 
-    url(r'^staff/$', views.StaffList.as_view(), name='vpac_staff'),
-
     url(r'^users/', include(placard.user_urls)),
     url(r'^groups/', include(placard.group_urls)),
 )
