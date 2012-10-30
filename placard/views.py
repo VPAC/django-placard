@@ -149,7 +149,7 @@ class AccountList(ListView):
 
         if request.GET.has_key('group'):
             try:
-                group = placard.models.group.objects.get(gidNumber=request.GET['group'])
+                group = placard.models.group.objects.get(cn=request.GET['group'])
                 user_list = user_list.filter(tldap.Q(primary_group=group) | tldap.Q(secondary_groups=group))
             except  placard.models.group.DoesNotExist:
                 pass
@@ -163,7 +163,7 @@ class AccountList(ListView):
         context = super(AccountList, self).get_context_data(**kwargs)
         group_list = {}
         for group in placard.models.group.objects.all():
-            group_list[group.gidNumber] = group.cn
+            group_list[group.cn] = group.cn
 
         filter_list = []
         filter_list.append(Filter(self.request, 'group', group_list))
@@ -298,13 +298,12 @@ class AccountRemoveGroup(AccountGeneric):
 
     def get_context_data(self, **kwargs):
         context = super(AccountRemoveGroup, self).get_context_data(**kwargs)
-        context['group_id'] = self.kwargs['group_id']
         context['group'] = self.group
         return context
 
     def get_form_kwargs(self):
         kwargs = super(AccountRemoveGroup, self).get_form_kwargs()
-        kwargs['group'] = get_object_or_404(placard.models.group, gidNumber=self.kwargs['group_id'])
+        kwargs['group'] = get_object_or_404(placard.models.group, cn=self.kwargs['group'])
         self.group = kwargs['group']
         return kwargs
 
@@ -332,7 +331,7 @@ class GroupDetail(DetailView):
         return context
 
     def get_object(self):
-        return get_object_or_404(placard.models.group, gidNumber=self.kwargs['group_id'])
+        return get_object_or_404(placard.models.group, cn=self.kwargs['group'])
 
 
 class GroupVerbose(GroupDetail):
@@ -342,27 +341,26 @@ class GroupVerbose(GroupDetail):
 class GroupGeneric(FormView):
     def get_context_data(self, **kwargs):
         context = super(GroupGeneric, self).get_context_data(**kwargs)
-        if 'group_id' in self.kwargs:
-            context['group_id'] = self.kwargs['group_id']
+        if 'group' in self.kwargs:
             context['group'] = self.object
         return context
 
     def get_form_kwargs(self):
         kwargs = super(GroupGeneric, self).get_form_kwargs()
-        if 'group_id' in self.kwargs:
+        if 'group' in self.kwargs:
             kwargs['group'] = self.get_object()
             self.object = kwargs['group']
         return kwargs
 
     def get_object(self):
-            return get_object_or_404(placard.models.group, gidNumber=self.kwargs['group_id'])
+            return get_object_or_404(placard.models.group, cn=self.kwargs['group'])
 
     def form_valid(self, form):
         self.object = form.save()
         return super(GroupGeneric, self).form_valid(form)
 
     def get_success_url(self):
-        return reverse("plac_grp_detail",kwargs={ 'group_id': self.object.gidNumber })
+        return reverse("plac_grp_detail",kwargs={ 'group': self.object.cn })
 
 
 class GroupEdit(GroupGeneric):
@@ -370,7 +368,7 @@ class GroupEdit(GroupGeneric):
     form_class = placard.forms.LDAPGroupForm
 
     def check_permissions(self, request, kwargs):
-        if 'group_id' in kwargs:
+        if 'group' in kwargs:
             self.permissions = [ 'auth.add_group' ]
         else:
             self.permissions = [ 'auth.change_group' ]

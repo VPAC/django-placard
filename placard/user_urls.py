@@ -32,7 +32,7 @@ urlpatterns = patterns('',
     url(r'^(?P<username>[-.\w]+)/groups/$', views.AccountGroups.as_view(), name='plac_users_groups'),
     url(r'^(?P<username>[-.\w]+)/lock/$', views.AccountLock.as_view(), name='plac_lock_user'),
     url(r'^(?P<username>[-.\w]+)/photo/$', views.account_photo, name='plac_user_photo'),
-    url(r'^(?P<username>[-.\w]+)/remove/(?P<group_id>\d+)/$', views.AccountRemoveGroup.as_view(), name='plac_user_rm_group'),
+    url(r'^(?P<username>[-.\w]+)/remove/(?P<group>[-.\w ]+)/$', views.AccountRemoveGroup.as_view(), name='plac_user_rm_group'),
     url(r'^(?P<username>[-.\w]+)/unlock/$', views.AccountUnlock.as_view(), name='plac_unlock_user'),
     url(r'^(?P<username>[-.\w]+)/verbose/$', views.AccountVerbose.as_view(), name='plac_user_detail_verbose'),
 )

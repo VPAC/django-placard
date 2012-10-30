@@ -27,7 +27,7 @@
             <tbody>
                 {% for g in group_list|dictsort:"cn" %}
                     <tr class="{% cycle row1,row2  as rowcolours %}">
-                        <td><a href="{% url plac_grp_detail g.gidNumber %}">{{ g.gidNumber }}</a></td>
+                        <td><a href="{% url plac_grp_detail g.cn %}">{{ g.cn }}</a></td>
                         <td>{{ g }}</td>
                     </tr>
                 {% endfor %}

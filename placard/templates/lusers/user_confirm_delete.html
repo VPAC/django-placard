@@ -14,7 +14,7 @@
 <li>Not actually delete the user.</li>
 </ul>
 
-<p>Are you sure you want to delete {{ username }}'s user account? </p>
+<p>Are you sure you want to delete {{ luser.uid }}'s user account? </p>
 <form method="post" action=".">{% csrf_token %}
   <div>
     <input type="hidden" name="post" value="yes" />

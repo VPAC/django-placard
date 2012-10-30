@@ -100,7 +100,7 @@ class LDAPUserForm(LDAPForm):
             all_groups = placard.models.group.objects.none()
             for cn in self.primary_groups:
                 all_groups = all_groups | placard.models.group.objects.filter(cn=cn)
-            self.fields['primary_group'] = forms.ChoiceField(choices=[('','None')]+[(x.gidNumber, x.cn) for x in all_groups], label="Primary Group")
+            self.fields['primary_group'] = forms.ChoiceField(choices=[('','None')]+[(x.cn, x.cn) for x in all_groups], label="Primary Group")
         else:
             self.fields['primary_group'] = AutoCompleteSelectField('group', required=True)
 
@@ -110,10 +110,7 @@ class LDAPUserForm(LDAPForm):
                 self.initial['managed_by'] = managed_by.pk
             primary_group = self.object.primary_group.get_obj()
             if primary_group is not None:
-                if getattr(self, 'primary_groups', None) is not None:
-                    self.initial['primary_group'] = primary_group.gidNumber
-                else:
-                    self.initial['primary_group'] = primary_group.pk
+                self.initial['primary_group'] = primary_group.cn
 
     def clean_jpegPhoto(self):
         data = self.cleaned_data
@@ -138,7 +135,7 @@ class LDAPUserForm(LDAPForm):
         pg = self.cleaned_data['primary_group']
         if getattr(self, 'primary_groups', None) is not None:
             try:
-                pg = placard.models.group.objects.get(gidNumber=pg)
+                pg = placard.models.group.objects.get(cn=pg)
             except placard.models.group.DoesNotExist:
                 raise forms.ValidationError("The group does not exist")
         return pg

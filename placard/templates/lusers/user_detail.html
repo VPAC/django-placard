@@ -127,7 +127,7 @@
                 <th>Primary Group:</th>
             </tr>
             <tr>
-                <td><a href="{% url plac_grp_detail primary_group.gidNumber %}">{{ primary_group }}</a></td>
+                <td><a href="{% url plac_grp_detail primary_group.cn %}">{{ primary_group }}</a></td>
             </tr>
             {% endif %}
             {% endwith %}
@@ -136,9 +136,9 @@
             </tr>
             {% for g in luser.secondary_groups.all %}
                 <tr class="{% cycle row1,row2 %}">
-                    <td><a href="{% url plac_grp_detail g.gidNumber %}">{{ g }}</a></td>
+                    <td><a href="{% url plac_grp_detail g.cn %}">{{ g }}</a></td>
                     {% if perms.auth.change_user %}
-                    <td><a href="{% url plac_user_rm_group luser.uid,g.gidNumber %}" class="deletelink">remove</a></td>
+                    <td><a href="{% url plac_user_rm_group luser.uid,g.cn %}" class="deletelink">remove</a></td>
                     {% endif %}
                 </tr>
             {% endfor %}

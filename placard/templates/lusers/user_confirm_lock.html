@@ -4,7 +4,7 @@
 
 <h1>Are you sure?</h1> 
 
-<p>Are you sure you want to lock {{ username }}'s user account? </p>
+<p>Are you sure you want to lock {{ luser.uid }}'s user account? </p>
 <form method="post" action=".">{% csrf_token %}
   <div>
     <input type="hidden" name="post" value="yes" />

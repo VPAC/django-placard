@@ -4,7 +4,7 @@
 
 {% block bread_crumbs_1 %}
  &rsaquo; <a href="{% url plac_grp_list %}">Groups</a>
- &rsaquo; {% if group_id %}Edit{% else %}Create{% endif %} Group
+ &rsaquo; {% if group %}Edit{% else %}Create{% endif %} Group
 {% endblock %}   
 
 {% block content %}
@@ -14,15 +14,15 @@
 {% endif %}
 
 <form method="post" action="." class="module">{% csrf_token %}
-    <h2> Groups - {% if group_id %}Edit{% else %}Create{% endif %} </h2>
+    <h2> Groups - {% if group %}Edit{% else %}Create{% endif %} </h2>
     <fieldset class="aligned ()">
         {% form_as_div form %}
     </fieldset>
 
     <div class="submit-row">
         <input type="submit" value="Save" class="default" />
-        {% if group_id and perms.auth.delete_group %}
-        <p class="deletelink-box"><a href="{% url plac_group_delete group_id %}" class="deletelink">Delete</a></p>
+        {% if group and perms.auth.delete_group %}
+        <p class="deletelink-box"><a href="{% url plac_group_delete group.cn %}" class="deletelink">Delete</a></p>
         {% endif %}
     </div>
 </form>

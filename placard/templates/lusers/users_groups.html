@@ -15,13 +15,13 @@
     <h2>Groups</h2>
     <table>
       <tr>
-	<td>Primary Group:</td><td><a href="{% url plac_grp_detail luser.primary_group.gidNumber %}">{{ luser.primary_group }}</a></td>
+	<td>Primary Group:</td><td><a href="{% url plac_grp_detail luser.primary_group.cn %}">{{ luser.primary_group }}</a></td>
       </tr>
       {% for g in luser.secondary_groups.all %}
       <tr>
-	<td>Secondary Groups:</td><td><a href="{% url plac_grp_detail g.gidNumber %}">{{ g }}</a></td>
+	<td>Secondary Groups:</td><td><a href="{% url plac_grp_detail g.cn %}">{{ g }}</a></td>
 	{% if perms.auth.change_user %}
-	<td><a href="{% url plac_grp_rm_member g.gidNumber,luser.uid %}" class="deletelink">remove</a></td>		
+	<td><a href="{% url plac_grp_rm_member g.cn,luser.uid %}" class="deletelink">remove</a></td>		
 	{% endif %}
       </tr>			
       {% endfor %}
