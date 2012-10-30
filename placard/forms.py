@@ -90,6 +90,7 @@ class LDAPUserForm(LDAPForm):
     eduPersonAffiliation = forms.ChoiceField(label="Affiliation", choices=AFFILIATIONS, initial='staff')
     sshPublicKey = fields.CharField(label="SSH pub-key", required=False)
     l = fields.CharField(label='Location', required=False)
+    loginShell = fields.CharField(label='Login Shell', required=False)
 
     def __init__(self, *args, **kwargs):
         self.object = kwargs.pop('account', None)
