@@ -105,10 +105,10 @@ class LDAPUserForm(LDAPForm):
             self.fields['primary_group'] = AutoCompleteSelectField('group', required=True)
 
         if self.object is not None:
-            managed_by = self.object.managed_by
+            managed_by = self.object.managed_by.get_obj()
             if managed_by is not None:
                 self.initial['managed_by'] = managed_by.pk
-            primary_group = self.object.primary_group
+            primary_group = self.object.primary_group.get_obj()
             if primary_group is not None:
                 if getattr(self, 'primary_groups', None) is not None:
                     self.initial['primary_group'] = primary_group.gidNumber

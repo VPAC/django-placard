@@ -91,7 +91,7 @@
             <tr>
             <td>loginShell</td><td>{{ luser.loginShell }}</td>
             </tr>
-            {% with luser.managed_by as manager %}
+            {% with luser.managed_by.get_obj as manager %}
             {% if manager %}
             <tr>
             <td>Manager</td><td><a href="{% url plac_user_detail manager.uid %}">{{ manager }}</a></td>
@@ -121,7 +121,7 @@
         <div class="module">
         <h2>Groups</h2>
         <table>
-            {% with luser.primary_group as primary_group %}
+            {% with luser.primary_group.get_obj as primary_group %}
             {% if primary_group %}
             <tr>
                 <th>Primary Group:</th>
