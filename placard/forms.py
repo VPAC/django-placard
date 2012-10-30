@@ -96,8 +96,8 @@ class LDAPUserForm(LDAPForm):
         self.object = kwargs.pop('account', None)
         super(LDAPUserForm, self).__init__(*args, **kwargs)
 
-        all_groups = placard.models.group.objects.none()
         if getattr(self, 'primary_groups', None) is not None:
+            all_groups = placard.models.group.objects.none()
             for cn in self.primary_groups:
                 all_groups = all_groups | placard.models.group.objects.filter(cn=cn)
             self.fields['primary_group'] = forms.ChoiceField(choices=[('','None')]+[(x.gidNumber, x.cn) for x in all_groups], label="Primary Group")
