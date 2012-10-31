@@ -180,7 +180,6 @@ class AccountDetail(DetailView):
     def get_context_data(self, **kwargs):
         context = super(AccountDetail, self).get_context_data(**kwargs)
         context['form'] = placard.forms.AddGroupForm(account=self.object)
-        context['username'] = self.object.uid
         return context
 
     def get_object(self):
@@ -201,7 +200,6 @@ class AccountGeneric(FormView):
     def get_context_data(self, **kwargs):
         context = super(AccountGeneric, self).get_context_data(**kwargs)
         if 'username' in self.kwargs:
-            context['username'] = self.kwargs['username']
             context['luser'] = self.object
         return context
 
@@ -382,7 +380,6 @@ class GroupRemoveMember(GroupGeneric):
 
     def get_context_data(self, **kwargs):
         context = super(GroupRemoveMember, self).get_context_data(**kwargs)
-        context['username'] = self.kwargs['username']
         context['luser'] = self.account
         return context
 
