@@ -13,7 +13,7 @@
         {% if perms.auth.add_user %}
             <li><a href="{% url plac_user_add %}" class="addlink">Add User</a></li>
         {% endif %}
-        <li><a href={% url plac_user_list_pdf %}>PDF List</a></li>
+        <li><a href="{% url plac_user_list_pdf %}?{{ request.META.QUERY_STRING }}">Printable</a></li>
     </ul>
 </div>
 {% endblock %}
