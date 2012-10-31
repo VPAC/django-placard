@@ -305,6 +305,9 @@ class AccountDelete(AccountGeneric):
     form_class = placard.forms.DeleteAccountForm
     permissions = [ 'auth.delete_user' ]
 
+    def get_success_url(self):
+        return reverse("plac_user_list")
+
 
 class GroupList(ListView):
     model = placard.models.group

@@ -376,12 +376,8 @@ class DeleteAccountForm(LDAPForm):
         super(DeleteAccountForm, self).__init__(*args, **kwargs)
 
     def save(self, commit=True):
-        self.object.primary_group = placard.models.group.objects.get(cn="visitor")
-        self.object.secondary_groups.clear()
-        self.object.lock()
-        if commit:
-            self.object.save()
-        return self.object
+        self.object.delete()
+        return None
 
 
 class AddGroupForm(LDAPForm):
