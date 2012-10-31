@@ -22,7 +22,7 @@ import placard.reports as reports
 
 urlpatterns = patterns('',
     url(r'^$', views.AccountList.as_view(), name='plac_user_list'),
-    url(r'^pdf/$', reports.user_list_pdf, name='plac_user_list_pdf'),
+    url(r'^pdf/$', reports.PdfAccountList.as_view(), name='plac_user_list_pdf'),
     url(r'^add/$', views.AccountAdd.as_view(), name='plac_user_add'),
     url(r'^(?P<username>[-.\w]+)/$', views.AccountDetail.as_view(), name='plac_user_detail'),
     url(r'^(?P<username>[-.\w]+)/add/$', views.AccountAddGroup.as_view(), name='plac_user_add_group'),

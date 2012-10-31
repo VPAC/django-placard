@@ -25,76 +25,79 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.lib.pagesizes import A4, portrait
 from reportlab.lib import colors
 
-import placard.models
+import placard.views
 
 PAGE_WIDTH = portrait(A4)[0]    
 
-def user_list_pdf(request):
-    user_list = placard.models.account.objects.all()
+class PdfResponseMixin(placard.views.AccountList):
+    response_class = HttpResponse
 
-    if request.GET.has_key('group'):
-        try:
-            group = placard.models.group.objects.get(cn=request.GET['group'])
-            user_list = user_list.filter(tldap.Q(primary_group=group) | tldap.Q(secondary_groups=group))
-        except  placard.models.group.DoesNotExist:
-            pass
+    def render_to_response(self, context, **response_kwargs):
+        """
+        Returns a JSON response, transforming 'context' to make the payload.
+        """
+        response_kwargs['content_type'] = 'application/pdf'
+#        response_kwargs = ['Content-Disposition'] = 'attachment; filename= ' + self.fname
+        return self.response_class(
+            self.convert_context_to_pdf(context),
+            **response_kwargs
+        )
 
-    today = datetime.date.today()
-    response = HttpResponse(mimetype='application/pdf')
-    
-    def myFirstPage(canvas, doc):
-        # Header
-        canvas.saveState()
-        canvas.setFont("Helvetica", 8)
-        canvas.drawCentredString(PAGE_WIDTH/2, 30, "VPAC")
-        canvas.drawString(540, 30, "Page %d" % doc.page)
-        canvas.drawString(50, 30, defaultfilters.date(today, "j, F Y"))
-        canvas.restoreState()
+class PdfAccountList(PdfResponseMixin, placard.views.AccountList):
+#    fname = "phone_list.pdf"
 
-    def myLaterPages(canvas, doc):
-        canvas.saveState()
-        
-        # Footer
-        canvas.setFont('Times-Roman', 8)
-        canvas.drawCentredString(PAGE_WIDTH/2, 30, "VPAC")
-        canvas.drawString(540, 30, "Page %d" % doc.page)
-        canvas.drawString(50, 30, defaultfilters.date(today, "j, F Y"))
-        canvas.restoreState()
+    def convert_context_to_pdf(self, context):
+        user_list = context['user_list']
 
+        today = datetime.date.today()
 
-    fname = "phone_list.pdf"
-    response['Content-Disposition'] = 'attachment; filename= ' + fname
-    
+        def myFirstPage(canvas, doc):
+            # Header
+            canvas.saveState()
+            canvas.setFont("Helvetica", 8)
+            canvas.drawCentredString(PAGE_WIDTH/2, 30, "VPAC")
+            canvas.drawString(540, 30, "Page %d" % doc.page)
+            canvas.drawString(50, 30, defaultfilters.date(today, "j, F Y"))
+            canvas.restoreState()
 
-    data_dic = [[str(x.cn), str(getattr(x, 'telephoneNumber', '')), str(getattr(x, 'mobile', '')), str(getattr(x, 'mail', '')), str(getattr(x, 'l', ''))] for x in user_list ]
+        def myLaterPages(canvas, doc):
+            canvas.saveState()
 
-    data_list = list(data_dic)
-    
-    buffer = StringIO()
-    doc = SimpleDocTemplate(buffer)
-    doc.pagesize = portrait(A4)
-    doc.topMargin = 40
-    story = []
+            # Footer
+            canvas.setFont('Times-Roman', 8)
+            canvas.drawCentredString(PAGE_WIDTH/2, 30, "VPAC")
+            canvas.drawString(540, 30, "Page %d" % doc.page)
+            canvas.drawString(50, 30, defaultfilters.date(today, "j, F Y"))
+            canvas.restoreState()
 
-    table_style = TableStyle(
-        [('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
-         ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
-         ]
-    )
+        data_dic = [[str(x.cn), str(getattr(x, 'telephoneNumber', '')), str(getattr(x, 'mobile', '')), str(getattr(x, 'mail', '')), str(getattr(x, 'l', ''))] for x in user_list ]
 
-    # build the tables per unit
-    # table
-    item_list = [[ 'Name', 'Telephone', 'Mobile', 'Email', 'Location']]
-    item_list.extend(data_list)
-    t = Table(item_list)
-    t.hAlign = 'LEFT'
-    t.setStyle(table_style)
-    story.append(t)
-    doc.build(story, onFirstPage=myFirstPage, onLaterPages=myLaterPages)
-        
-    # Close the PDF object cleanly.
-    pdf = buffer.getvalue()
-    buffer.close()
-    # Get the value of the StringIO buffer and write it to the response.
-    response.write(pdf)
-    return response
+        data_list = list(data_dic)
+
+        buffer = StringIO()
+        doc = SimpleDocTemplate(buffer)
+        doc.pagesize = portrait(A4)
+        doc.topMargin = 40
+        story = []
+
+        table_style = TableStyle(
+            [('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+             ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+             ]
+        )
+
+        # build the tables per unit
+        # table
+        item_list = [[ 'Name', 'Telephone', 'Mobile', 'Email', 'Location']]
+        item_list.extend(data_list)
+        t = Table(item_list)
+        t.hAlign = 'LEFT'
+        t.setStyle(table_style)
+        story.append(t)
+        doc.build(story, onFirstPage=myFirstPage, onLaterPages=myLaterPages)
+
+        # Close the PDF object cleanly.
+        pdf = buffer.getvalue()
+        buffer.close()
+        # Get the value of the StringIO buffer and write it to the response.
+        return pdf
