@@ -93,11 +93,11 @@
             </tr>
             {% endif %}
             {% endwith %}
-            {% with luser.manager_of as manager_of %}
+            {% with luser.manager_of.all as manager_of %}
             {% if manager_of %}
             <tr>
             <td>Manager of</td><td>
-            {% for p in manager_of.all %}
+            {% for p in manager_of %}
             <span class="{% if p.is_locked %}locked{% endif %}"><a href="{% url plac_user_detail p.uid %}">{{ p }}</a></span>{% if not forloop.last %}, {% endif %}
             {% endfor %}
             </td></tr>
