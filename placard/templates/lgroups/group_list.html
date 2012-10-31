@@ -6,16 +6,23 @@
 &rsaquo; Groups
 {% endblock %}   
 
+{% block sidebar_extra %}
+{% if perms.auth.add_group %}
+<div class="module">
+    <h2>Group links</h2>
+    <ul>
+        {% if perms.auth.add_group %}
+            <li><a href="{% url plac_grp_add %}" class="addlink">Add Group</a></li>
+        {% endif %}
+    </ul>
+</div>
+{% endif %}
+{% endblock %}
+
 {% block content %}
 <div id="content-main">
     <div class="module">
-        <h2>Groups</h2>
-
-        <ul class="object-tools">
-            {% if perms.auth.add_group %}
-                <li><a href="{% url plac_grp_add %}" class="addlink">Add Group</a></li>
-            {% endif %}
-        </ul>
+        <h2>Group List</h2>
 
         <table cellspacing="0">
             <thead>

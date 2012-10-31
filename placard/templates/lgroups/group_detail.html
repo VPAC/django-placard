@@ -10,26 +10,30 @@
 {% block bread_crumbs_1 %}
 &rsaquo; <a href="../">Groups</a>
 &rsaquo; {{ group }}
-{% endblock %}   
+{% endblock %}
 
+{% block sidebar_extra %}
+{% if perms.auth.change_group or perms.auth.delete_group %}
+<div class="module">
+    <h2>Group links</h2>
+    <ul>
+        {% if perms.auth.change_group %}
+        <li><a href="{% url plac_grp_edit group.cn %}">Edit details</a></li>
+        <li><a href="{% url plac_grp_rename group.cn %}">Rename Group</a></li>
+        {% endif %}
+        {% if perms.auth.delete_group %}
+        <li><a href="verbose/">Verbose</a></li>
+        <li><a href="{% url plac_group_email group.cn %}">Sends members an Email</a></li>
+        {% endif %}
+    </ul>
+</div>
+{% endif %}
+{% endblock %}
 {% block content %}
 <div id="content-main">
 
     <div class="module">
         <h2>Group {{ group }} detail</h2>
-
-        <ul class="object-tools">
-            {% if perms.auth.change_user %}
-            <li><a href="{% url plac_grp_edit group.cn %}">Edit details</a></li>
-            {% endif %}
-            {% if perms.auth.change_group %}
-            <li><a href="{% url plac_grp_rename group.cn %}">Rename Group</a></li>
-            {% endif %}
-            {% if perms.auth.delete_group %}
-            <li><a href="verbose/">Verbose</a></li>
-            <li><a href="{% url plac_group_email group.cn %}">Sends members an Email</a></li>
-            {% endif %}
-        </ul>
 
         <h3>{{ group.cn }}</h3>
         <table>

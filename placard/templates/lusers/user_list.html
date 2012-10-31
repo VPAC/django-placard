@@ -6,6 +6,18 @@
  &rsaquo; Users
 {% endblock %}   
 
+{% block sidebar_extra %}
+<div class="module">
+    <h2>User links</h2>
+    <ul>
+        {% if perms.auth.add_user %}
+            <li><a href="{% url plac_user_add %}" class="addlink">Add User</a></li>
+        {% endif %}
+        <li><a href={% url plac_user_list_pdf %}>PDF List</a></li>
+    </ul>
+</div>
+{% endblock %}
+
 {% block content %}
 <div id="content-main">
     <div class="module filtered">
@@ -18,13 +30,6 @@
             <h2>Filter</h2>
             {{ filter_bar|safe }}
         </div>
-
-
-        <ul class="object-tools">
-            {% if perms.auth.add_group %}
-                <li><a href="{% url plac_user_add %}" class="addlink">Add User</a></li>
-            {% endif %}
-        </ul>
 
         <table cellspacing="0">
             <thead>

@@ -10,7 +10,32 @@
 {% block bread_crumbs_1 %}
  &rsaquo; <a href="../">Users</a>
  &rsaquo; {{ luser.uid }}
-{% endblock %}   
+{% endblock %}
+
+{% block sidebar_extra %}
+{% if perms.auth.change_user or perms.auth.hr_user or perms.auth.delete_user %}
+<div class="module">
+    <h2>User links</h2>
+    <ul>
+        {% if perms.auth.change_user or perms.auth.hr_user %}
+        <li><a href="{% url plac_user_edit luser.uid %}">Edit details</a></li>
+        {% endif %}
+        {% if perms.auth.change_user %}
+        <li><a href="{% url plac_change_password luser.uid %}">Change password</a></li>
+        {% if luser.is_locked %}
+        <li><a href="{% url plac_unlock_user luser.uid %}">Unlock</a></li>
+        {% else %}
+        <li><a href="{% url plac_lock_user luser.uid %}">Lock</a></li>
+        {% endif %}
+        {% endif %}
+        {% if perms.auth.delete_user %}
+        <li><a href="{% url plac_user_detail_verbose luser.uid %}">Verbose output</a></li>
+        {% endif %}
+    </ul>
+</div>
+{% endif %}
+{% endblock %}
+
 
 {% block content %}
 <div id="content-main">
@@ -18,23 +43,7 @@
     <div class="module {% if luser.is_locked %}locked{% endif %}">
         <h2>User {{ luser }} detail</h2>
 
-        <ul class="object-tools">
-            {% if perms.auth.change_user or perms.auth.hr_user %}
-            <li><a href="{% url plac_user_edit luser.uid %}">Edit details</a></li>
-            {% endif %}
-            {% if perms.auth.change_user %}
-            <li><a href="{% url plac_change_password luser.uid %}">Change password</a></li>
-            {% if luser.is_locked %}
-            <li><a href="{% url plac_unlock_user luser.uid %}">Unlock</a></li>
-            {% else %}
-            <li><a href="{% url plac_lock_user luser.uid %}">Lock</a></li>
-            {% endif %}
-            {% endif %}
-            {% if perms.auth.delete_user %}
-            <li><a href="{% url plac_user_detail_verbose luser.uid %}">Verbose output</a></li>
-            {% endif %}
-        </ul>
-
+        <h3>{{ luser.cn }}</h3>
         <table>
             {% if luser.is_locked %}
             <tr>

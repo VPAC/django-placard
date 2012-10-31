@@ -2,4 +2,29 @@
 
 {% block coltype %}colSM{% endblock %}
 
-{% block sidebar %}{% include "sidebar.html" %}{% endblock %}
+{% block sidebar %}
+<div id="content-related">
+  <div class="module">
+    <h2>Quick Search</h2>
+    <form id="changelist-search" action="{% url plac_search %}" method="post">
+      <div><!-- DIV needed for valid HTML -->
+        &nbsp;<input type="text" size="21" name="sitesearch" value="{{ siteterms }}" id="sitesearch" />
+        <input type="submit" value="Go" />
+      </div>
+    </form>
+  </div>
+  <div class="module">
+    {% load common %}
+    <h2>Quick links</h2>
+    <ul>
+      <li><a class="{% active request "$" %}" href="{% url plac_index %}">Home</a></li>
+      <li><a class="{% active request "users/" %}" href="{% url plac_user_list %}">Users</a></li>
+      <li><a class="{% active request "groups/" %}" href="{% url plac_grp_list %}">Groups</a></li>
+      {% if user.is_staff %}
+      <li><a href="{% url admin:index %}">Admin</a></h3></li>
+      {% endif %}
+    </ul>
+  </div>
+{% block sidebar_extra %}{% endblock %}
+</div>
+{% endblock %}

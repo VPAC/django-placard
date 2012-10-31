@@ -1,6 +1,6 @@
 /*  FILTER COLUMN  */
 .filtered { position:relative; }
-#changelist-filter { position:absolute; top:50px; right:10px; z-index:1000; width:160px; border-left:1px solid #ddd; background:#efefef; margin:0; }
+#changelist-filter { position:absolute; top:30px; right:10px; z-index:1000; width:160px; border-left:1px solid #ddd; background:#efefef; margin:0; }
 #changelist-filter h2 { font-size:11px; padding:2px 5px; border-bottom:1px solid #ddd; }
 #changelist-filter h3 { font-size:12px; margin-bottom:0; }
 #changelist-filter ul { padding-left:0;margin-left:10px; }
@@ -818,6 +818,21 @@ table#change-history tbody th {
 }
 
 /* SIDEBAR */
+
+#content-related input[type="text"] {
+    width:15em;
+}
+
+#content-related .active {
+    color: #666
+}
+
+#content-related li {
+    font-size:12px;
+    line-height:normal;
+    margin-top: 9px;
+    margin-bottom: 6px;
+}
 
 #content-related h3 {
     font-size: 12px;
