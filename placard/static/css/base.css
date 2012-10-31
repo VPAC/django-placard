@@ -837,7 +837,8 @@ table#change-history tbody th {
 /* OTHER */
 
 .locked {
-    color: #f00;
+    color: #AAA;
+    text-decoration:line-through;
 }
 
 .module table p {

@@ -15,11 +15,7 @@
 {% block content %}
 <div id="content-main">
 
-    {% if luser.is_locked %}
-    <div class="module locked">
-    {% else %}
-    <div class="module">
-    {% endif %}
+    <div class="module {% if luser.is_locked %}locked{% endif %}">
         <h2>User {{ luser }} detail</h2>
 
         <ul class="object-tools">
