@@ -89,7 +89,7 @@
             {% with luser.managed_by.get_obj as manager %}
             {% if manager %}
             <tr>
-            <td>Manager</td><td><a href="{% url plac_user_detail manager.uid %}">{{ manager }}</a></td>
+            <td>Manager</td><td class="{% if manager.is_locked %}locked{% endif %}"><a href="{% url plac_user_detail manager.uid %}">{{ manager }}</a></td>
             </tr>
             {% endif %}
             {% endwith %}
@@ -97,7 +97,7 @@
             {% if manager_of %}
             {% for p in manager_of.all %}
             <tr>
-            <td>Manager of</td><td><a href="{% url plac_user_detail p.uid %}">{{ p }}</a></td>
+            <td>Manager of</td><td class="{% if p.is_locked %}locked{% endif %}"><a href="{% url plac_user_detail p.uid %}">{{ p }}</a></td>
             </tr>
             {% endfor %}
             {% endif %}
