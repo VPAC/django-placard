@@ -27,15 +27,15 @@
         <table cellspacing="0">
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Name</th>
+                    <th>Description</th>
                 </tr>
             </thead>
             <tbody>
                 {% for g in group_list|dictsort:"cn" %}
                     <tr class="{% cycle row1,row2  as rowcolours %}">
                         <td><a href="{% url plac_grp_detail g.cn %}">{{ g.cn }}</a></td>
-                        <td>{{ g }}</td>
+                        <td>{{ g.description }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
