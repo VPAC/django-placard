@@ -30,18 +30,14 @@ import placard.models
 PAGE_WIDTH = portrait(A4)[0]    
 
 def user_list_pdf(request):
+    user_list = placard.models.account.objects.all()
+
     if request.GET.has_key('group'):
         try:
-            group = placard.models.group.objects.get(gidNumber=request.GET['group'])
+            group = placard.models.group.objects.get(cn=request.GET['group'])
+            user_list = user_list.filter(tldap.Q(primary_group=group) | tldap.Q(secondary_groups=group))
         except  placard.models.group.DoesNotExist:
-            group = None
-    else:
-        group = None
-
-    if group is not None:
-        user_list = group.secondary_accounts.all()
-    else:
-        user_list = placard.models.account.objects.all()
+            pass
 
     today = datetime.date.today()
     response = HttpResponse(mimetype='application/pdf')
