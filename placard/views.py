@@ -60,32 +60,35 @@ def account_photo(request, username):
         return HttpResponseNotFound()
 
 
-def check_permissions(self, request):
-    if len(self.permissions) != 0 or self.login_required:
-        if not request.user.is_authenticated():
-            from django.contrib.auth.views import redirect_to_login
-            return redirect_to_login(request.build_absolute_uri())
-
-    if len(self.permissions) == 0:
-        return None
-
-    ok = False
-    for p in self.permissions:
-        if request.user.has_perm(p):
-            ok = True
-
-    if not ok:
-        return HttpResponseForbidden()
-
-    return None
-
-
-class ListView(django.views.generic.ListView):
+class PermissionMixin(object):
     permissions = []
     login_required = False
 
     def check_permissions(self, request, kwargs):
-        return check_permissions(self, request)
+        if len(self.permissions) != 0 or self.login_required:
+            if not request.user.is_authenticated():
+                from django.contrib.auth.views import redirect_to_login
+                return redirect_to_login(request.build_absolute_uri())
+
+        if len(self.permissions) == 0:
+            return None
+
+        ok = False
+        for p in self.permissions:
+            if request.user.has_perm(p):
+                ok = True
+
+        if not ok:
+            return HttpResponseForbidden()
+
+        return None
+
+
+class ListView(PermissionMixin, django.views.generic.ListView):
+    def get_context_data(self, **kwargs):
+        context = super(ListView, self).get_context_data(**kwargs)
+        context['request'] = self.request
+        return context
 
     def dispatch(self, *args, **kwargs):
         r = self.check_permissions(args[0], kwargs)
@@ -93,18 +96,12 @@ class ListView(django.views.generic.ListView):
             return r
         return super(ListView, self).dispatch(*args, **kwargs)
 
+
+class DetailView(PermissionMixin, django.views.generic.DetailView):
     def get_context_data(self, **kwargs):
-        context = super(ListView, self).get_context_data(**kwargs)
+        context = super(DetailView, self).get_context_data(**kwargs)
         context['request'] = self.request
         return context
-
-
-class DetailView(django.views.generic.DetailView):
-    permissions = []
-    login_required = False
-
-    def check_permissions(self, request, kwargs):
-        return check_permissions(self, request)
 
     def dispatch(self, *args, **kwargs):
         r = self.check_permissions(args[0], kwargs)
@@ -112,29 +109,18 @@ class DetailView(django.views.generic.DetailView):
             return r
         return super(DetailView, self).dispatch(*args, **kwargs)
 
+
+class FormView(PermissionMixin, django.views.generic.FormView):
     def get_context_data(self, **kwargs):
-        context = super(DetailView, self).get_context_data(**kwargs)
+        context = super(FormView, self).get_context_data(**kwargs)
         context['request'] = self.request
         return context
-
-
-class FormView(django.views.generic.FormView):
-    permissions = []
-    login_required = False
-
-    def check_permissions(self, request, kwargs):
-        return check_permissions(self, request)
 
     def dispatch(self, *args, **kwargs):
         r = self.check_permissions(args[0], kwargs)
         if r is not None:
             return r
         return super(FormView, self).dispatch(*args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super(FormView, self).get_context_data(**kwargs)
-        context['request'] = self.request
-        return context
 
 
 class AccountList(ListView):
