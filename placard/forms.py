@@ -290,8 +290,8 @@ class LDAPGroupForm(LDAPForm):
     """ Add/modify a group form"""
 
     model = placard.models.group
-    displayName = fields.CharField('Display name', required=False)
-    description = fields.CharField('Description', required=False)
+    displayName = fields.CharField('Display name', required=False, widget=forms.TextInput(attrs={ 'size':60 }))
+    description = fields.CharField('Description', required=False, widget=forms.TextInput(attrs={ 'size':60 }))
     cn = fields.CharField(label='CN')
 
     def __init__(self, *args, **kwargs):
