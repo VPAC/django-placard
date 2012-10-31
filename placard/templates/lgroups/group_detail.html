@@ -60,7 +60,7 @@
                 <th>Primary Users</th>
             </tr>
             {% for m in group.primary_accounts.all %}
-                <tr class="{% cycle row1,row2 %}">
+                <tr class="{% cycle row1,row2 %} {% if m.is_locked %}locked{% endif %}">
                     <td><a href="{% url plac_user_detail m.uid %}" >{{ m }}</a></td>
                 </tr>
             {% endfor %}
@@ -69,7 +69,7 @@
             </tr>
             {% for m in group.secondary_accounts.all %}
                 <tr class="{% cycle row1,row2 %}">
-                    <td><a href="{% url plac_user_detail m.uid %}" >{{ m }}</a></td>
+                    <td class="{% if m.is_locked %}locked{% endif %}"><a href="{% url plac_user_detail m.uid %}" >{{ m }}</a></td>
                     {% if perms.auth.change_group %}
                     <td><a href="{% url plac_grp_rm_member group.cn m.uid %}" class="deletelink">Remove</a></td>
                     {% endif %}
