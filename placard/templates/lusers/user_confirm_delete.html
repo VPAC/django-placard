@@ -1,24 +1,15 @@
-{% extends "base_site.html" %}
+{% extends "forms.html" %}
+
+{% block title %}{{ luser }} delete | Users{% endblock %}
 
 {% block content %}
 
-<h1>Are you sure?</h1> 
+<form method="post" action="." class="module">{% csrf_token %}
+    <h2>Delete {{ luser }}</h2>
 
-<p>This operation will:</p>
-
-<ul>
-<li>Set the users primary group to visitors.</li>
-<li>Remove the users secondary groups.</li>
-<li>Lock the user's account.</li>
-<li>Not change password or shell.</li>
-<li>Not actually delete the user.</li>
-</ul>
-
-<p>Are you sure you want to delete {{ luser.uid }}'s user account? </p>
-<form method="post" action=".">{% csrf_token %}
-  <div>
-    <input type="hidden" name="post" value="yes" />
-    <input type="submit" value="Yes, I'm sure" />
-  </div>
+    <p>Are you sure you want to delete {{ luser }}'s user account? </p>
+    <div class="submit-row">
+        <input type="submit" value="Yes, I'm sure" />
+    </div>
 </form>
 {% endblock %}

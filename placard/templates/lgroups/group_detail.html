@@ -1,6 +1,6 @@
 {% extends "main.html" %}
 
-{% block title %}Groups{% endblock %}
+{% block title %}{{ group }} detail | Groups{% endblock %}
 
 {% load admin_static %}
 {% block extrastyle %}
@@ -16,7 +16,7 @@
 <div id="content-main">
 
     <div class="module">
-        <h2>Groups</h2>
+        <h2>Group {{ group }} detail</h2>
 
         <ul class="object-tools">
             {% if perms.auth.change_user %}

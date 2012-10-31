@@ -1,6 +1,6 @@
 {% extends "main.html" %}
 
-{% block title %}Users{% endblock %}
+{% block title %}{{ luser }} groups | Users{% endblock %}
 
 {% block content_title %}{% endblock %}
 
@@ -11,21 +11,26 @@
 {% endblock %}   
 
 {% block content %}
-  <div class="module">
-    <h2>Groups</h2>
-    <table>
-      <tr>
-	<td>Primary Group:</td><td><a href="{% url plac_grp_detail luser.primary_group.cn %}">{{ luser.primary_group }}</a></td>
-      </tr>
-      {% for g in luser.secondary_groups.all %}
-      <tr>
-	<td>Secondary Groups:</td><td><a href="{% url plac_grp_detail g.cn %}">{{ g }}</a></td>
-	{% if perms.auth.change_user %}
-	<td><a href="{% url plac_grp_rm_member g.cn,luser.uid %}" class="deletelink">remove</a></td>		
-	{% endif %}
-      </tr>			
-      {% endfor %}
-    </table>
-  </div>
-  
+<div id="content-main">
+    <div class="module">
+        <h2>Groups for {{ luser }}</h2>
+        <table>
+            {% with luser.primary_group.get_obj as primary_group %}
+            {% if primary_group %}
+            <tr>
+                <td>Primary Group:</td><td><a href="{% url plac_grp_detail primary_group.cn %}">{{ primary_group }}</a></td>
+            </tr>
+            {% endif %}
+            {% endwith %}
+            {% for g in luser.secondary_groups.all %}
+                <tr>
+                    <td>Secondary Groups:</td><td><a href="{% url plac_grp_detail g.cn %}">{{ g }}</a></td>
+                    {% if perms.auth.change_user %}
+                        <td><a href="{% url plac_grp_rm_member g.cn,luser.uid %}" class="deletelink">remove</a></td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
 {% endblock %}

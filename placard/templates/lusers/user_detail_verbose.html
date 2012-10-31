@@ -1,6 +1,6 @@
 {% extends "main.html" %}
 
-{% block title %}Users{% endblock %}
+{% block title %}{{ luser }} verbose | Users{% endblock %}
 
 {% block content_title %}{% endblock %}
 
@@ -14,7 +14,7 @@
 <div id="content-main">
 
     <div class="module">
-        <h2> Users - verbose </h2>
+        <h2>User {{ luser }} verbose</h2>
         <h3>{{ luser.dn }}</h3>
         <table>
             {% for i,j in luser.get_fields %}

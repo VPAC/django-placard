@@ -1,6 +1,6 @@
 {% extends "main.html" %}
 
-{% block title %}Groups{% endblock %}
+{% block title %}{{ group }} verbose | Groups{% endblock %}
 
 {% block bread_crumbs_1 %}
  &rsaquo; <a href="../../">Groups
@@ -12,7 +12,7 @@
 <div id="content-main">
 
     <div class="module">
-        <h2> Groups - verbose </h2>
+        <h2>Group {{ group }} verbose </h2>
         <h3>{{ group.dn }}</h3>
         <table>
             {% for i,j in group.get_fields %}

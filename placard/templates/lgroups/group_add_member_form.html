@@ -1,6 +1,6 @@
 {% extends "forms.html" %}
 
-{% block title %}Groups{% endblock %}
+{% block title %}{{ group }} add user | Groups{% endblock %}
 
 {% block bread_crumbs_1 %}
  &rsaquo; <a href="{% url plac_grp_list %}">Groups</a>
@@ -14,7 +14,7 @@
 {% endif %}
 
 <form method="post" action="." class="module">{% csrf_token %}
-    <h2> Groups - Add member </h2>
+    <h2>Add user {{ luser }} to {{ group }}</h2>
     <fieldset class="aligned ()">
         {% form_as_div form %}
     </fieldset>

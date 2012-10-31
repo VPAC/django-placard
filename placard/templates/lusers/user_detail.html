@@ -1,6 +1,6 @@
 {% extends "main.html" %}
 
-{% block title %}Users{% endblock %}
+{% block title %}{{ luser }} detail | Users{% endblock %}
 
 {% load admin_static %}
 {% block extrastyle %}
@@ -20,7 +20,7 @@
     {% else %}
     <div class="module">
     {% endif %}
-        <h2>Users</h2>
+        <h2>User {{ luser }} detail</h2>
 
         <ul class="object-tools">
             {% if perms.auth.change_user or perms.auth.hr_user %}
@@ -39,7 +39,6 @@
             {% endif %}
         </ul>
 
-        <h3>{{ luser.cn }}</h3>
         <table>
             {% if luser.is_locked %}
             <tr>

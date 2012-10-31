@@ -1,6 +1,6 @@
 {% extends "forms.html" %}
 
-{% block title %}Groups{% endblock %}
+{% block title %}{{ group }} rename | Groups{% endblock %}
 
 {% block bread_crumbs_1 %}
  &rsaquo; <a href="{% url plac_grp_list %}">LDAP Groups</a>
@@ -9,7 +9,7 @@
 
 {% block content %}
 <form method="post" action="." class="module">{% csrf_token %}
-  <h2>Groups - Rename</h2>
+  <h2>Rename group {{ group }}</h2>
   <div>
     {% load forms %}
     {% if form.errors  or form.non_field_errors %}

@@ -1,14 +1,15 @@
-{% extends "base_site.html" %}
+{% extends "forms.html" %}
+
+{% block title %}{{ luser }} unlock | Users{% endblock %}
 
 {% block content %}
 
-<h1>Are you sure?</h1> 
+<form method="post" action="." class="module">{% csrf_token %}
+    <h2>Unlock {{ luser }}</h2>
 
-<p>Are you sure you want to unlock {{ luser.uid }}'s user account? </p>
-<form method="post" action=".">{% csrf_token %}
-  <div>
-    <input type="hidden" name="post" value="yes" />
-    <input type="submit" value="Yes, I'm sure" />
-  </div>
+    <p>Are you sure you want to unlock {{ luser }}'s user account? </p>
+    <div class="submit-row">
+        <input type="submit" value="Yes, I'm sure" />
+    </div>
 </form>
 {% endblock %}
