@@ -834,7 +834,14 @@ table#change-history tbody th {
     color: #666;
 }
 
+/* OTHER */
+
 .locked {
     color: #f00;
+}
+
+.module table p {
+    margin: 0;
+    padding: 0;
 }
 
