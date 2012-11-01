@@ -2,7 +2,7 @@
 
 {% block title %}{% if group %}Edit {{ group }}{% else %}Create group{% endif %} | Groups{% endblock %}
 
-{% block breadcrumbs %}
+{% block bread_crumbs_1 %}
  &rsaquo; <a href="{% url plac_grp_list %}">Groups</a>
  &rsaquo; {% if group %}Edit {{ group }}{% else %}Create group{% endif %}
 {% endblock %}

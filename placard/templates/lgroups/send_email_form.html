@@ -2,7 +2,7 @@
 
 {% block title %}{{ group }} email | Groups{% endblock %}
 
-{% block breadcrumbs %}
+{% block bread_crumbs_1 %}
 &rsaquo; <a href="{% url plac_grp_list %}">LDAP Groups</a>
 &rsaquo; <a href="{% url plac_grp_detail group.gidNumber %}">{{ group }}</a>
 &rsaquo; Send Email

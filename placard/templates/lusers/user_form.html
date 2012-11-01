@@ -2,7 +2,7 @@
 
 {% block title %}{% if luser %}Edit {{ luser }}{% else %}Create user{% endif %} | Groups{% endblock %}
 
-{% block breadcrumbs %}
+{% block bread_crumbs_1 %}
  &rsaquo; <a href="{% url plac_user_list %}">Users</a>
  &rsaquo; {% if luser %}Edit {{ luser }}{% else %}Create User{% endif %} User
 {% endblock %}
