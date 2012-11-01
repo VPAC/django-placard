@@ -25,6 +25,12 @@
       {% endif %}
     </ul>
   </div>
-{% block sidebar_extra %}{% endblock %}
+  {% block sidebar_extra %}
+  <div class="module">
+    <h2>Object links</h2>
+    {% block objecttools %}
+    {% endblock %}
+  </div>
+  {% endblock %}
 </div>
 {% endblock %}
