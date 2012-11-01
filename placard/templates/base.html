@@ -40,13 +40,11 @@
         {% block nav-global %}{% endblock %}
     </div>
     <!-- END Header -->
-    {% block breadcrumbs %}
     <div class="breadcrumbs">
     <a href="{{ base_url|default:"/" }}">Home</a>
-    {% block bread_crumbs_1 %}{% endblock %}
+    {% block breadcrumbs %}{% endblock %}
     {% if title %} &rsaquo; {{ title }}{% endif %}
     </div>
-    {% endblock %}
     {% endif %}
 
     {% block messages %}
