@@ -1,12 +1,18 @@
 {% extends "main.html" %}
 
+
 {% block title %}Groups{% endblock %}
 
-{% block bread_crumbs_1 %}
-&rsaquo; Groups
-{% endblock %}   
 
-{% block sidebar_extra %}
+{% block breadcrumbs %}
+<div id="breadcrumbs">
+<a href='{{ base_url|default:"/" }}'>Home</a>
+&rsaquo; Groups
+</div>
+{% endblock %}
+
+
+{% block object-tools %}
 {% if perms.auth.add_group %}
 <div class="module">
     <h2>Group links</h2>
@@ -18,6 +24,7 @@
 </div>
 {% endif %}
 {% endblock %}
+
 
 {% block content %}
 <div id="content-main">

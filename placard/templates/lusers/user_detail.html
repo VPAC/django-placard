@@ -1,18 +1,25 @@
 {% extends "main.html" %}
 
+
 {% block title %}{{ luser }} detail | Users{% endblock %}
+
 
 {% load admin_static %}
 {% block extrastyle %}
 <link rel="stylesheet" type="text/css" href="{% static "css/forms.css" %}" />
 {% endblock %}
 
-{% block bread_crumbs_1 %}
- &rsaquo; <a href="../">Users</a>
- &rsaquo; {{ luser.uid }}
+
+{% block breadcrumbs %}
+<div id="breadcrumbs">
+<a href='{{ base_url|default:"/" }}'>Home</a>
+ &rsaquo; <a href="{% url plac_user_list %}">Users</a>
+ &rsaquo; {{ luser }} detail
+</div>
 {% endblock %}
 
-{% block sidebar_extra %}
+
+{% block object-tools %}
 {% if perms.auth.change_user or perms.auth.hr_user or perms.auth.delete_user %}
 <div class="module">
     <h2>User links</h2>

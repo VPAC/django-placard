@@ -1,12 +1,18 @@
 {% extends "main.html" %}
 
+
 {% block title %}{{ group }} verbose | Groups{% endblock %}
 
-{% block bread_crumbs_1 %}
- &rsaquo; <a href="../../">Groups
- &rsaquo; <a href="../">{{ group }}</a>
+
+{% block breadcrumbs %}
+<div id="breadcrumbs">
+<a href='{{ base_url|default:"/" }}'>Home</a>
+ &rsaquo; <a href="{% url plac_grp_list %}">Groups</a>
+ &rsaquo; {{ group }}
  &rsaquo; Verbose
-{% endblock %}   
+</div>
+{% endblock %}
+
 
 {% block content %}
 <div id="content-main">

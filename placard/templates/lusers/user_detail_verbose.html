@@ -1,14 +1,17 @@
 {% extends "main.html" %}
 
+
 {% block title %}{{ luser }} verbose | Users{% endblock %}
 
-{% block content_title %}{% endblock %}
 
-{% block bread_crumbs_1 %}
- &rsaquo; <a href="../../">Users
- &rsaquo; <a href="../">{{ luser.uid }}</a>
- &rsaquo; Verbose
-{% endblock %}   
+{% block breadcrumbs %}
+<div id="breadcrumbs">
+<a href='{{ base_url|default:"/" }}'>Home</a>
+ &rsaquo; <a href="{% url plac_user_list %}">Users</a>
+ &rsaquo; {{ luser }} verbose
+</div>
+{% endblock %}
+
 
 {% block content %}
 <div id="content-main">

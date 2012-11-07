@@ -1,14 +1,18 @@
 {% extends "main.html" %}
 
+
 {% block title %}{{ luser }} groups | Users{% endblock %}
 
-{% block content_title %}{% endblock %}
 
-{% block bread_crumbs_1 %}
- &rsaquo; <a href="../../">Users</a>
- &rsaquo; <a href="../">{{ luser.uid }}</a>
+{% block breadcrumbs %}
+<div id="breadcrumbs">
+<a href='{{ base_url|default:"/" }}'>Home</a>
+ &rsaquo; <a href="{% url plac_user_list %}">Users</a>
+ &rsaquo; <a href="{% url plac_user_detail luser.uid %}">{{ luser }}</a>
  &rsaquo; Groups
-{% endblock %}   
+</div>
+{% endblock %}
+
 
 {% block content %}
 <div id="content-main">

@@ -1,11 +1,17 @@
 {% extends "forms.html" %}
 
+
 {% block title %}{{ group }} add user | Groups{% endblock %}
 
-{% block bread_crumbs_1 %}
+
+{% block breadcrumbs %}
+<div id="breadcrumbs">
+<a href='{{ base_url|default:"/" }}'>Home</a>
  &rsaquo; <a href="{% url plac_grp_list %}">Groups</a>
  &rsaquo; Add Group Member
-{% endblock %}   
+</div>
+{% endblock %}
+
 
 {% block content %}
 {% load forms %}

@@ -1,11 +1,17 @@
 {% extends "forms.html" %}
 
+
 {% block title %}{% if group %}Edit {{ group }}{% else %}Create group{% endif %} | Groups{% endblock %}
 
-{% block bread_crumbs_1 %}
+
+{% block breadcrumbs %}
+<div id="breadcrumbs">
+<a href='{{ base_url|default:"/" }}'>Home</a>
  &rsaquo; <a href="{% url plac_grp_list %}">Groups</a>
  &rsaquo; {% if group %}Edit {{ group }}{% else %}Create group{% endif %}
+</div>
 {% endblock %}
+
 
 {% block content %}
 {% load forms %}

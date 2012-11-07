@@ -1,19 +1,25 @@
 {% extends "forms.html" %}
 
+
 {% block title %}{{ group }} email | Groups{% endblock %}
 
-{% block bread_crumbs_1 %}
-&rsaquo; <a href="{% url plac_grp_list %}">LDAP Groups</a>
-&rsaquo; <a href="{% url plac_grp_detail group.gidNumber %}">{{ group }}</a>
-&rsaquo; Send Email
-{% endblock %}   
 
+{% block breadcrumbs %}
+<div id="breadcrumbs">
+<a href='{{ base_url|default:"/" }}'>Home</a>
+ &rsaquo; <a href="{% url plac_grp_list %}">Groups</a>
+ &rsaquo; <a href="{% url plac_grp_detail group.cn %}">{{ group }}</a>
+ &rsaquo; Send Email
+</div>
+{% endblock %}
+
+
+{% block content %}
 {% load forms %}
 {% if form.errors  or form.non_field_errors %}
     <p class="errornote">Please correct the error{{ form.errors|pluralize }} below.</p>
 {% endif %}
 
-{% block content %}
 <form method="post" action="." class="module">{% csrf_token %}
     <h2>Send Email to {{ group }}</h2>
     <div>

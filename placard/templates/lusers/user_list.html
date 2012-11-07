@@ -1,12 +1,18 @@
 {% extends "main.html" %}
 
+
 {% block title %}List | Users{% endblock %}
 
-{% block bread_crumbs_1 %}
- &rsaquo; Users
-{% endblock %}   
 
-{% block sidebar_extra %}
+{% block breadcrumbs %}
+<div id="breadcrumbs">
+<a href='{{ base_url|default:"/" }}'>Home</a>
+ &rsaquo; Users
+</div>
+{% endblock %}
+
+
+{% block object-tools %}
 <div class="module">
     <h2>User links</h2>
     <ul>
@@ -17,6 +23,7 @@
     </ul>
 </div>
 {% endblock %}
+
 
 {% block content %}
 <div id="content-main">

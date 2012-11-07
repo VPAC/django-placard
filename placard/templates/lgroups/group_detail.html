@@ -1,18 +1,25 @@
 {% extends "main.html" %}
 
+
 {% block title %}{{ group }} detail | Groups{% endblock %}
+
 
 {% load admin_static %}
 {% block extrastyle %}
 <link rel="stylesheet" type="text/css" href="{% static "css/forms.css" %}" />
 {% endblock %}
 
-{% block bread_crumbs_1 %}
-&rsaquo; <a href="../">Groups</a>
-&rsaquo; {{ group }}
+
+{% block breadcrumbs %}
+<div id="breadcrumbs">
+<a href='{{ base_url|default:"/" }}'>Home</a>
+ &rsaquo; <a href="{% url plac_grp_list %}">Groups</a>
+ &rsaquo; {{ group }}
+</div>
 {% endblock %}
 
-{% block sidebar_extra %}
+
+{% block object-tools %}
 {% if perms.auth.change_group or perms.auth.delete_group %}
 <div class="module">
     <h2>Group links</h2>
@@ -29,6 +36,8 @@
 </div>
 {% endif %}
 {% endblock %}
+
+
 {% block content %}
 <div id="content-main">
 

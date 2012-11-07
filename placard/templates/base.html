@@ -42,8 +42,7 @@
     <!-- END Header -->
     {% block breadcrumbs %}
     <div class="breadcrumbs">
-    <a href="{{ base_url|default:"/" }}">Home</a>
-    {% block bread_crumbs_1 %}{% endblock %}
+    <a href="{{ base_url|default:"/" }}">{% trans 'Home' %}</a>
     {% if title %} &rsaquo; {{ title }}{% endif %}
     </div>
     {% endblock %}

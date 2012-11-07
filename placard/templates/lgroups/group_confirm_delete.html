@@ -1,9 +1,19 @@
 {% extends "forms.html" %}
 
-{% block title %}{{ luser }} delete | Users{% endblock %}
+
+{% block title %}{{ group }} delete | Groups{% endblock %}
+
+
+{% block breadcrumbs %}
+<div id="breadcrumbs">
+<a href='{{ base_url|default:"/" }}'>Home</a>
+ &rsaquo; <a href="{% url plac_grp_list %}">Groups</a>
+ &rsaquo; Delete Group
+</div>
+{% endblock %}
+
 
 {% block content %}
-
 <form method="post" action=".">{% csrf_token %}
     <h2>Delete {{ group }}</h2>
 

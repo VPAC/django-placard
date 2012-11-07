@@ -1,11 +1,17 @@
 {% extends "forms.html" %}
 
+
 {% block title %}{% if luser %}Edit {{ luser }}{% else %}Create user{% endif %} | Groups{% endblock %}
 
-{% block bread_crumbs_1 %}
+
+{% block breadcrumbs %}
+<div id="breadcrumbs">
+<a href='{{ base_url|default:"/" }}'>Home</a>
  &rsaquo; <a href="{% url plac_user_list %}">Users</a>
  &rsaquo; {% if luser %}Edit {{ luser }}{% else %}Create User{% endif %} User
+</div>
 {% endblock %}
+
 
 {% block content %}
 {% load forms %}
