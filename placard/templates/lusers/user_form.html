@@ -5,7 +5,7 @@
 
 
 {% block breadcrumbs %}
-<div id="breadcrumbs">
+<div class="breadcrumbs">
 <a href='{{ base_url|default:"/" }}'>Home</a>
  &rsaquo; <a href="{% url plac_user_list %}">Users</a>
  &rsaquo; {% if luser %}Edit {{ luser }}{% else %}Create User{% endif %} User
