@@ -447,7 +447,7 @@ class RenameGroupForm(LDAPForm):
 
     def save(self, commit=True):
         cn = self.cleaned_data['cn']
-        placard.signals.group_rename.send(self.object, new_cn=cn)
+        placard.signals.group_rename.send(self.object, user=self.user, new_pk=cn)
         self.object.rename(cn=cn)
         return self.object
 
@@ -464,7 +464,7 @@ class EmailForm(LDAPForm):
         return self.cleaned_data['subject'], self.cleaned_data['body']
 
     def save(self, commit=True):
-        placard.signals.group_email.send(self.object, subject=self.cleaned_data['subject'], body=self.cleaned_data['body'])
+        placard.signals.group_email.send(self.object, user=self.user, subject=self.cleaned_data['subject'], body=self.cleaned_data['body'])
         group = self.object
 
         def list_all_people():
