@@ -289,7 +289,7 @@ class LDAPAdminPasswordForm(LDAPForm):
     def save(self):
         placard.signals.account_password_change.send(self.object, user=self.user)
         data = self.cleaned_data
-        self.object.change_password(data['new1'], django.conf.settings.LDAP_PASSWD_SCHEME)
+        self.object.change_password(data['new1'])
         self.object.save()
         return self.object
 

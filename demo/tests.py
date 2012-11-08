@@ -120,13 +120,13 @@ class PasswordTests(TestCase):
 
     def test_api(self):
         u = self.account.objects.get(uid='testuser2')
-        u.change_password('aq12ws', settings.LDAP_PASSWD_SCHEME)
+        u.change_password('aq12ws')
         u.save()
 
         self.failUnlessEqual(u.check_password('aq12ws'), True)
 
         u = self.account.objects.get(uid='testuser3')
-        u.change_password('qwerty', settings.LDAP_PASSWD_SCHEME)
+        u.change_password('qwerty')
         u.save()
 
         self.failUnlessEqual(u.check_password('qwerty'), True)
@@ -146,7 +146,7 @@ class PasswordTests(TestCase):
 
     def test_user_view(self):
         u = self.account.objects.get(uid='testuser2')
-        u.change_password('aq12ws', settings.LDAP_PASSWD_SCHEME)
+        u.change_password('aq12ws')
         u.save()
 
         luser = self.account.objects.get(uid='testuser2')
