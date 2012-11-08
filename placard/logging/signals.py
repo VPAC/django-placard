@@ -76,10 +76,10 @@ def group_delete(sender, user, **kwargs):
     group = sender
     log(user, group, "D", u"Deleted group" )
 
-def group_rename(sender, user, new_pk, **kwargs):
+def group_rename(sender, user, old_dn, old_pk, **kwargs):
     group = sender
-    log(user, group, "C", u"Renamed group from '%s' to '%s'" % (group.pk, new_pk) )
-    LogEntry.objects.filter(object_type="group", object_pk=group.pk).update(object_pk=new_pk)
+    LogEntry.objects.filter(object_dn=old_dn).update(object_dn=group.dn, object_pk=group.pk)
+    log(user, group, "C", u"Renamed group from '%s' to '%s'" % (old_pk, group.pk) )
 
 def group_email(sender, user, subject, body, **kwargs):
     group = sender

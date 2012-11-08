@@ -447,8 +447,10 @@ class RenameGroupForm(LDAPForm):
 
     def save(self, commit=True):
         cn = self.cleaned_data['cn']
-        placard.signals.group_rename.send(self.object, user=self.user, new_pk=cn)
+        old_dn = self.object.dn
+        old_pk = self.object.cn
         self.object.rename(cn=cn)
+        placard.signals.group_rename.send(self.object, user=self.user, old_dn=old_dn, old_pk=old_pk)
         return self.object
 
 

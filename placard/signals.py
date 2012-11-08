@@ -31,6 +31,6 @@ group_edit = django.dispatch.Signal(providing_args=['user', 'data'])
 group_add_member = django.dispatch.Signal(providing_args=['user', 'account'])
 group_remove_member = django.dispatch.Signal(providing_args=['user', 'account'])
 group_delete = django.dispatch.Signal(providing_args=['user'])
-group_rename = django.dispatch.Signal(providing_args=['user', 'new_pk'])
+group_rename = django.dispatch.Signal(providing_args=['user', 'old_dn', 'old_pk'])
 group_email = django.dispatch.Signal(providing_args=['user', 'subject', 'body'])
 
