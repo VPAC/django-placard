@@ -18,6 +18,8 @@
 import placard.views
 import placard.logging.models
 
+from django.shortcuts import get_object_or_404
+
 class LogView(placard.views.ListView):
     model = placard.logging.models.LogEntry
     template_name = "placard_log_list.html"
@@ -36,11 +38,11 @@ class LogView(placard.views.ListView):
         qs = self.model.objects.all()
 
         if self.kwargs.has_key('username'):
-            username = self.kwargs['username']
-            qs = qs.filter(object_pk=username, object_type="account")
+            user = get_object_or_404(placard.models.account, uid=self.kwargs['username'])
+            qs = qs.filter(object_dn = user.dn)
         elif self.kwargs.has_key('group'):
-            group = self.kwargs['group']
-            qs = qs.filter(object_pk=group, object_type="group")
+            group = get_object_or_404(placard.models.group, uid=self.kwargs['group'])
+            qs = qs.filter(object_dn = group.dn)
         elif self.kwargs.has_key('user'):
             user = self.kwargs['user']
             qs = qs.filter(user__username=user)
