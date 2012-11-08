@@ -26,7 +26,7 @@ class LogView(placard.views.ListView):
     def check_permissions(self, request, kwargs):
         if kwargs.has_key('username'):
             self.permissions = [ 'auth.change_user' ]
-        elif self.kwargs.has_key('group'):
+        elif kwargs.has_key('group'):
             self.permissions = [ 'auth.change_group' ]
         else:
             self.permissions = [ 'auth.change_user' ]
