@@ -1,0 +1,58 @@
+{% extends "main.html" %}
+
+
+{% block title %}Logs{% endblock %}
+
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href='{{ base_url|default:"/" }}'>Home</a>
+ &rsaquo; Logs
+</div>
+{% endblock %}
+
+
+{% block content %}
+<div id="content-main">
+    <div class="module" id="changelist">
+
+        <table cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>User</th>
+                    <th>Object</th>
+                    <th>Type</th>
+                    <th>Message</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for l in log_list %}
+                <tr class="{% cycle row1,row2 %}">
+                    <td>{{ l.action_time }}</td>
+                    <td><a href="{% url admin:auth_user_change l.user.pk %}">{{ l.user.get_full_name }}</a></td>
+                    {% if not short %}
+                    <td>
+                        {% ifequal l.object_type "account" %}
+                            <a href="{% url plac_user_detail l.object_pk %}">{{ l.object_repr }}</a>
+                        {% endifequal %}
+                        {% ifequal l.object_type "group" %}
+                            <a href="{% url plac_grp_detail l.object_pk %}">{{ l.object_repr }}</a>
+                        {% endifequal %}
+                    </td>
+                    {% endif %}
+                    <td> <a class=
+                    {% if l.is_addition %}"addlink"{% endif %}
+                    {% if l.is_change %}"changelink"{% endif %}
+                    {% if l.is_deletion %}"deletelink"{% endif %}
+                    ></a></td>
+
+                    <td>{{ l.change_message }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+</div>
+{% endblock %}

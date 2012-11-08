@@ -25,6 +25,7 @@ import os
 import tldap
 import placard.models
 import placard.fields as fields
+import placard.signals
 
 import ajax_select.fields
 
@@ -41,7 +42,11 @@ class AutoCompleteSelectField(ajax_select.fields.AutoCompleteSelectField):
     pass
 
 class LDAPForm(forms.Form):
-    def __init__(self, *args, **kwargs):
+    signal_add = None
+    signal_edit = None
+
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
         if self.object is None and self.model is None:
             raise RuntimeError("If creating an object we need a model to be specified")
 
@@ -61,6 +66,10 @@ class LDAPForm(forms.Form):
         if self.object is None:
             self.object = self.model()
             self.object.set_defaults()
+            created = True
+        else:
+            created = False
+            self.signal_edit.send(self.object, user=self.user, data=self.cleaned_data)
 
         field_names = self.object._meta.get_all_field_names()
         for name in list(self.fields):
@@ -68,6 +77,9 @@ class LDAPForm(forms.Form):
                 continue
             value = self.cleaned_data[name]
             setattr(self.object, name, value)
+
+        if created:
+            self.signal_add.send(self.object, user=self.user)
 
         if commit:
             self.object.save()
@@ -92,8 +104,11 @@ class LDAPUserForm(LDAPForm):
     l = fields.CharField(label='Location', required=False)
     loginShell = fields.CharField(label='Login Shell', required=False)
 
-    def __init__(self, *args, **kwargs):
-        self.object = kwargs.pop('account', None)
+    signal_add = placard.signals.account_add
+    signal_edit = placard.signals.account_edit
+
+    def __init__(self, account=None, *args, **kwargs):
+        self.object = account
         super(LDAPUserForm, self).__init__(*args, **kwargs)
 
         if getattr(self, 'primary_groups', None) is not None:
@@ -162,8 +177,10 @@ class LDAPHrUserForm(LDAPForm):
     managed_by = AutoCompleteSelectField('account', required=False)
     l = fields.CharField(label='Location', required=False)
 
-    def __init__(self, *args, **kwargs):
-        self.object = kwargs.pop('account', None)
+    signal_add = placard.signals.account_add
+    signal_edit = placard.signals.account_edit
+
+    def __init__(self, account=None, *args, **kwargs):
         super(LDAPHrUserForm, self).__init__(*args, **kwargs)
 
         all_users =  placard.models.account.objects.all()
@@ -245,14 +262,14 @@ class LDAPAddUserForm(LDAPUserForm):
         return data
 
 
-class LDAPAdminPasswordForm(forms.Form):
+class LDAPAdminPasswordForm(LDAPForm):
     """ Password change form for admin. No old password needed. """
 
     new1 = fields.CharField(widget=forms.PasswordInput(), label=u'New Password')
     new2 = fields.CharField(widget=forms.PasswordInput(), label=u'New Password (again)')
 
-    def __init__(self, *args, **kwargs):
-        self.object = kwargs.pop('account')
+    def __init__(self, account, *args, **kwargs):
+        self.object = account
         super(LDAPAdminPasswordForm, self).__init__(*args, **kwargs)
 
     def clean(self):
@@ -269,6 +286,7 @@ class LDAPAdminPasswordForm(forms.Form):
             return data
 
     def save(self):
+        placard.signals.account_password_change.send(self.object, user=self.user)
         data = self.cleaned_data
         self.object.change_password(data['new1'], django.conf.settings.LDAP_PASSWD_SCHEME)
         self.object.save()
@@ -294,6 +312,9 @@ class LDAPGroupForm(LDAPForm):
     description = fields.CharField('Description', required=False, widget=forms.TextInput(attrs={ 'size':60 }))
     cn = fields.CharField(label='CN')
 
+    signal_add = placard.signals.group_add
+    signal_edit = placard.signals.group_edit
+
     def __init__(self, *args, **kwargs):
         self.object = kwargs.pop('group', None)
         super(LDAPGroupForm, self).__init__(*args, **kwargs)
@@ -316,14 +337,15 @@ class AddMemberForm(LDAPForm):
     """ Add a user to a group form """
     account = AutoCompleteSelectField('account', required=True, label="Add user")
 
-    def __init__(self, *args, **kwargs):
-        self.object = kwargs.pop('group')
+    def __init__(self, group, *args, **kwargs):
+        self.object = group
         super(AddMemberForm, self).__init__(*args, **kwargs)
 #        all_users =  placard.models.account.objects.all()
 #        self.fields['add_user'] = forms.ChoiceField(choices=[('','-------------')]+[(x.uid, x.cn) for x in all_users])
 
     def save(self, commit=True):
         user = self.cleaned_data['account']
+        placard.signals.group_add_member.send(self.object, user=self.user, account=user)
         self.object.secondary_accounts.add(user, commit)
         return self.object
 
@@ -331,12 +353,13 @@ class AddMemberForm(LDAPForm):
 class RemoveMemberForm(LDAPForm):
     """ Add a user to a group form """
 
-    def __init__(self, *args, **kwargs):
-        self.object = kwargs.pop('group')
-        self.account = kwargs.pop('account')
+    def __init__(self, group, account, *args, **kwargs):
+        self.object = group
+        self.account = account
         super(RemoveMemberForm, self).__init__(*args, **kwargs)
 
     def save(self, commit=True):
+        placard.signals.group_remove_member.send(self.object, user=self.user, account=self.account)
         self.object.secondary_accounts.remove(self.account, commit)
         return self.object
 
@@ -344,11 +367,12 @@ class RemoveMemberForm(LDAPForm):
 class LockAccountForm(LDAPForm):
     """ Delete a group """
 
-    def __init__(self, *args, **kwargs):
-        self.object = kwargs.pop('account')
+    def __init__(self, account, *args, **kwargs):
+        self.object = account
         super(LockAccountForm, self).__init__(*args, **kwargs)
 
     def save(self, commit=True):
+        placard.signals.account_lock.send(self.object, user=self.user)
         self.object.lock()
         if commit:
             self.object.save()
@@ -357,11 +381,12 @@ class LockAccountForm(LDAPForm):
 class UnlockAccountForm(LDAPForm):
     """ Delete a group """
 
-    def __init__(self, *args, **kwargs):
-        self.object = kwargs.pop('account')
+    def __init__(self, account, *args, **kwargs):
+        self.object = account
         super(UnlockAccountForm, self).__init__(*args, **kwargs)
 
     def save(self, commit=True):
+        placard.signals.account_unlock.send(self.object, user=self.user)
         self.object.unlock()
         if commit:
             self.object.save()
@@ -371,11 +396,12 @@ class UnlockAccountForm(LDAPForm):
 class DeleteAccountForm(LDAPForm):
     """ Delete a group """
 
-    def __init__(self, *args, **kwargs):
-        self.object = kwargs.pop('account')
+    def __init__(self, account, *args, **kwargs):
+        self.object = account
         super(DeleteAccountForm, self).__init__(*args, **kwargs)
 
     def save(self, commit=True):
+        placard.signals.account_delete.send(self.object, user=self.user)
         self.object.delete()
         return None
 
@@ -384,12 +410,13 @@ class AddGroupForm(LDAPForm):
     """ Add a group to a account form """
     group = AutoCompleteSelectField('group', required=True, label="Add group")
 
-    def __init__(self, *args, **kwargs):
-        self.object = kwargs.pop('account')
+    def __init__(self, account, *args, **kwargs):
+        self.object = account
         super(AddGroupForm, self).__init__(*args, **kwargs)
 
     def save(self, commit=True):
         group = self.cleaned_data['group']
+        placard.signals.group_add_member.send(group, user=self.user, account=self.object)
         self.object.secondary_groups.add(group)
         return self.object
 
@@ -397,12 +424,13 @@ class AddGroupForm(LDAPForm):
 class RemoveGroupForm(LDAPForm):
     """ Add a user to a group form """
 
-    def __init__(self, *args, **kwargs):
-        self.object = kwargs.pop('account')
-        self.group = kwargs.pop('group')
+    def __init__(self, account, group, *args, **kwargs):
+        self.object = account
+        self.group = group
         super(RemoveGroupForm, self).__init__(*args, **kwargs)
 
     def save(self, commit=True):
+        placard.signals.group_remove_member.send(self.group, user=self.user, account=self.object)
         self.object.secondary_groups.remove(self.group)
         return self.object
 
@@ -411,29 +439,31 @@ class RenameGroupForm(LDAPForm):
     """ Rename a group """
     cn = fields.CharField(label="Name")
 
-    def __init__(self, *args, **kwargs):
-        self.object = kwargs.pop('group')
+    def __init__(self, group, *args, **kwargs):
+        self.object = group
         super(RenameGroupForm, self).__init__(*args, **kwargs)
 
 
     def save(self, commit=True):
         cn = self.cleaned_data['cn']
+        placard.signals.group_rename.send(self.object, new_cn=cn)
         self.object.rename(cn=cn)
         return self.object
 
 
-class EmailForm(forms.Form):
+class EmailForm(LDAPForm):
     subject = fields.CharField(widget=forms.TextInput(attrs={ 'size':60 }))
     body = fields.CharField(widget=forms.Textarea(attrs={'class':'vLargeTextField', 'rows':10, 'cols':40 }))
 
-    def __init__(self, *args, **kwargs):
-        self.object = kwargs.pop('group')
+    def __init__(self, group, *args, **kwargs):
+        self.object = group
         super(EmailForm, self).__init__(*args, **kwargs)
 
     def get_data(self):
         return self.cleaned_data['subject'], self.cleaned_data['body']
 
     def save(self, commit=True):
+        placard.signals.group_email.send(self.object, subject=self.cleaned_data['subject'], body=self.cleaned_data['body'])
         group = self.object
 
         def list_all_people():
@@ -464,11 +494,12 @@ class EmailForm(forms.Form):
 class DeleteGroupForm(LDAPForm):
     """ Delete a group """
 
-    def __init__(self, *args, **kwargs):
-        self.object = kwargs.pop('group')
+    def __init__(self, group, *args, **kwargs):
+        self.object = group
         super(DeleteGroupForm, self).__init__(*args, **kwargs)
 
     def save(self, commit=True):
+        placard.signals.group_delete.send(self.object, user=self.user)
         self.object.delete()
         return None
 

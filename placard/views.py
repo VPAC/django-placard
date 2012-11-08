@@ -122,6 +122,12 @@ class FormView(PermissionMixin, django.views.generic.FormView):
             return r
         return super(FormView, self).dispatch(*args, **kwargs)
 
+    def get_form_kwargs(self):
+        kwargs = super(FormView, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+
 
 class AccountList(ListView):
     model = placard.models.account
@@ -140,6 +146,13 @@ class AccountList(ListView):
             except  placard.models.group.DoesNotExist:
                 pass
 
+        if request.GET.has_key('exclude'):
+            try:
+                group = placard.models.group.objects.get(cn=request.GET['exclude'])
+                user_list = user_list.filter(~(tldap.Q(primary_group=group) | tldap.Q(secondary_groups=group)))
+            except  placard.models.group.DoesNotExist:
+                pass
+
         return user_list
 
     def get_default_queryset(self):
@@ -153,6 +166,7 @@ class AccountList(ListView):
 
         filter_list = []
         filter_list.append(Filter(self.request, 'group', group_list))
+        filter_list.append(Filter(self.request, 'exclude', group_list))
         context['filter_bar'] = FilterBar(self.request, filter_list)
 
         return context
@@ -165,7 +179,7 @@ class AccountDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(AccountDetail, self).get_context_data(**kwargs)
-        context['form'] = placard.forms.AddGroupForm(account=self.object)
+        context['form'] = placard.forms.AddGroupForm(user=self.request.user, account=self.object)
         return context
 
     def get_object(self):
@@ -308,7 +322,7 @@ class GroupDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(GroupDetail, self).get_context_data(**kwargs)
-        context['form'] = placard.forms.AddMemberForm(group=self.object)
+        context['form'] = placard.forms.AddMemberForm(user=self.request.user, group=self.object)
         return context
 
     def get_object(self):
