@@ -78,11 +78,12 @@ class LDAPForm(forms.Form):
             value = self.cleaned_data[name]
             setattr(self.object, name, value)
 
-        if created:
-            self.signal_add.send(self.object, user=self.user)
-
         if commit:
             self.object.save()
+
+        # signal must be activated after saving, as saving completes the DN
+        if created:
+            self.signal_add.send(self.object, user=self.user)
 
         return self.object
 
