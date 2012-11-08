@@ -31,13 +31,6 @@ import ajax_select.fields
 
 from andsome.util import is_password_strong
 
-AFFILIATIONS = (
-    ('staff', 'Staff'),
-    ('student', 'Student'),
-    ('affiliate', 'Affiliate'),
-)
-
-
 class AutoCompleteSelectField(ajax_select.fields.AutoCompleteSelectField):
     pass
 
@@ -100,8 +93,6 @@ class LDAPUserForm(LDAPForm):
     jpegPhoto = forms.ImageField(label='Photo', required=False)
     title = fields.CharField(widget=forms.TextInput(attrs={ 'size':60 }))
     managed_by = AutoCompleteSelectField('account', required=False)
-    eduPersonAffiliation = forms.ChoiceField(label="Affiliation", choices=AFFILIATIONS, initial='staff')
-    sshPublicKey = fields.CharField(label="SSH pub-key", required=False)
     l = fields.CharField(label='Location', required=False)
     loginShell = fields.CharField(label='Login Shell', required=False)
 
