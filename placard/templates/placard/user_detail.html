@@ -24,6 +24,7 @@
     <h2>User links</h2>
     <ul>
         <li><a href="{% url plac_user_detail_verbose luser.uid %}">Verbose output</a></li>
+        {% block object-tools-view %}{% endblock %}
         {% if perms.placard.change_account or perms.placard.hr_change_account %}
         <li><a href="{% url plac_user_edit luser.uid %}">Edit details</a></li>
         {% endif %}

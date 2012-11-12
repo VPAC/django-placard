@@ -18,6 +18,8 @@
 <form method="post" action="." class="module">{% csrf_token %}
     <h2>Lock {{ luser }}</h2>
 
+    {% block confirm-details %}{% endblock %}
+
     <p>Are you sure you want to lock {{ luser }}'s user account? </p>
     <div class="submit-row">
         <input type="submit" value="Yes, I'm sure" />

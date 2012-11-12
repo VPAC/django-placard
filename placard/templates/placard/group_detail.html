@@ -24,6 +24,7 @@
     <h2>Group links</h2>
     <ul>
         <li><a href="verbose/">Verbose</a></li>
+        {% block object-tools-view %}{% endblock %}
         {% if perms.placard.change_group %}
         <li><a href="{% url plac_grp_edit group.cn %}">Edit details</a></li>
         {% endif %}

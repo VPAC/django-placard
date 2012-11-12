@@ -131,7 +131,7 @@ class FormView(PermissionMixin, django.views.generic.FormView):
 
 class AccountList(ListView):
     model = placard.models.account
-    template_name = "lusers/user_list.html"
+    template_name = "placard/user_list.html"
     context_object_name = "user_list"
 
     def get_queryset(self):
@@ -174,7 +174,7 @@ class AccountList(ListView):
 
 class AccountDetail(DetailView):
     model = placard.models.account
-    template_name = "lusers/user_detail.html"
+    template_name = "placard/user_detail.html"
     context_object_name = "luser"
 
     def get_context_data(self, **kwargs):
@@ -187,11 +187,11 @@ class AccountDetail(DetailView):
 
 
 class AccountVerbose(AccountDetail):
-    template_name = "lusers/user_detail_verbose.html"
+    template_name = "placard/user_detail_verbose.html"
 
 
 class AccountGroups(AccountDetail):
-    template_name = "lusers/users_groups.html"
+    template_name = "placard/users_groups.html"
 
 
 class AccountGeneric(FormView):
@@ -220,13 +220,13 @@ class AccountGeneric(FormView):
 
 
 class AccountAdd(AccountGeneric):
-    template_name = "lusers/user_form.html"
+    template_name = "placard/user_form.html"
     form_class = placard.forms.LDAPAddUserForm
     permissions = [ 'placard.add_account' ]
 
 
 class AccountEdit(AccountGeneric):
-    template_name = "lusers/user_form.html"
+    template_name = "placard/user_form.html"
     context_object_name = "luser"
     permissions = [ 'placard.change_account', 'placard.hr_change_account' ]
 
@@ -249,7 +249,7 @@ class AccountEdit(AccountGeneric):
 
 
 class AccountChangePassword(AccountGeneric):
-    template_name = "lusers/password_form.html"
+    template_name = "placard/password_form.html"
     form_class = placard.forms.LDAPAdminPasswordForm
     login_required = True
     permissions = [ "placard.change_account_password" ]
@@ -267,25 +267,25 @@ class UserChangePassword(AccountChangePassword):
 
 
 class AccountLock(AccountGeneric):
-    template_name = "lusers/user_confirm_lock.html"
+    template_name = "placard/user_confirm_lock.html"
     form_class = placard.forms.LockAccountForm
     permissions = [ 'placard.lock_account' ]
 
 
 class AccountUnlock(AccountGeneric):
-    template_name = "lusers/user_confirm_unlock.html"
+    template_name = "placard/user_confirm_unlock.html"
     form_class = placard.forms.UnlockAccountForm
     permissions = [ 'placard.lock_account' ]
 
 
 class AccountAddGroup(AccountGeneric):
-    template_name = "lgroups/group_add_member_form.html"
+    template_name = "placard/group_add_member_form.html"
     form_class = placard.forms.AddGroupForm
     permissions = [ 'placard.change_account' ]
 
 
 class AccountRemoveGroup(AccountGeneric):
-    template_name = "lgroups/remove_member.html"
+    template_name = "placard/remove_member.html"
     form_class = placard.forms.RemoveGroupForm
     permissions = [ 'placard.change_account' ]
 
@@ -302,7 +302,7 @@ class AccountRemoveGroup(AccountGeneric):
 
 
 class AccountDelete(AccountGeneric):
-    template_name = "lusers/user_confirm_delete.html"
+    template_name = "placard/user_confirm_delete.html"
     form_class = placard.forms.DeleteAccountForm
     permissions = [ 'placard.delete_account' ]
 
@@ -312,13 +312,13 @@ class AccountDelete(AccountGeneric):
 
 class GroupList(ListView):
     model = placard.models.group
-    template_name = "lgroups/group_list.html"
+    template_name = "placard/group_list.html"
     context_object_name = "group_list"
 
 
 class GroupDetail(DetailView):
     model = placard.models.account
-    template_name = "lgroups/group_detail.html"
+    template_name = "placard/group_detail.html"
     context_object_name = "group"
 
     def get_context_data(self, **kwargs):
@@ -331,7 +331,7 @@ class GroupDetail(DetailView):
 
 
 class GroupVerbose(GroupDetail):
-    template_name = "lgroups/group_detail_verbose.html"
+    template_name = "placard/group_detail_verbose.html"
 
 
 class GroupGeneric(FormView):
@@ -360,7 +360,7 @@ class GroupGeneric(FormView):
 
 
 class GroupEdit(GroupGeneric):
-    template_name = "lgroups/group_form.html"
+    template_name = "placard/group_form.html"
     form_class = placard.forms.LDAPGroupForm
 
     def check_permissions(self, request, kwargs):
@@ -372,13 +372,13 @@ class GroupEdit(GroupGeneric):
 
 
 class GroupAddMember(GroupGeneric):
-    template_name = "lgroups/group_add_member_form.html"
+    template_name = "placard/group_add_member_form.html"
     form_class = placard.forms.AddMemberForm
     permissions = [ 'placard.change_group' ]
 
 
 class GroupRemoveMember(GroupGeneric):
-    template_name = "lgroups/remove_member.html"
+    template_name = "placard/remove_member.html"
     form_class = placard.forms.RemoveMemberForm
     permissions = [ 'placard.change_group' ]
 
@@ -395,19 +395,19 @@ class GroupRemoveMember(GroupGeneric):
 
 
 class GroupRename(GroupGeneric):
-    template_name = "lgroups/group_rename.html"
+    template_name = "placard/group_rename.html"
     form_class = placard.forms.RenameGroupForm
     permissions = [ 'placard.rename_group' ]
 
 
 class GroupEmail(GroupGeneric):
-    template_name = "lgroups/send_email_form.html"
+    template_name = "placard/send_email_form.html"
     form_class = placard.forms.EmailForm
     permissions = [ 'placard.email_group' ]
 
 
 class GroupDelete(GroupGeneric):
-    template_name = "lgroups/group_confirm_delete.html"
+    template_name = "placard/group_confirm_delete.html"
     form_class = placard.forms.DeleteGroupForm
     permissions = [ 'placard.delete_group' ]
 
