@@ -41,7 +41,7 @@ class LogView(placard.views.ListView):
             user = get_object_or_404(placard.models.account, uid=self.kwargs['username'])
             qs = qs.filter(object_dn = user.dn)
         elif self.kwargs.has_key('group'):
-            group = get_object_or_404(placard.models.group, uid=self.kwargs['group'])
+            group = get_object_or_404(placard.models.group, cn=self.kwargs['group'])
             qs = qs.filter(object_dn = group.dn)
         elif self.kwargs.has_key('user'):
             user = self.kwargs['user']
