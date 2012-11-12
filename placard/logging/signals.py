@@ -32,8 +32,19 @@ def account_edit(sender, user, data, **kwargs):
             old_value = old_value.get_obj()
         if key == "managed_by" and old_value is not None:
             old_value = old_value.get_obj()
+
         if old_value != value:
             log(user, account, "C", u"Changed '%s' from '%s' to '%s'" % (key, old_value, value) )
+            if key == "primary_group":
+                if old_value is not None:
+                    log(user, old_value, "C", u"Changed '%s' for '%s' from '%s' to '%s'" % (key, account, old_value, value) )
+                if value is not None:
+                    log(user, value, "C", u"Changed '%s' for '%s' from '%s' to '%s'" % (key, account, old_value, value) )
+            if key == "managed_by":
+                if old_value is not None:
+                    log(user, old_value, "C", u"Changed '%s' for '%s' from '%s' to '%s'" % (key, account, old_value, value) )
+                if value is not None:
+                    log(user, value, "C", u"Changed '%s' for '%s' from '%s' to '%s'" % (key, account, old_value, value) )
 
 def account_password_change(sender, user, **kwargs):
     account = sender
