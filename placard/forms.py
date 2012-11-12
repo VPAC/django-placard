@@ -173,6 +173,7 @@ class LDAPHrUserForm(LDAPForm):
     signal_edit = placard.signals.account_edit
 
     def __init__(self, account=None, *args, **kwargs):
+        self.object = account
         super(LDAPHrUserForm, self).__init__(*args, **kwargs)
 
         all_users =  placard.models.account.objects.all()
