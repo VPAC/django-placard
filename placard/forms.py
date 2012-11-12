@@ -177,8 +177,10 @@ class LDAPHrUserForm(LDAPForm):
         super(LDAPHrUserForm, self).__init__(*args, **kwargs)
 
         all_users =  placard.models.account.objects.all()
-        if self.object.manager is not None:
-            self.initial['managed_by'] = self.object.managed_by.pk
+        if self.object is not None:
+            managed_by = self.object.managed_by.get_obj()
+            if managed_by is not None:
+                self.initial['managed_by'] = managed_by.pk
 
     def clean_jpegPhoto(self):
         data = self.cleaned_data
