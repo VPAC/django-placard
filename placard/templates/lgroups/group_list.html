@@ -13,11 +13,11 @@
 
 
 {% block object-tools %}
-{% if perms.auth.add_group %}
+{% if perms.placard.add_group %}
 <div class="module">
     <h2>Group links</h2>
     <ul>
-        {% if perms.auth.add_group %}
+        {% if perms.placard.add_group %}
             <li><a href="{% url plac_grp_add %}" class="addlink">Add Group</a></li>
         {% endif %}
     </ul>

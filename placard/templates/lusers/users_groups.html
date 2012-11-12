@@ -29,7 +29,7 @@
             {% for g in luser.secondary_groups.all %}
                 <tr>
                     <td>Secondary Groups:</td><td><a href="{% url plac_grp_detail g.cn %}">{{ g }}</a></td>
-                    {% if perms.auth.change_user %}
+                    {% if perms.placard.change_account %}
                         <td><a href="{% url plac_grp_rm_member g.cn,luser.uid %}" class="deletelink">remove</a></td>
                     {% endif %}
                 </tr>

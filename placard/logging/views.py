@@ -25,15 +25,6 @@ class LogView(placard.views.ListView):
     template_name = "placard_log_list.html"
     context_object_name = "log_list"
 
-    def check_permissions(self, request, kwargs):
-        if kwargs.has_key('username'):
-            self.permissions = [ 'auth.change_user' ]
-        elif kwargs.has_key('group'):
-            self.permissions = [ 'auth.change_group' ]
-        else:
-            self.permissions = [ 'auth.change_user' ]
-        return super(LogView, self).check_permissions(request, kwargs)
-
     def get_queryset(self):
         qs = self.model.objects.all()
 

@@ -20,21 +20,21 @@
 
 
 {% block object-tools %}
-{% if perms.auth.change_group or perms.auth.delete_group %}
 <div class="module">
     <h2>Group links</h2>
     <ul>
-        {% if perms.auth.change_group %}
+        <li><a href="verbose/">Verbose</a></li>
+        {% if perms.placard.change_group %}
         <li><a href="{% url plac_grp_edit group.cn %}">Edit details</a></li>
+        {% endif %}
+        {% if perms.placard.rename_group %}
         <li><a href="{% url plac_grp_rename group.cn %}">Rename Group</a></li>
         {% endif %}
-        {% if perms.auth.delete_group %}
-        <li><a href="verbose/">Verbose</a></li>
+        {% if perms.placard.email_group %}
         <li><a href="{% url plac_group_email group.cn %}">Sends members an Email</a></li>
         {% endif %}
     </ul>
 </div>
-{% endif %}
 {% endblock %}
 
 
@@ -83,13 +83,13 @@
             {% for m in group.secondary_accounts.all %}
                 <tr class="{% cycle row1,row2 %}">
                     <td class="{% if m.is_locked %}locked{% endif %}"><a href="{% url plac_user_detail m.uid %}" >{{ m }}</a></td>
-                    {% if perms.auth.change_group %}
+                    {% if perms.placard.change_group %}
                     <td><a href="{% url plac_grp_rm_member group.cn m.uid %}" class="deletelink">Remove</a></td>
                     {% endif %}
                 </tr>
             {% endfor %}
         </table>
-        {% if perms.auth.change_group %}
+        {% if perms.placard.change_group %}
             <form method="post" action="{% url plac_grp_add_member group.cn %}" class="simple">{% csrf_token %}
                 <fieldset>
                     {{ form }}<input type="submit" value="Add" class="default" />

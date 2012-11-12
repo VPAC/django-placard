@@ -28,7 +28,7 @@
 
     <div class="submit-row">
         <input type="submit" value="Save" class="default" />
-        {% if group and perms.auth.delete_group %}
+        {% if group and perms.placard.delete_group %}
         <p class="deletelink-box"><a href="{% url plac_group_delete group.cn %}" class="deletelink">Delete</a></p>
         {% endif %}
     </div>

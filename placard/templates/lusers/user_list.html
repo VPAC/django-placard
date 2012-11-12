@@ -16,7 +16,7 @@
 <div class="module">
     <h2>User links</h2>
     <ul>
-        {% if perms.auth.add_user %}
+        {% if perms.placard.add_account %}
             <li><a href="{% url plac_user_add %}" class="addlink">Add User</a></li>
         {% endif %}
         <li><a href="{% url plac_user_list_pdf %}?{{ request.META.QUERY_STRING }}">Printable</a></li>

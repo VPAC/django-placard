@@ -20,27 +20,25 @@
 
 
 {% block object-tools %}
-{% if perms.auth.change_user or perms.auth.hr_user or perms.auth.delete_user %}
 <div class="module">
     <h2>User links</h2>
     <ul>
-        {% if perms.auth.change_user or perms.auth.hr_user %}
+        <li><a href="{% url plac_user_detail_verbose luser.uid %}">Verbose output</a></li>
+        {% if perms.placard.change_account or perms.placard.hr_change_account %}
         <li><a href="{% url plac_user_edit luser.uid %}">Edit details</a></li>
         {% endif %}
-        {% if perms.auth.change_user %}
+        {% if perms.placard.change_account_password %}
         <li><a href="{% url plac_change_password luser.uid %}">Change password</a></li>
-        {% if luser.is_locked %}
-        <li><a href="{% url plac_unlock_user luser.uid %}">Unlock</a></li>
-        {% else %}
-        <li><a href="{% url plac_lock_user luser.uid %}">Lock</a></li>
         {% endif %}
-        {% endif %}
-        {% if perms.auth.delete_user %}
-        <li><a href="{% url plac_user_detail_verbose luser.uid %}">Verbose output</a></li>
+        {% if perms.placard.lock_account %}
+            {% if luser.is_locked %}
+            <li><a href="{% url plac_unlock_user luser.uid %}">Unlock</a></li>
+            {% else %}
+            <li><a href="{% url plac_lock_user luser.uid %}">Lock</a></li>
+            {% endif %}
         {% endif %}
     </ul>
 </div>
-{% endif %}
 {% endblock %}
 
 
@@ -149,13 +147,13 @@
             {% for g in luser.secondary_groups.all %}
                 <tr class="{% cycle row1,row2 %}">
                     <td><a href="{% url plac_grp_detail g.cn %}">{{ g }}</a></td>
-                    {% if perms.auth.change_user %}
+                    {% if perms.placard.change_account %}
                     <td><a href="{% url plac_user_rm_group luser.uid,g.cn %}" class="deletelink">remove</a></td>
                     {% endif %}
                 </tr>
             {% endfor %}
         </table>
-        {% if perms.auth.change_group %}
+        {% if perms.placard.change_account %}
             <form method="post" action="{% url plac_user_add_group luser.uid %}" class="simple">{% csrf_token %}
                 <fieldset>
                     {{ form }}<input type="submit" value="Add" class="default" />
