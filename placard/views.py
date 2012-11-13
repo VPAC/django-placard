@@ -84,6 +84,8 @@ class PermissionMixin(object):
 
 
 class ListView(PermissionMixin, django.views.generic.ListView):
+    paginate_by = 20
+
     def get_context_data(self, **kwargs):
         context = super(ListView, self).get_context_data(**kwargs)
         context['request'] = self.request

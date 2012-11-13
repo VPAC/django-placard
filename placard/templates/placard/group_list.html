@@ -12,6 +12,12 @@
 {% endblock %}
 
 
+{% block extrastyle %}
+{% load admin_static %}
+<link rel="stylesheet" type="text/css" href="{% static "css/changelists.css" %}" />
+{% endblock %}
+
+
 {% block object-tools %}
 {% if perms.placard.add_group %}
 <div class="module">
@@ -47,6 +53,8 @@
                 {% endfor %}
             </tbody>
         </table>
+        {% load placard %}
+        {% if is_paginated %}{% pagination request page_obj %}{% endif %}
     </div>
 </div>
 {% endblock %}

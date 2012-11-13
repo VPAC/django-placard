@@ -16,6 +16,7 @@
 # along with django-placard  If not, see <http://www.gnu.org/licenses/>.
 
 
+from django.http import QueryDict
 from django import template
 import re
 
@@ -49,3 +50,58 @@ def formfield(field):
     context['formfield'] = field
     context['type'] = widget_class_name
     return context
+
+@register.inclusion_tag('placard/pagination.html')
+def pagination(request, page_obj):
+    context = {}
+    context['request'] = request
+    context['page_obj'] = page_obj
+    return context
+
+class url_with_param_node(template.Node):
+    def __init__(self, copy, changes):
+        self.copy = copy
+        self.changes = []
+        for key, newvalue in changes:
+            newvalue = template.Variable(newvalue)
+            self.changes.append( (key,newvalue,) )
+
+    def render(self, context):
+        if 'request' not in context:
+            raise template.TemplateSyntaxError, "request not in context"
+
+        request = context['request']
+
+        result = {}
+
+        if self.copy:
+            result = request.GET.copy()
+        else:
+            result = QueryDict("",mutable=True)
+
+        for key, newvalue in self.changes:
+            newvalue = newvalue.resolve(context)
+            result[key] = newvalue
+
+        return "?" + result.urlencode()
+
+@register.tag
+def url_with_param(parser, token):
+    bits = token.split_contents()
+    qschanges = []
+
+    bits.pop(0)
+
+    copy = False
+    if bits[0] == "copy":
+        copy = True
+        bits.pop(0)
+
+    for i in bits:
+        try:
+            key, newvalue = i.split('=', 1);
+            qschanges.append( (key,newvalue,) )
+        except ValueError:
+            raise template.TemplateSyntaxError, "Argument syntax wrong: should be key=value"
+    return url_with_param_node(copy, qschanges)
+

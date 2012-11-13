@@ -185,9 +185,9 @@
 .paginator {
     font-size: 11px;
     padding-top: 10px;
-    padding-bottom: 10px;
+    padding-bottom: 10px 10px 0 10px;
     line-height: 22px;
-    margin: 0;
+    margin: 10px;
     border-top: 1px solid #ddd;
 }
 
