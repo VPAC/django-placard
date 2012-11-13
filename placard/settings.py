@@ -5,8 +5,6 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.staticfiles',
     'placard',
-    'andsome',
-    'andsome.layout',
     'ajax_select',
 )
 
@@ -19,7 +17,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'andsome.middleware.threadlocals.ThreadLocals',
     'django.middleware.doc.XViewMiddleware',
     'tldap.middleware.TransactionMiddleware',
 )

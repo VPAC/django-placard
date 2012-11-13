@@ -23,7 +23,7 @@ TEMPLATE_DEBUG = DEBUG
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'placard.db',            # Or path to database file if using sqlite3.
+        'NAME': 'myplacard.db',            # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -34,16 +34,16 @@ DATABASES = {
 LDAP = {
     'default': {
         'ENGINE': 'tldap.backend.transaction',
-        'URI': 'ldap://localhost:38911/',
-        'USER': 'cn=Manager,dc=python-ldap,dc=org',
-        'PASSWORD': 'password',
+        'URI': 'ldap://sys12.in.vpac.org/',
+        'USER': 'cn=admin,dc=nodomain',
+        'PASSWORD': 'j1pUXrz2Qj',
         'USE_TLS': False,
         'TLS_CA' : None,
     }
 }
 
-LDAP_BASE="dc=python-ldap,dc=org"
+LDAP_BASE='dc=nodomain'
 LDAP_USER_BASE='ou=People, %s' % LDAP_BASE
-LDAP_GROUP_BASE='ou=Group, %s' % LDAP_BASE
+LDAP_GROUP_BASE='ou=Groups, %s' % LDAP_BASE
 
 PLACARD_MODELS = 'demo.models'

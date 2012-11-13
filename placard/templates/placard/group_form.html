@@ -14,7 +14,7 @@
 
 
 {% block content %}
-{% load forms %}
+{% load placard %}
 {% if form.errors  or form.non_field_errors %}
     <p class="errornote">Please correct the error{{ form.errors|pluralize }} below.</p>
 {% endif %}
@@ -22,8 +22,8 @@
 <form method="post" action="." class="module" enctype="multipart/form-data">
     <h2> {% if group %}Edit {{ group }}{% else %}Create group{% endif %} </h2>
 
-    <fieldset class="aligned ()">
-        {% form_as_div form %}
+    <fieldset class="aligned">
+        {% for field in form %}{% formfield field %}{% endfor %}
     </fieldset>
 
     <div class="submit-row">

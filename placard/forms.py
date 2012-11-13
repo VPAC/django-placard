@@ -26,10 +26,9 @@ import tldap
 import placard.models
 import placard.fields as fields
 import placard.signals
+import placard.util
 
 import ajax_select.fields
-
-from andsome.util import is_password_strong
 
 class AutoCompleteSelectField(ajax_select.fields.AutoCompleteSelectField):
     pass
@@ -275,7 +274,7 @@ class LDAPAdminPasswordForm(LDAPForm):
             if data['new1'] != data['new2']:
                 raise forms.ValidationError(u'You must type the same password each time')
 
-            if not is_password_strong(data['new1']):
+            if not placard.util.is_password_strong(data['new1']):
                 raise forms.ValidationError(u'Your password was found to be insecure, a good password has a combination of letters (upercase, lowercase), numbers and is at least 8 characters long.')
 
             return data

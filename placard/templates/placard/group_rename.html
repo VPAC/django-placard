@@ -18,12 +18,12 @@
 <form method="post" action="." class="module">{% csrf_token %}
     <h2>Rename group {{ group }}</h2>
     <div>
-        {% load forms %}
+        {% load placard %}
         {% if form.errors  or form.non_field_errors %}
         <p class="errornote">Please correct the error{{ form.errors|pluralize }} below.</p>
         {% endif %}
-        <fieldset class="module aligned ()">
-        {% form_as_div form %}
+        <fieldset class="module aligned">
+        {% for field in form %}{% formfield field %}{% endfor %}
         </fieldset>
     </div>
     <div class="submit-row">	

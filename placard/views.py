@@ -18,6 +18,7 @@
 import django.views.generic
 import placard.models
 import placard.forms
+import placard.filterspecs
 import tldap
 
 from django.shortcuts import get_object_or_404, render_to_response
@@ -26,8 +27,6 @@ from django.http import HttpResponseNotFound, HttpResponseForbidden, HttpRespons
 from django.core.mail import send_mass_mail
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
-
-from andsome.util.filterspecs import Filter, FilterBar
 
 def index(request):
 
@@ -165,9 +164,9 @@ class AccountList(ListView):
             group_list[group.cn] = group.cn
 
         filter_list = []
-        filter_list.append(Filter(self.request, 'group', group_list))
-        filter_list.append(Filter(self.request, 'exclude', group_list))
-        context['filter_bar'] = FilterBar(self.request, filter_list)
+        filter_list.append(placard.filterspecs.Filter(self.request, 'group', group_list))
+        filter_list.append(placard.filterspecs.Filter(self.request, 'exclude', group_list))
+        context['filter_bar'] = placard.filterspecs.FilterBar(self.request, filter_list)
 
         return context
 

@@ -8,7 +8,7 @@ Standards-Version: 3.9.2
 Package: django-placard
 Architecture: all
 Homepage: http://code.arcs.org.au/gitorious/django/django-placard/
-Depends: ${misc:Depends}, ${python:Depends}, python-ldap (>= 2.2), python-django (>= 1.2.1), django-andsome (>= 1.1.6), django-ajax-selects
+Depends: ${misc:Depends}, ${python:Depends}, python-ldap (>= 2.2), python-django (>= 1.2.1), django-ajax-selects
 Description: Django LDAP client library
  Provides an easy to use API to the python-ldap package.
  Also provides some urls/views and templates to use for

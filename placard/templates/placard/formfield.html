@@ -1,0 +1,11 @@
+{% autoescape off %} 
+<div class="form-row {% if formfield.errors %}errors{% endif %}" >
+{% if formfield.errors %}{{ formfield.errors }}{% endif %}
+{% ifequal type 'checkboxinput' %}
+{{ formfield }}<label for="{{ formfield.auto_id }}"{{ class }}>{{ formfield.label }}</label>
+{% else %}
+<label for="{{ formfield.auto_id }}"{{ class }}>{{ formfield.label }}:</label> {{ formfield }}
+{% endifequal %}
+{% if formfield.help_text %}<p class="help">{{ formfield.help_text }}</p>{% endif %}
+</div>
+{% endautoescape %} 
