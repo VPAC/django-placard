@@ -8,7 +8,7 @@
 <div class="breadcrumbs">
 <a href='{{ base_url|default:"/" }}'>Home</a>
  &rsaquo; <a href="{% url plac_user_list %}">Users</a>
- &rsaquo; <a href="{% url plac_user_detail luser.uid %}">{{ luser }}</a>
+ &rsaquo; <a href="{% url plac_user_detail luser.pk %}">{{ luser }}</a>
  &rsaquo; Groups
 </div>
 {% endblock %}
@@ -30,7 +30,7 @@
                 <tr>
                     <td>Secondary Groups:</td><td><a href="{% url plac_grp_detail g.cn %}">{{ g }}</a></td>
                     {% if perms.placard.change_account %}
-                        <td><a href="{% url plac_grp_rm_member g.cn,luser.uid %}" class="deletelink">remove</a></td>
+                        <td><a href="{% url plac_grp_rm_member g.cn,luser.pk %}" class="deletelink">remove</a></td>
                     {% endif %}
                 </tr>
             {% endfor %}

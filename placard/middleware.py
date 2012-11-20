@@ -65,8 +65,8 @@ class LDAPRemoteUserMiddleware(RemoteUserMiddleware):
             user = User.objects.get(username__exact=username)
         except User.DoesNotExist:
             # Create user
-            ldap_user = placard.account.objects.get(uid=username)
-            user = User.objects.create_user(ldap_user.uid, ldap_user.mail)
+            ldap_user = placard.models.account.objects.get(pk=username)
+            user = User.objects.create_user(ldap_user.pk, ldap_user.mail)
             user.first_name = ldap_user.givenName
             user.last_name = ldap_user.sn
             user.save()

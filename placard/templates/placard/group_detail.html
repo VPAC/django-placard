@@ -26,13 +26,13 @@
         <li><a href="verbose/">Verbose</a></li>
         {% block object-tools-view %}{% endblock %}
         {% if perms.placard.change_group %}
-        <li><a href="{% url plac_grp_edit group.cn %}">Edit details</a></li>
+        <li><a href="{% url plac_grp_edit group.pk %}">Edit details</a></li>
         {% endif %}
         {% if perms.placard.rename_group %}
-        <li><a href="{% url plac_grp_rename group.cn %}">Rename Group</a></li>
+        <li><a href="{% url plac_grp_rename group.pk %}">Rename Group</a></li>
         {% endif %}
         {% if perms.placard.email_group %}
-        <li><a href="{% url plac_group_email group.cn %}">Sends members an Email</a></li>
+        <li><a href="{% url plac_group_email group.pk %}">Sends members an Email</a></li>
         {% endif %}
     </ul>
 </div>
@@ -75,7 +75,7 @@
             </tr>
             {% for m in group.primary_accounts.all %}
                 <tr class="{% cycle row1,row2 %} {% if m.is_locked %}locked{% endif %}">
-                    <td><a href="{% url plac_user_detail m.uid %}" >{{ m }}</a></td>
+                    <td><a href="{% url plac_user_detail m.pk %}" >{{ m }}</a></td>
                 </tr>
             {% endfor %}
             <tr>
@@ -83,15 +83,15 @@
             </tr>
             {% for m in group.secondary_accounts.all %}
                 <tr class="{% cycle row1,row2 %}">
-                    <td class="{% if m.is_locked %}locked{% endif %}"><a href="{% url plac_user_detail m.uid %}" >{{ m }}</a></td>
+                    <td class="{% if m.is_locked %}locked{% endif %}"><a href="{% url plac_user_detail m.pk %}" >{{ m }}</a></td>
                     {% if perms.placard.change_group %}
-                    <td><a href="{% url plac_grp_rm_member group.cn m.uid %}" class="deletelink">Remove</a></td>
+                    <td><a href="{% url plac_grp_rm_member group.pk m.pk %}" class="deletelink">Remove</a></td>
                     {% endif %}
                 </tr>
             {% endfor %}
         </table>
         {% if perms.placard.change_group %}
-            <form method="post" action="{% url plac_grp_add_member group.cn %}" class="simple">{% csrf_token %}
+            <form method="post" action="{% url plac_grp_add_member group.pk %}" class="simple">{% csrf_token %}
                 <fieldset>
                     {{ form }}<input type="submit" value="Add" class="default" />
                 </fieldset>

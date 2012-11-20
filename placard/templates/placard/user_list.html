@@ -57,7 +57,7 @@
             <tbody>
                 {% for u in user_list|dictsort:"cn" %}
                     <tr class="{% cycle row1,row2  as rowcolours %} {% if u.is_locked %}locked{% endif %}">
-                        <td><a href="{% url plac_user_detail u.uid %}">{{ u.cn }}</a></td>
+                        <td><a href="{% url plac_user_detail u.pk %}">{{ u }}</a></td>
                         <td>{{ u.telephoneNumber }}</td>
                         <td>{{ u.mobile }}</td>
                         <td>{{ u.mail|urlize }}</td>

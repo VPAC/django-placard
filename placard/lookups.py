@@ -45,7 +45,7 @@ class AccountLookup(LookupChannel):
     model = placard.models.account
 
     def get_query(self, q, request):
-        return self.model.objects.filter(tldap.Q(cn__contains=q) | tldap.Q(uid__contains=q))
+        return self.model.objects.filter(tldap.Q(cn__contains=q) | tldap.Q(pk__contains=q))
 
     def get_result(self, obj):
         u""" result is the simple text that is the completion of what the person typed """
@@ -68,7 +68,7 @@ class GroupLookup(LookupChannel):
     model = placard.models.group
 
     def get_query(self, q, request):
-        return self.model.objects.filter(tldap.Q(cn__contains=q) | tldap.Q(description__contains=q))
+        return self.model.objects.filter(tldap.Q(pk__contains=q) | tldap.Q(description__contains=q))
 
     def get_result(self, obj):
         u""" result is the simple text that is the completion of what the person typed """

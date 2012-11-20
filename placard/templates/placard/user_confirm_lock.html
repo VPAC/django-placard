@@ -8,7 +8,7 @@
 <div class="breadcrumbs">
 <a href='{{ base_url|default:"/" }}'>Home</a>
  &rsaquo; <a href="{% url plac_user_list %}">Users</a>
- &rsaquo; <a href="{% url plac_user_detail luser.uid %}">{{ luser }}</a>
+ &rsaquo; <a href="{% url plac_user_detail luser.pk %}">{{ luser }}</a>
  &rsaquo; Lock user
 </div>
 {% endblock %}

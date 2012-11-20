@@ -47,7 +47,7 @@
     <div class="submit-row">
         <input type="submit" value="Save" class="default" />
         {% if luser and perms.placard.delete_account %}
-        <p class="deletelink-box"><a href="{% url plac_user_delete luser.uid %}" class="deletelink">Delete</a></p>
+        <p class="deletelink-box"><a href="{% url plac_user_delete luser.pk %}" class="deletelink">Delete</a></p>
         {% endif %}
     </div>
 </form>

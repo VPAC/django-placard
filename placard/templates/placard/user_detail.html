@@ -23,19 +23,19 @@
 <div class="module">
     <h2>User links</h2>
     <ul>
-        <li><a href="{% url plac_user_detail_verbose luser.uid %}">Verbose output</a></li>
+        <li><a href="{% url plac_user_detail_verbose luser.pk %}">Verbose output</a></li>
         {% block object-tools-view %}{% endblock %}
         {% if perms.placard.change_account or perms.placard.hr_change_account %}
-        <li><a href="{% url plac_user_edit luser.uid %}">Edit details</a></li>
+        <li><a href="{% url plac_user_edit luser.pk %}">Edit details</a></li>
         {% endif %}
         {% if perms.placard.change_account_password %}
-        <li><a href="{% url plac_change_password luser.uid %}">Change password</a></li>
+        <li><a href="{% url plac_change_password luser.pk %}">Change password</a></li>
         {% endif %}
         {% if perms.placard.lock_account %}
             {% if luser.is_locked %}
-            <li><a href="{% url plac_unlock_user luser.uid %}">Unlock</a></li>
+            <li><a href="{% url plac_unlock_user luser.pk %}">Unlock</a></li>
             {% else %}
-            <li><a href="{% url plac_lock_user luser.uid %}">Lock</a></li>
+            <li><a href="{% url plac_lock_user luser.pk %}">Lock</a></li>
             {% endif %}
         {% endif %}
     </ul>
@@ -80,7 +80,7 @@
             </tr>
             {% if luser.jpegPhoto %}
             <tr>
-            <td>Photo</td><td><img src="{% url plac_user_photo luser.uid %}" /></td>
+            <td>Photo</td><td><img src="{% url plac_user_photo luser.pk %}" /></td>
             </tr>
             {% endif %}
             <tr>
@@ -99,12 +99,15 @@
             <td>homeDirectory</td><td>{{ luser.homeDirectory }}</td>
             </tr>
             <tr>
+            <td>unixHomeDirectory</td><td>{{ luser.unixHomeDirectory }}</td>
+            </tr>
+            <tr>
             <td>loginShell</td><td>{{ luser.loginShell }}</td>
             </tr>
             {% with luser.managed_by.get_obj as manager %}
             {% if manager %}
             <tr>
-            <td>Manager</td><td class="{% if manager.is_locked %}locked{% endif %}"><a href="{% url plac_user_detail manager.uid %}">{{ manager }}</a></td>
+            <td>Manager</td><td class="{% if manager.is_locked %}locked{% endif %}"><a href="{% url plac_user_detail manager.pk %}">{{ manager }}</a></td>
             </tr>
             {% endif %}
             {% endwith %}
@@ -113,7 +116,7 @@
             <tr>
             <td>Manager of</td><td>
             {% for p in manager_of %}
-            <span class="{% if p.is_locked %}locked{% endif %}"><a href="{% url plac_user_detail p.uid %}">{{ p }}</a></span>{% if not forloop.last %}, {% endif %}
+            <span class="{% if p.is_locked %}locked{% endif %}"><a href="{% url plac_user_detail p.pk %}">{{ p }}</a></span>{% if not forloop.last %}, {% endif %}
             {% endfor %}
             </td></tr>
             {% endif %}
@@ -138,7 +141,7 @@
                 <th>Primary Group:</th>
             </tr>
             <tr>
-                <td><a href="{% url plac_grp_detail primary_group.cn %}">{{ primary_group }}</a></td>
+                <td><a href="{% url plac_grp_detail primary_group.pk %}">{{ primary_group }}</a></td>
             </tr>
             {% endif %}
             {% endwith %}
@@ -147,15 +150,15 @@
             </tr>
             {% for g in luser.secondary_groups.all %}
                 <tr class="{% cycle row1,row2 %}">
-                    <td><a href="{% url plac_grp_detail g.cn %}">{{ g }}</a></td>
+                    <td><a href="{% url plac_grp_detail g.pk %}">{{ g }}</a></td>
                     {% if perms.placard.change_account %}
-                    <td><a href="{% url plac_user_rm_group luser.uid,g.cn %}" class="deletelink">remove</a></td>
+                    <td><a href="{% url plac_user_rm_group luser.pk,g.pk %}" class="deletelink">remove</a></td>
                     {% endif %}
                 </tr>
             {% endfor %}
         </table>
         {% if perms.placard.change_account %}
-            <form method="post" action="{% url plac_user_add_group luser.uid %}" class="simple">{% csrf_token %}
+            <form method="post" action="{% url plac_user_add_group luser.pk %}" class="simple">{% csrf_token %}
                 <fieldset>
                     {{ form }}<input type="submit" value="Add" class="default" />
                 </fieldset>
