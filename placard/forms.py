@@ -334,8 +334,6 @@ class AddMemberForm(LDAPForm):
     def __init__(self, group, *args, **kwargs):
         self.object = group
         super(AddMemberForm, self).__init__(*args, **kwargs)
-#        all_users =  placard.models.account.objects.all()
-#        self.fields['add_user'] = forms.ChoiceField(choices=[('','-------------')]+[(x.uid, x.cn) for x in all_users])
 
     def save(self, commit=True):
         user = self.cleaned_data['account']
