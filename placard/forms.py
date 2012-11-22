@@ -323,7 +323,7 @@ class LDAPGroupForm(LDAPForm):
                 raise forms.ValidationError("This group already exists!")
         else:
             if self.object.cn != cn:
-                raise forms.ValidationError(u'Cannot change value of uid')
+                raise forms.ValidationError(u'Cannot change value of cn')
         return cn
 
 
