@@ -37,7 +37,7 @@ class person(ad.person, rfc.organizationalPerson, rfc.inetOrgPerson, ad.user):
 
     def save(self, *args, **kwargs):
         if self.uid is not None:
-            self.cn = '%s' % (self.uid)
+            self.cn = self.uid
         self.displayName = '%s %s' % (self.givenName, self.sn)
         super(person, self).save(*args, **kwargs)
 
