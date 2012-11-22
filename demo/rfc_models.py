@@ -36,7 +36,8 @@ class person(rfc.person, rfc.organizationalPerson, rfc.inetOrgPerson, rfc.pwdPol
         self.pwdAttribute = 'userPassword'
 
     def save(self, *args, **kwargs):
-        self.cn = '%s %s' % (self.givenName, self.sn)
+        if self.cn is None:
+            self.cn = '%s %s' % (self.givenName, self.sn)
         self.displayName = '%s %s' % (self.givenName, self.sn)
         if self.pwdAttribute is None:
             self.pwdAttribute = 'userPassword'
@@ -54,8 +55,6 @@ class person(rfc.person, rfc.organizationalPerson, rfc.inetOrgPerson, rfc.pwdPol
         self.secondary_groups.clear()
 
     def unlock(self):
-        if self.loginShell.startswith("!"):
-            self.loginShell = self.loginShell[1:]
         if self.loginShell.startswith("/locked"):
             self.loginShell = self.loginShell[7:]
         self.pwdAccountLockedTime=None

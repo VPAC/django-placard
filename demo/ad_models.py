@@ -36,7 +36,7 @@ class person(ad.person, rfc.organizationalPerson, rfc.inetOrgPerson, ad.user):
         self.userAccountControl = 512
 
     def save(self, *args, **kwargs):
-        if self.uid is not None:
+        if self.cn is None:
             self.cn = self.uid
         self.displayName = '%s %s' % (self.givenName, self.sn)
         super(person, self).save(*args, **kwargs)
@@ -50,8 +50,6 @@ class person(ad.person, rfc.organizationalPerson, rfc.inetOrgPerson, ad.user):
         self.userAccountControl = self.userAccountControl | 0x2
 
     def unlock(self):
-        if self.loginShell.startswith("!"):
-            self.loginShell = self.loginShell[1:]
         if self.loginShell.startswith("/locked"):
             self.loginShell = self.loginShell[7:]
         self.userAccountControl = self.userAccountControl & 0xFFFFFFFD
