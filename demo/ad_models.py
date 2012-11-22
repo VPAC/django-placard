@@ -102,7 +102,7 @@ class account(person, rfc.posixAccount, helpers.accountMixin):
 
     def save(self, *args, **kwargs):
         self.gecos = '%s %s' % (self.givenName, self.sn)
-        self.homeDirectory =  '/home/%s' % self.uid
+        self.unixHomeDirectory =  '/home/%s' % self.uid
         self.mail = '%s@vpac.org' % self.uid
 
         super(account, self).save(*args, **kwargs)
