@@ -56,12 +56,12 @@ class AccountLookup(LookupChannel):
         result=[]
         if obj.jpegPhoto is not None:
             result.append(u"<img width='50' src='%s' alt='' />" % (reverse("plac_user_photo", args=[obj.uid])))
-        result.append(u"%s<div><i>%s</i></div>" % (escape(obj.cn), escape(obj.mail)))
+        result.append(u"%s<div><i>%s</i></div>" % (escape(obj), escape(obj.mail)))
         return u"".join(result)
 
     def format_item_display(self, obj):
         """ (HTML) formatted item for displaying item in the selected deck area """
-        return u"%s<div><i>%s</i></div>" % (escape(obj.cn), escape(obj.mail))
+        return u"%s<div><i>%s</i></div>" % (escape(obj), escape(obj.mail))
 
 class GroupLookup(LookupChannel):
 
@@ -81,7 +81,7 @@ class GroupLookup(LookupChannel):
     def format_item_display(self, obj):
         """ (HTML) formatted item for display in the dropdown """
         result = []
-        result.append(u"%s" % escape(obj.cn))
+        result.append(u"%s" % escape(obj))
         if obj.description is not None:
             result.append(u"<div><i>%s</i></div>" % escape(obj.description))
         return u"".join(result)
