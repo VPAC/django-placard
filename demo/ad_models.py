@@ -11,7 +11,7 @@ import placard.ldap_passwd
 # person #
 ##########
 
-class person(rfc.person, rfc.organizationalPerson, rfc.inetOrgPerson, ad.user):
+class person(ad.person, rfc.organizationalPerson, rfc.inetOrgPerson, ad.user):
 
     class Meta:
         base_dn = django.conf.settings.LDAP_USER_BASE
@@ -63,7 +63,7 @@ class person(rfc.person, rfc.organizationalPerson, rfc.inetOrgPerson, ad.user):
 # account #
 ###########
 
-class account(person, rfc.posixAccount, helpers.accountMixin):
+class account(person, ad.posixAccount, helpers.accountMixin):
 
     class Meta:
         base_dn = django.conf.settings.LDAP_USER_BASE
