@@ -101,7 +101,6 @@ class account(person, rfc.posixAccount, rfc.shadowAccount, helpers.AccountMixin)
         self.set_free_uidNumber()
 
         self.secondary_groups.add(group.objects.get(cn="Domain Users"))
-        self.secondary_groups.add(group.objects.get(cn="vpac"))
 
         self.o = 'VPAC'
         self.loginShell = '/bin/bash'
@@ -119,7 +118,6 @@ class account(person, rfc.posixAccount, rfc.shadowAccount, helpers.AccountMixin)
     def save(self, *args, **kwargs):
         self.gecos = '%s %s' % (self.givenName, self.sn)
         self.homeDirectory =  '/home/%s' % self.uid
-        self.mail = '%s@vpac.org' % self.uid
 
         super(account, self).save(*args, **kwargs)
 
