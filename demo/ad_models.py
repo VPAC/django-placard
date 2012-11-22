@@ -84,7 +84,6 @@ class account(person, ad.posixAccount, helpers.accountMixin):
         self.set_free_uidNumber()
 
         self.secondary_groups.add(group.objects.get(cn="Domain Users"))
-        self.secondary_groups.add(group.objects.get(cn="vpac"))
 
         self.o = 'VPAC'
         self.loginShell = '/bin/bash'
@@ -104,7 +103,6 @@ class account(person, ad.posixAccount, helpers.accountMixin):
         self.gecos = '%s %s' % (self.givenName, self.sn)
         if self.uid is not None:
             self.unixHomeDirectory =  '/home/%s' % self.uid
-            self.mail = '%s@vpac.org' % self.uid
 
         super(account, self).save(*args, **kwargs)
 
