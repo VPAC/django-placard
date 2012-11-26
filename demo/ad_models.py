@@ -72,7 +72,6 @@ class account(person, ad.posixAccount, helpers.accountMixin):
     def __unicode__(self):
         return u"A:%s"%(self.displayName or self.cn)
 
-    secondary_groups = tldap.manager.ManyToManyDescriptor('dn', 'demo.ad_models.group', 'member', True)
     managed_by = tldap.manager.ManyToOneDescriptor('manager', 'demo.ad_models.account', 'dn')
     manager_of = tldap.manager.OneToManyDescriptor('dn', 'demo.ad_models.account', 'manager')
 
@@ -122,7 +121,7 @@ class group(rfc.posixGroup, ad.group, helpers.groupMixin):
     primary_accounts = tldap.manager.OneToManyDescriptor('gidNumber', account, 'gidNumber', "primary_group")
 #    secondary_accounts = tldap.manager.ManyToManyDescriptor('memberUid', account, 'uid', False, "secondary_groups")
 #    secondary_accounts = tldap.manager.ManyToManyDescriptor('member', account, 'dn', False, "secondary_groups")
-    secondary_accounts = tldap.manager.ManyToManyDescriptor('dn', account, 'memberOf', True)
+    secondary_accounts = tldap.manager.AdAccountLinkDescriptor(account, "secondary_groups")
 
     def set_defaults(self):
         self.set_free_gidNumber()
