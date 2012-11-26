@@ -81,7 +81,6 @@ class account(person, ad.posixAccount, helpers.accountMixin):
 
         self.secondary_groups.add(group.objects.get(cn="Domain Users"))
 
-        self.o = 'VPAC'
         self.loginShell = '/bin/bash'
         self.shadowInactive = 10
         self.shadowLastChange = 13600
@@ -91,8 +90,7 @@ class account(person, ad.posixAccount, helpers.accountMixin):
         self.objectSid = "S-1-5-" + django.conf.settings.SAMBA_DOMAIN_SID + "-" + str(int(self.uidNumber)*2)
 
     def delete(self, using=None):
-        for u in self.manager_of.all():
-            self.manager_of.remove(u)
+        self.manager_of.clear()
         super(account, self).delete(using)
 
     def save(self, *args, **kwargs):
@@ -114,7 +112,7 @@ class group(rfc.posixGroup, ad.group, helpers.groupMixin):
         pk = 'cn'
 
     def __unicode__(self):
-        return u"G:%s"%(self.displayName or self.cn)
+        return u"G:%s"%self.cn
 
     # accounts
     primary_accounts = tldap.manager.OneToManyDescriptor('gidNumber', account, 'gidNumber', "primary_group")
@@ -127,10 +125,8 @@ class group(rfc.posixGroup, ad.group, helpers.groupMixin):
         self.objectSid = "S-1-5-" + django.conf.settings.SAMBA_DOMAIN_SID + "-" + str(int(self.uidNumber)*2 + 1001)
 
     def save(self, *args, **kwargs):
-        if self.displayName is None:
-            self.displayName = self.cn
         if self.description is None:
-            self.description = self.displayName
+            self.description = self.cn
         super(group, self).save(*args, **kwargs)
 
     def delete(self, using=None):
