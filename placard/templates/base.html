@@ -23,20 +23,29 @@
         <div id="branding">
         {% block branding %}{% endblock %}
         </div>
-        {% if user.is_active and user.is_staff %}
+        {% block usertools %}
         <div id="user-tools">
             {% trans 'Welcome,' %}
+            {% if user.is_active %}
             <strong>{% filter force_escape %}{% firstof user.first_name user.username %}{% endfilter %}</strong>.
+            {% else %}
+            <strong>{% trans 'Guest' %}</strong>
+            {% endif %}
             {% block userlinks %}
+                {% if user.is_active %}
                 {% url 'django-admindocs-docroot' as docsroot %}
                 {% if docsroot %}
                     <a href="{{ docsroot }}">{% trans 'Documentation' %}</a> /
                 {% endif %}
                 <a href="{% url 'plac_user_password' %}">{% trans 'Change password' %}</a> /
                 <a href="{% url 'logout' %}">{% trans 'Log out' %}</a>
+                {% else %}
+                {% load placard %}
+                <a href="{% url 'login' %}{% url_with_param next=request.path %}">{% trans 'Log in' %}</a>
+                {% endif %}
             {% endblock %}
         </div>
-        {% endif %}
+        {% endblock %}
         {% block nav-global %}{% endblock %}
     </div>
     <!-- END Header -->
