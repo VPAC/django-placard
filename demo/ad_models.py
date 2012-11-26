@@ -26,11 +26,10 @@ class person(ad.person, rfc.organizationalPerson, rfc.inetOrgPerson, ad.user):
         return tldap.connection.check_password(self.dn, password)
 
     def change_password(self, password):
-        if isinstance(password, unicode):
-            password = password.encode()
+        self.userPassword = None
+        self.unicodePwd = '"' + password + '"'
 
-        up = placard.ldap_passwd.UserPassword()
-        self.userPassword = up.encodePassword(password, "ssha")
+        self.force_replace.add('unicodePwd')
 
     def set_defaults(self):
         self.userAccountControl = 512
