@@ -11,12 +11,13 @@
 
 
 {% block breadcrumbs %}
+{% load placard_tags %}
 <div class="breadcrumbs">
 <a href='{{ base_url|default:"/" }}'>Home</a>
  &rsaquo; <a href="{% url plac_grp_list %}">Groups</a>
 {% if slave_id %}
  &rsaquo; <a href="{% url plac_grp_detail group.pk %}">{{ group }} detail</a>
- &rsaquo; {{ slave_name }}
+ &rsaquo; {% slave_name slave_id %}
 {% else %}
  &rsaquo; {{ group }} detail
 {% endif %}
@@ -43,9 +44,9 @@
         {% if perms.placard.email_group %}
         <li><a href="{% url plac_group_email group.pk %}">Sends members an Email</a></li>
         {% endif %}
-        {% if all_slave_names %}
+        {% if slave_objs %}
         <li>source:
-        <a href="{% url plac_grp_detail group.pk %}">master</a>, {% for slave_id, slave_name in all_slave_names.items %}<a href="{% url plac_grp_detail group.pk slave_id %}">{{ slave_name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
+        <a href="{% url plac_grp_detail group.pk %}">master</a>, {% for slave_id, obj in slave_objs.items %}<a href="{% url plac_grp_detail group.pk slave_id %}">{% slave_name slave_id %}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
         </li>
         {% endif %}
     </ul>

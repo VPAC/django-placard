@@ -4,19 +4,20 @@
 {% block title %}{{ luser }} detail | Users{% endblock %}
 
 
-{% load admin_static %}
 {% block extrastyle %}
+{% load admin_static %}
 <link rel="stylesheet" type="text/css" href="{% static "css/forms.css" %}" />
 {% endblock %}
 
 
 {% block breadcrumbs %}
+{% load placard_tags %}
 <div class="breadcrumbs">
 <a href='{{ base_url|default:"/" }}'>Home</a>
  &rsaquo; <a href="{% url plac_user_list %}">Users</a>
 {% if slave_id %}
  &rsaquo; <a href="{% url plac_user_detail luser.pk %}">{{ luser }} detail</a>
- &rsaquo; {{ slave_name }}
+ &rsaquo; {% slave_name slave_id %}
 {% else %}
  &rsaquo; {{ luser }} detail
 {% endif %}
@@ -47,9 +48,9 @@
             <li><a href="{% url plac_lock_user luser.pk %}">Lock</a></li>
             {% endif %}
         {% endif %}
-        {% if all_slave_names %}
+        {% if slave_objs %}
         <li>source:
-        <a href="{% url plac_user_detail luser.pk %}">master</a>, {% for slave_id, slave_name in all_slave_names.items %}<a href="{% url plac_user_detail luser.pk slave_id %}">{{ slave_name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
+        <a href="{% url plac_user_detail luser.pk %}">master</a>, {% for slave_id, slave_obj in slave_objs.items %}<a href="{% url plac_user_detail luser.pk slave_id %}">{% slave_name slave_id %}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
         </li>
         {% endif %}
     </ul>
@@ -145,9 +146,10 @@
             <td>sn</td><td>{{ luser.sn }}</td>
             </tr>
         </table>
-        </div>
-        <div class="module">
-        <h2>Groups</h2>
+    </div>
+
+    <div class="module">
+    <h2>Groups</h2>
         <table>
             {% with luser.primary_group.get_obj as primary_group %}
             {% if primary_group %}

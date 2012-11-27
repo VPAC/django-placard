@@ -132,14 +132,14 @@ class FormView(PermissionMixin, django.views.generic.FormView):
 
 class AccountMixin(object):
     def get_slave_objs(self):
-        try:
-            objs = {}
-            for slave_id, module in placard.models.get_slave_modules().iteritems():
+        objs = {}
+        for slave_id, module in placard.models.get_slave_modules().iteritems():
+            try:
                 obj = module.account.objects.using(slave_id).get(pk=self.object.pk)
                 objs[slave_id] = obj
-            return objs
-        except module.account.DoesNotExist:
-            raise Http404('Slave not found')
+            except module.account.DoesNotExist:
+                pass
+        return objs
 
 
 class AccountList(ListView, AccountMixin):
@@ -194,11 +194,9 @@ class AccountDetail(DetailView, AccountMixin):
         context = super(AccountDetail, self).get_context_data(**kwargs)
         slave_objs = self.get_slave_objs()
         context['form'] = placard.forms.AddGroupForm(user=self.request.user, slave_objs=slave_objs, account=self.object)
-        context['all_slave_names'] = placard.models.get_slave_names()
+        context['slave_objs'] = slave_objs
         if 'slave' in self.kwargs:
             context['slave_id'] = self.kwargs['slave']
-            context['slave_name'] = placard.models.get_slave_name_by_id(self.kwargs['slave'])
-
         return context
 
     def get_object(self):
@@ -342,14 +340,14 @@ class AccountDelete(AccountGeneric):
 
 class GroupMixin(object):
     def get_slave_objs(self):
-        try:
-            objs = {}
-            for slave_id, module in placard.models.get_slave_modules().iteritems():
+        objs = {}
+        for slave_id, module in placard.models.get_slave_modules().iteritems():
+            try:
                 obj = module.group.objects.using(slave_id).get(pk=self.object.pk)
                 objs[slave_id] = obj
-            return objs
-        except module.group.DoesNotExist:
-            raise Http404('Slave not found')
+            except module.group.DoesNotExist:
+                pass
+        return objs
 
 
 class GroupList(ListView, GroupMixin):
@@ -367,10 +365,9 @@ class GroupDetail(DetailView, GroupMixin):
         context = super(GroupDetail, self).get_context_data(**kwargs)
         slave_objs = self.get_slave_objs()
         context['form'] = placard.forms.AddMemberForm(user=self.request.user, slave_objs=slave_objs, group=self.object)
-        context['all_slave_names'] = placard.models.get_slave_names()
+        context['slave_objs'] = slave_objs
         if 'slave' in self.kwargs:
             context['slave_id'] = self.kwargs['slave']
-            context['slave_name'] = placard.models.get_slave_name_by_id(self.kwargs['slave'])
         return context
 
     def get_object(self):

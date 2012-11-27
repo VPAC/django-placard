@@ -20,7 +20,13 @@ from django.http import QueryDict
 from django import template
 import re
 
+import placard.models
+
 register = template.Library()
+
+@register.simple_tag
+def slave_name(slave_id):
+    return placard.models.get_slave_name_by_id(slave_id)
 
 @register.simple_tag
 def active(request, pattern):

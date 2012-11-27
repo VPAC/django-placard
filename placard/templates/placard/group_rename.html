@@ -18,7 +18,7 @@
 <form method="post" action="." class="module">{% csrf_token %}
     <h2>Rename group {{ group }}</h2>
     <div>
-        {% load placard %}
+        {% load placard_tags %}
         {% if form.errors  or form.non_field_errors %}
         <p class="errornote">Please correct the error{{ form.errors|pluralize }} below.</p>
         {% endif %}

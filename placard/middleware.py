@@ -87,19 +87,19 @@ class TransactionMiddleware(object):
     """
     def process_request(self, request):
         """Enters transaction management"""
-        for slave in placard.models.get_slave_names():
+        for slave in placard.models.get_slave_ids():
             if not tldap.transaction.is_managed(using=slave):
                 tldap.transaction.enter_transaction_management(using=slave)
 
     def process_exception(self, request, exception):
         """Rolls back the database and leaves transaction management"""
-        for slave in placard.models.get_slave_names():
+        for slave in placard.models.get_slave_ids():
             if tldap.transaction.is_dirty(using=slave):
                 tldap.transaction.rollback(using=slave)
 
     def process_response(self, request, response):
         """Commits and leaves transaction management."""
-        for slave in placard.models.get_slave_names():
+        for slave in placard.models.get_slave_ids():
             if tldap.transaction.is_managed(using=slave):
                 if tldap.transaction.is_dirty(using=slave):
                     tldap.transaction.commit(using=slave)

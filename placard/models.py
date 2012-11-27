@@ -31,12 +31,13 @@ def get_slave_modules():
         modules[slave_id] = module
     return modules
 
-def get_slave_names():
+def get_slave_ids():
     models = getattr(django.conf.settings, 'PLACARD_SLAVES', {})
-    names = {}
+    ids = []
     for slave_id, s in models.iteritems():
-        names[slave_id] = s['NAME']
-    return names
+        ids.append(slave_id)
+    return ids
+
 
 def get_slave_module_by_id(slave_id):
     models = getattr(django.conf.settings, 'PLACARD_SLAVES', {})
