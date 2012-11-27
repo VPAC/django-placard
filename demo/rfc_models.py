@@ -3,7 +3,6 @@ import tldap.manager
 import django.conf
 import time
 import datetime
-import smbpasswd
 
 import placard.ldap_passwd
 
