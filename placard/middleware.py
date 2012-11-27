@@ -22,7 +22,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.contrib import auth
 
 import placard.models
-
+import tldap.transaction
 
 class LDAPRemoteUserMiddleware(RemoteUserMiddleware):
     """
@@ -78,3 +78,30 @@ class LDAPRemoteUserMiddleware(RemoteUserMiddleware):
         auth.login(request, user)
 
 
+class TransactionMiddleware(object):
+    """
+    Transaction middleware. If this is enabled, each view function will be run
+    with commit_on_response activated - that way a save() doesn't do a direct
+    commit, the commit is done when a successful response is created. If an
+    exception happens, the database is rolled back.
+    """
+    def process_request(self, request):
+        """Enters transaction management"""
+        for slave in placard.models.get_slave_names():
+            if not tldap.transaction.is_managed(using=slave):
+                tldap.transaction.enter_transaction_management(using=slave)
+
+    def process_exception(self, request, exception):
+        """Rolls back the database and leaves transaction management"""
+        for slave in placard.models.get_slave_names():
+            if tldap.transaction.is_dirty(using=slave):
+                tldap.transaction.rollback(using=slave)
+
+    def process_response(self, request, response):
+        """Commits and leaves transaction management."""
+        for slave in placard.models.get_slave_names():
+            if tldap.transaction.is_managed(using=slave):
+                if tldap.transaction.is_dirty(using=slave):
+                    tldap.transaction.commit(using=slave)
+                tldap.transaction.leave_transaction_management(using=slave)
+        return response

@@ -19,6 +19,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.doc.XViewMiddleware',
     'tldap.middleware.TransactionMiddleware',
+    'placard.middleware.TransactionMiddleware',
 )
 
 STATIC_URL = '/media/'
