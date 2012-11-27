@@ -78,8 +78,7 @@ class account(person, rfc.posixAccount, rfc.shadowAccount, helpers.accountMixin)
 
     managed_by = tldap.manager.ManyToOneDescriptor('manager', 'vpac_ldap.models.account', 'dn')
     manager_of = tldap.manager.OneToManyDescriptor('dn', 'vpac_ldap.models.account', 'manager')
-
-
+    unixHomeDirectory = tldap.manager.AliasDescriptor("homeDirectory")
 
     def _generate_shared_token(self):
         try:
