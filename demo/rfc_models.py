@@ -14,7 +14,7 @@ import placard.ldap_passwd
 class person(rfc.person, rfc.organizationalPerson, rfc.inetOrgPerson, rfc.pwdPolicy):
 
     class Meta:
-        base_dn = django.conf.settings.LDAP_USER_BASE
+        base_dn_setting = "LDAP_ACCOUNT_BASE"
         object_classes = { 'top', }
         search_classes = { 'person', }
         pk = 'uid'
@@ -68,7 +68,7 @@ class person(rfc.person, rfc.organizationalPerson, rfc.inetOrgPerson, rfc.pwdPol
 class account(person, rfc.posixAccount, rfc.shadowAccount, helpers.accountMixin):
 
     class Meta:
-        base_dn = django.conf.settings.LDAP_USER_BASE
+        base_dn_setting = "LDAP_ACCOUNT_BASE"
         object_classes = { 'top', }
         search_classes = { 'posixAccount', }
         pk = 'uid'
@@ -120,7 +120,7 @@ class account(person, rfc.posixAccount, rfc.shadowAccount, helpers.accountMixin)
 
 class group(rfc.posixGroup, helpers.groupMixin):
     class Meta:
-        base_dn = django.conf.settings.LDAP_GROUP_BASE
+        base_dn_setting = "LDAP_GROUP_BASE"
         object_classes = { 'top', }
         search_classes = { 'posixGroup', }
         pk = 'cn'

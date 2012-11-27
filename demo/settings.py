@@ -39,11 +39,9 @@ LDAP = {
         'PASSWORD': 'password',
         'USE_TLS': False,
         'TLS_CA' : None,
+        'LDAP_USER_BASE': 'ou=People, dc=python-ldap,dc=org'
+        'LDAP_GROUP_BASE': 'ou=Group, dc=python-ldap,dc=org'
     }
 }
-
-LDAP_BASE="dc=python-ldap,dc=org"
-LDAP_USER_BASE='ou=People, %s' % LDAP_BASE
-LDAP_GROUP_BASE='ou=Group, %s' % LDAP_BASE
 
 PLACARD_MODELS = 'demo.rfc_models'
