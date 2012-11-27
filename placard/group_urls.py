@@ -31,4 +31,6 @@ urlpatterns = patterns('',
     url(r'^(?P<group>[-.\w ]+)/rename/$', views.GroupRename.as_view(), name='plac_grp_rename'),
     url(r'^(?P<group>[-.\w ]+)/send_mail/$', views.GroupEmail.as_view(), name='plac_group_email'),
     url(r'^(?P<group>[-.\w ]+)/verbose/$', views.GroupVerbose.as_view(), name='plac_grp_detail_verbose'),
+    url(r'^(?P<group>[-.\w ]+)/source/(?P<slave>[-.\w\$]+)/$', views.GroupDetail.as_view(), name='plac_grp_detail'),
+    url(r'^(?P<group>[-.\w ]+)/source/(?P<slave>[-.\w\$]+)/verbose/$', views.GroupVerbose.as_view(), name='plac_grp_detail_verbose'),
 )

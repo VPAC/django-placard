@@ -23,7 +23,11 @@
 <div class="module object-tools">
     <h2>Group links</h2>
     <ul>
-        <li><a href="verbose/">Verbose</a></li>
+        {% if slave %}
+        <li><a href="{% url plac_grp_detail_verbose group.pk slave %}">Verbose output</a></li>
+        {% else %}
+        <li><a href="{% url plac_grp_detail_verbose group.pk %}">Verbose output</a></li>
+        {% endif %}
         {% block object-tools-view %}{% endblock %}
         {% if perms.placard.change_group %}
         <li><a href="{% url plac_grp_edit group.pk %}">Edit details</a></li>
@@ -33,6 +37,11 @@
         {% endif %}
         {% if perms.placard.email_group %}
         <li><a href="{% url plac_group_email group.pk %}">Sends members an Email</a></li>
+        {% endif %}
+        {% if slaves %}
+        <li>source:
+        <a href="{% url plac_grp_detail group.pk %}">master</a>, {% for slave in slaves %}<a href="{% url plac_grp_detail group.pk slave %}">{{ slave }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
+        </li>
         {% endif %}
     </ul>
 </div>

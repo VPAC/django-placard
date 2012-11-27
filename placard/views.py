@@ -22,8 +22,8 @@ import placard.filterspecs
 import tldap
 
 from django.shortcuts import get_object_or_404, render_to_response
-from django.http import HttpResponse
-from django.http import HttpResponseNotFound, HttpResponseForbidden, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseForbidden, HttpResponseRedirect
+from django.http import Http404
 from django.core.mail import send_mass_mail
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
@@ -130,7 +130,16 @@ class FormView(PermissionMixin, django.views.generic.FormView):
 
 
 
-class AccountList(ListView):
+class AccountMixin(object):
+    def get_slaves(self):
+        slaves = {}
+        for name, slave in placard.models.get_slaves():
+            obj = slave.account.objects.using(name).get(pk=self.object.pk)
+            slaves.update({ name: obj })
+        return slaves
+
+
+class AccountList(ListView, AccountMixin):
     model = placard.models.account
     template_name = "placard/user_list.html"
     context_object_name = "user_list"
@@ -173,29 +182,44 @@ class AccountList(ListView):
         return context
 
 
-class AccountDetail(DetailView):
+class AccountDetail(DetailView, AccountMixin):
     model = placard.models.account
     template_name = "placard/user_detail.html"
     context_object_name = "luser"
 
     def get_context_data(self, **kwargs):
         context = super(AccountDetail, self).get_context_data(**kwargs)
-        context['form'] = placard.forms.AddGroupForm(user=self.request.user, account=self.object)
+        slaves = self.get_slaves()
+        context['form'] = placard.forms.AddGroupForm(user=self.request.user, slaves=slaves, account=self.object)
+        context['slaves'] = placard.models.get_slave_names()
+        if 'slave' in self.kwargs:
+            context['slave'] = self.kwargs['slave']
+
         return context
 
     def get_object(self):
-        return get_object_or_404(placard.models.account, pk=self.kwargs['username'])
+        if 'slave' in self.kwargs:
+            using = self.kwargs['slave']
+            model = placard.models.get_slave_by_name(using).account
+        else:
+            using = None
+            model = placard.models.account
+
+        try:
+            return model.objects.using(using).get(pk=self.kwargs['username'])
+        except model.DoesNotExist:
+            raise Http404
 
 
-class AccountVerbose(AccountDetail):
+class AccountVerbose(AccountDetail, AccountMixin):
     template_name = "placard/user_detail_verbose.html"
 
 
-class AccountGroups(AccountDetail):
+class AccountGroups(AccountDetail, AccountMixin):
     template_name = "placard/users_groups.html"
 
 
-class AccountGeneric(FormView):
+class AccountGeneric(FormView, AccountMixin):
     def get_context_data(self, **kwargs):
         context = super(AccountGeneric, self).get_context_data(**kwargs)
         if 'username' in self.kwargs:
@@ -207,6 +231,7 @@ class AccountGeneric(FormView):
         if 'username' in self.kwargs:
             kwargs['account'] = self.get_object()
             self.object = kwargs['account']
+        kwargs['slaves'] = self.get_slaves()
         return kwargs
 
     def get_object(self):
@@ -311,31 +336,54 @@ class AccountDelete(AccountGeneric):
         return reverse("plac_user_list")
 
 
-class GroupList(ListView):
+class GroupMixin(object):
+    def get_slaves(self):
+        slaves = {}
+        for name, slave in placard.models.get_slaves():
+            obj = slave.group.objects.using(name).get(pk=self.object.pk)
+            slaves.update({ name: obj })
+        return slaves
+
+
+class GroupList(ListView, GroupMixin):
     model = placard.models.group
     template_name = "placard/group_list.html"
     context_object_name = "group_list"
 
 
-class GroupDetail(DetailView):
+class GroupDetail(DetailView, GroupMixin):
     model = placard.models.account
     template_name = "placard/group_detail.html"
     context_object_name = "group"
 
     def get_context_data(self, **kwargs):
         context = super(GroupDetail, self).get_context_data(**kwargs)
-        context['form'] = placard.forms.AddMemberForm(user=self.request.user, group=self.object)
+        slaves = self.get_slaves()
+        context['form'] = placard.forms.AddMemberForm(user=self.request.user, slaves=slaves, group=self.object)
+        context['slaves'] = placard.models.get_slave_names()
+        if 'slave' in self.kwargs:
+            context['slave'] = self.kwargs['slave']
         return context
 
     def get_object(self):
-        return get_object_or_404(placard.models.group, cn=self.kwargs['group'])
+        if 'slave' in self.kwargs:
+            using = self.kwargs['slave']
+            model = placard.models.get_slave_by_name(using).group
+        else:
+            using = None
+            model = placard.models.group
+
+        try:
+            return model.objects.using(using).get(pk=self.kwargs['group'])
+        except model.DoesNotExist:
+            raise Http404
 
 
-class GroupVerbose(GroupDetail):
+class GroupVerbose(GroupDetail, GroupMixin):
     template_name = "placard/group_detail_verbose.html"
 
 
-class GroupGeneric(FormView):
+class GroupGeneric(FormView, GroupMixin):
     def get_context_data(self, **kwargs):
         context = super(GroupGeneric, self).get_context_data(**kwargs)
         if 'group' in self.kwargs:
@@ -347,6 +395,7 @@ class GroupGeneric(FormView):
         if 'group' in self.kwargs:
             kwargs['group'] = self.get_object()
             self.object = kwargs['group']
+        kwargs['slaves'] = self.get_slaves()
         return kwargs
 
     def get_object(self):

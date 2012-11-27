@@ -35,4 +35,6 @@ urlpatterns = patterns('',
     url(r'^(?P<username>[-.\w\$]+)/remove/(?P<group>[-.\w ]+)/$', views.AccountRemoveGroup.as_view(), name='plac_user_rm_group'),
     url(r'^(?P<username>[-.\w\$]+)/unlock/$', views.AccountUnlock.as_view(), name='plac_unlock_user'),
     url(r'^(?P<username>[-.\w\$]+)/verbose/$', views.AccountVerbose.as_view(), name='plac_user_detail_verbose'),
+    url(r'^(?P<username>[-.\w\$]+)/source/(?P<slave>[-.\w\$]+)/$', views.AccountDetail.as_view(), name='plac_user_detail'),
+    url(r'^(?P<username>[-.\w\$]+)/source/(?P<slave>[-.\w\$]+)/verbose/$', views.AccountVerbose.as_view(), name='plac_user_detail_verbose'),
 )

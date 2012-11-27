@@ -22,3 +22,23 @@ module = django.utils.importlib.import_module(django.conf.settings.PLACARD_MODEL
 
 account = module.account
 group = module.group
+
+def get_slaves():
+    models = getattr(django.conf.settings, 'PLACARD_SLAVES', {})
+    slaves = []
+    for i, j in models.iteritems():
+        module = django.utils.importlib.import_module(j)
+        slaves.append((i, module))
+    return slaves
+
+def get_slave_by_name(name):
+    models = getattr(django.conf.settings, 'PLACARD_SLAVES', {})
+    j = models[name]
+    return django.utils.importlib.import_module(j)
+
+def get_slave_names():
+    models = getattr(django.conf.settings, 'PLACARD_SLAVES', {})
+    names = []
+    for i, j in models.iteritems():
+        names.append(i)
+    return names
