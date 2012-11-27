@@ -23,22 +23,27 @@ module = django.utils.importlib.import_module(django.conf.settings.PLACARD_MODEL
 account = module.account
 group = module.group
 
-def get_slaves():
+def get_slave_modules():
     models = getattr(django.conf.settings, 'PLACARD_SLAVES', {})
-    slaves = []
-    for i, j in models.iteritems():
-        module = django.utils.importlib.import_module(j)
-        slaves.append((i, module))
-    return slaves
-
-def get_slave_by_name(name):
-    models = getattr(django.conf.settings, 'PLACARD_SLAVES', {})
-    j = models[name]
-    return django.utils.importlib.import_module(j)
+    modules = {}
+    for slave_id, s in models.iteritems():
+        module = django.utils.importlib.import_module(s['MODULE'])
+        modules[slave_id] = module
+    return modules
 
 def get_slave_names():
     models = getattr(django.conf.settings, 'PLACARD_SLAVES', {})
-    names = []
-    for i, j in models.iteritems():
-        names.append(i)
+    names = {}
+    for slave_id, s in models.iteritems():
+        names[slave_id] = s['NAME']
     return names
+
+def get_slave_module_by_id(slave_id):
+    models = getattr(django.conf.settings, 'PLACARD_SLAVES', {})
+    s = models[slave_id]
+    return django.utils.importlib.import_module(s['MODULE'])
+
+def get_slave_name_by_id(slave_id):
+    models = getattr(django.conf.settings, 'PLACARD_SLAVES', {})
+    s = models[slave_id]
+    return s['NAME']

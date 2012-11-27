@@ -14,7 +14,12 @@
 <div class="breadcrumbs">
 <a href='{{ base_url|default:"/" }}'>Home</a>
  &rsaquo; <a href="{% url plac_grp_list %}">Groups</a>
- &rsaquo; {{ group }}
+{% if slave_id %}
+ &rsaquo; <a href="{% url plac_grp_detail group.pk %}">{{ group }} detail</a>
+ &rsaquo; {{ slave_name }}
+{% else %}
+ &rsaquo; {{ group }} detail
+{% endif %}
 </div>
 {% endblock %}
 
@@ -23,8 +28,8 @@
 <div class="module object-tools">
     <h2>Group links</h2>
     <ul>
-        {% if slave %}
-        <li><a href="{% url plac_grp_detail_verbose group.pk slave %}">Verbose output</a></li>
+        {% if slave_id %}
+        <li><a href="{% url plac_grp_detail_verbose group.pk slave_id %}">Verbose output</a></li>
         {% else %}
         <li><a href="{% url plac_grp_detail_verbose group.pk %}">Verbose output</a></li>
         {% endif %}
@@ -38,9 +43,9 @@
         {% if perms.placard.email_group %}
         <li><a href="{% url plac_group_email group.pk %}">Sends members an Email</a></li>
         {% endif %}
-        {% if slaves %}
+        {% if all_slave_names %}
         <li>source:
-        <a href="{% url plac_grp_detail group.pk %}">master</a>, {% for slave in slaves %}<a href="{% url plac_grp_detail group.pk slave %}">{{ slave }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
+        <a href="{% url plac_grp_detail group.pk %}">master</a>, {% for slave_id, slave_name in all_slave_names.items %}<a href="{% url plac_grp_detail group.pk slave_id %}">{{ slave_name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
         </li>
         {% endif %}
     </ul>
@@ -54,7 +59,7 @@
     <div class="module">
         <h2>Group {{ group }} detail</h2>
 
-        <h3>{{ group.cn }}</h3>
+        <h3>{{ group }}</h3>
         <table>
             <tr>
             <td>cn</td><td>{{ group.cn }}</td>

@@ -131,12 +131,15 @@ class FormView(PermissionMixin, django.views.generic.FormView):
 
 
 class AccountMixin(object):
-    def get_slaves(self):
-        slaves = {}
-        for name, slave in placard.models.get_slaves():
-            obj = slave.account.objects.using(name).get(pk=self.object.pk)
-            slaves.update({ name: obj })
-        return slaves
+    def get_slave_objs(self):
+        try:
+            objs = {}
+            for slave_id, module in placard.models.get_slave_modules().iteritems():
+                obj = module.account.objects.using(slave_id).get(pk=self.object.pk)
+                objs[slave_id] = obj
+            return objs
+        except module.account.DoesNotExist:
+            raise Http404('Slave not found')
 
 
 class AccountList(ListView, AccountMixin):
@@ -189,24 +192,25 @@ class AccountDetail(DetailView, AccountMixin):
 
     def get_context_data(self, **kwargs):
         context = super(AccountDetail, self).get_context_data(**kwargs)
-        slaves = self.get_slaves()
-        context['form'] = placard.forms.AddGroupForm(user=self.request.user, slaves=slaves, account=self.object)
-        context['slaves'] = placard.models.get_slave_names()
+        slave_objs = self.get_slave_objs()
+        context['form'] = placard.forms.AddGroupForm(user=self.request.user, slave_objs=slave_objs, account=self.object)
+        context['all_slave_names'] = placard.models.get_slave_names()
         if 'slave' in self.kwargs:
-            context['slave'] = self.kwargs['slave']
+            context['slave_id'] = self.kwargs['slave']
+            context['slave_name'] = placard.models.get_slave_name_by_id(self.kwargs['slave'])
 
         return context
 
     def get_object(self):
         if 'slave' in self.kwargs:
-            using = self.kwargs['slave']
-            model = placard.models.get_slave_by_name(using).account
+            slave_id = self.kwargs['slave']
+            model = placard.models.get_slave_module_by_id(slave_id).account
         else:
-            using = None
+            slave_id = None
             model = placard.models.account
 
         try:
-            return model.objects.using(using).get(pk=self.kwargs['username'])
+            return model.objects.using(slave_id).get(pk=self.kwargs['username'])
         except model.DoesNotExist:
             raise Http404
 
@@ -231,7 +235,7 @@ class AccountGeneric(FormView, AccountMixin):
         if 'username' in self.kwargs:
             kwargs['account'] = self.get_object()
             self.object = kwargs['account']
-        kwargs['slaves'] = self.get_slaves()
+        kwargs['slave_objs'] = self.get_slave_objs()
         return kwargs
 
     def get_object(self):
@@ -337,12 +341,15 @@ class AccountDelete(AccountGeneric):
 
 
 class GroupMixin(object):
-    def get_slaves(self):
-        slaves = {}
-        for name, slave in placard.models.get_slaves():
-            obj = slave.group.objects.using(name).get(pk=self.object.pk)
-            slaves.update({ name: obj })
-        return slaves
+    def get_slave_objs(self):
+        try:
+            objs = {}
+            for slave_id, module in placard.models.get_slave_modules().iteritems():
+                obj = module.group.objects.using(slave_id).get(pk=self.object.pk)
+                objs[slave_id] = obj
+            return objs
+        except module.group.DoesNotExist:
+            raise Http404('Slave not found')
 
 
 class GroupList(ListView, GroupMixin):
@@ -358,23 +365,24 @@ class GroupDetail(DetailView, GroupMixin):
 
     def get_context_data(self, **kwargs):
         context = super(GroupDetail, self).get_context_data(**kwargs)
-        slaves = self.get_slaves()
-        context['form'] = placard.forms.AddMemberForm(user=self.request.user, slaves=slaves, group=self.object)
-        context['slaves'] = placard.models.get_slave_names()
+        slave_objs = self.get_slave_objs()
+        context['form'] = placard.forms.AddMemberForm(user=self.request.user, slave_objs=slave_objs, group=self.object)
+        context['all_slave_names'] = placard.models.get_slave_names()
         if 'slave' in self.kwargs:
-            context['slave'] = self.kwargs['slave']
+            context['slave_id'] = self.kwargs['slave']
+            context['slave_name'] = placard.models.get_slave_name_by_id(self.kwargs['slave'])
         return context
 
     def get_object(self):
         if 'slave' in self.kwargs:
-            using = self.kwargs['slave']
-            model = placard.models.get_slave_by_name(using).group
+            slave_id = self.kwargs['slave']
+            model = placard.models.get_slave_module_by_id(slave_id).group
         else:
-            using = None
+            slave_id = None
             model = placard.models.group
 
         try:
-            return model.objects.using(using).get(pk=self.kwargs['group'])
+            return model.objects.using(slave_id).get(pk=self.kwargs['group'])
         except model.DoesNotExist:
             raise Http404
 
@@ -395,7 +403,7 @@ class GroupGeneric(FormView, GroupMixin):
         if 'group' in self.kwargs:
             kwargs['group'] = self.get_object()
             self.object = kwargs['group']
-        kwargs['slaves'] = self.get_slaves()
+        kwargs['slave_objs'] = self.get_slave_objs()
         return kwargs
 
     def get_object(self):
