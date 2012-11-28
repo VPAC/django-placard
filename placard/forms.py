@@ -52,7 +52,7 @@ class LDAPForm(forms.Form):
         self.user = user
         if self.object is None and self.model is None:
             raise RuntimeError("If creating an object we need a model to be specified")
-        if self.slave_objs is None:
+        if self.object is not None and self.slave_objs is None:
             raise RuntimeError("No slave_objs given")
 
         super(LDAPForm, self).__init__(*args, **kwargs)
@@ -283,6 +283,7 @@ class LDAPAddUserForm(LDAPUserForm):
 
     def clean_uid(self):
         username = self.cleaned_data['uid']
+        username = username.lower()
         try:
             placard.models.account.objects.get(uid=username)
         except placard.models.account.DoesNotExist:
@@ -290,11 +291,7 @@ class LDAPAddUserForm(LDAPUserForm):
         raise forms.ValidationError(u'Username exists')
 
     def clean(self):
-        data = self.cleaned_data
-
-        username = data['uid']
-        if not username.islower():
-            username = username.lower()
+        data = super(LDAPAddUserForm, self).clean()
 
         if 'raw_password' not in data or 'raw_password2' not in data:
             return data

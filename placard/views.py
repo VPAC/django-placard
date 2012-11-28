@@ -233,7 +233,7 @@ class AccountGeneric(FormView, AccountMixin):
         if 'username' in self.kwargs:
             kwargs['account'] = self.get_object()
             self.object = kwargs['account']
-        kwargs['slave_objs'] = self.get_slave_objs()
+            kwargs['slave_objs'] = self.get_slave_objs()
         return kwargs
 
     def get_object(self):
@@ -400,7 +400,7 @@ class GroupGeneric(FormView, GroupMixin):
         if 'group' in self.kwargs:
             kwargs['group'] = self.get_object()
             self.object = kwargs['group']
-        kwargs['slave_objs'] = self.get_slave_objs()
+            kwargs['slave_objs'] = self.get_slave_objs()
         return kwargs
 
     def get_object(self):
