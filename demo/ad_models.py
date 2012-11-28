@@ -87,7 +87,7 @@ class account(person, ad.posixAccount, helpers.accountMixin):
         self.shadowMax = 365
         self.shadowMin = 1
         self.shadowWarning = 10
-        self.objectSid = "S-1-5-" + django.conf.settings.SAMBA_DOMAIN_SID + "-" + str(int(self.uidNumber)*2)
+        self.objectSid = "S-1-5-" + django.conf.settings.AD_DOMAIN_SID + "-" + str(int(self.uidNumber)*2)
 
     def delete(self, using=None):
         self.manager_of.clear()
@@ -122,7 +122,7 @@ class group(rfc.posixGroup, ad.group, helpers.groupMixin):
 
     def set_defaults(self):
         self.set_free_gidNumber()
-        self.objectSid = "S-1-5-" + django.conf.settings.SAMBA_DOMAIN_SID + "-" + str(int(self.uidNumber)*2 + 1001)
+        self.objectSid = "S-1-5-" + django.conf.settings.AD_DOMAIN_SID + "-" + str(int(self.uidNumber)*2 + 1001)
 
     def save(self, *args, **kwargs):
         if self.description is None:
