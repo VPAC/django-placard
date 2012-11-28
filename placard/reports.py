@@ -45,6 +45,7 @@ class PdfResponseMixin(placard.views.AccountList):
 
 class PdfAccountList(PdfResponseMixin, placard.views.AccountList):
 #    fname = "phone_list.pdf"
+    paginate_by = None
 
     def convert_context_to_pdf(self, context):
         user_list = context['user_list']
