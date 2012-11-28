@@ -84,6 +84,11 @@ class PdfAccountList(PdfResponseMixin, placard.views.AccountList):
         table_style = TableStyle(
             [('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
              ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+             ('LINEABOVE',(0,0),(-1,0),1,colors.black),
+             ('LINEBELOW',(0,0),(-1,0),1,colors.black),
+             ('LINEBELOW',(0,-1),(-1,-1),1,colors.black),
+             ('LINEBEFORE',(0,0),(0,-1),1,colors.black),
+             ('LINEAFTER',(-1,0),(-1,-1),1,colors.black),
              ]
         )
 
