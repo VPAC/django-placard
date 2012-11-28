@@ -14,8 +14,8 @@ class person(rfc.person, rfc.organizationalPerson, rfc.inetOrgPerson, rfc.pwdPol
 
     class Meta:
         base_dn_setting = "LDAP_ACCOUNT_BASE"
-        object_classes = { 'top', }
-        search_classes = { 'person', }
+        object_classes = set([ 'top' ])
+        search_classes = set([ 'person' ])
         pk = 'uid'
 
     def __unicode__(self):
@@ -68,8 +68,8 @@ class account(person, rfc.posixAccount, rfc.shadowAccount, helpers.accountMixin)
 
     class Meta:
         base_dn_setting = "LDAP_ACCOUNT_BASE"
-        object_classes = { 'top', }
-        search_classes = { 'posixAccount', }
+        object_classes = set([ 'top' ])
+        search_classes = set([ 'posixAccount' ])
         pk = 'uid'
 
     def __unicode__(self):
@@ -120,8 +120,8 @@ class account(person, rfc.posixAccount, rfc.shadowAccount, helpers.accountMixin)
 class group(rfc.posixGroup, helpers.groupMixin):
     class Meta:
         base_dn_setting = "LDAP_GROUP_BASE"
-        object_classes = { 'top', }
-        search_classes = { 'posixGroup', }
+        object_classes = set([ 'top' ])
+        search_classes = set([ 'posixGroup' ])
         pk = 'cn'
 
     def __unicode__(self):
