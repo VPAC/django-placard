@@ -107,7 +107,7 @@
     top: 0;
     right: 0;
     z-index: 1000;
-    width: 160px;
+    width: 300px;
     border-left: 1px solid #ddd;
     background: #efefef;
     margin: 0;
@@ -151,6 +151,11 @@
 
 #changelist-filter li.selected a {
     color: #5b80b2 !important;
+}
+
+#changelist-filter .changelist-block {
+    display: inline-block;
+    width: 50%;
 }
 
 /* DATE DRILLDOWN */

@@ -178,8 +178,8 @@ class AccountList(ListView, AccountMixin):
             group_list[group.cn] = group.cn
 
         filter_list = []
-        filter_list.append(placard.filterspecs.Filter(self.request, 'group', group_list))
-        filter_list.append(placard.filterspecs.Filter(self.request, 'exclude', group_list))
+        filter_list.append(placard.filterspecs.Filter(self.request, 'group', group_list, "Include"))
+        filter_list.append(placard.filterspecs.Filter(self.request, 'exclude', group_list, "Exclude"))
         context['filter_bar'] = placard.filterspecs.FilterBar(self.request, filter_list)
 
         return context

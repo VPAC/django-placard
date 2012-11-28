@@ -33,7 +33,7 @@ class Filter(object):
     def __init__(self, request, name, filters, header=None):
 
         if header is None:
-            self.header = name
+            self.header = "By %s" % name.replace('_', ' ')
         else:
             self.header = header
 
@@ -49,24 +49,26 @@ class Filter(object):
         if qs.has_key(self.name):
             del(qs[self.name])
 
-        output = ''
-        output += '<h3>By %s</h3>\n' % self.header.replace('_', ' ')
-        output += '<ul>\n'
+        output = []
+        output.append('<div class="changelist-block">\n')
+        output.append('<h3>%s</h3>\n' % self.header)
+        output.append('<ul>\n')
         filters = sorted(self.filters.iteritems(), key=itemgetter(1))
 
         if self.selected is not None:
-            output += '<li><a href="%s">All</a></li>\n' % get_query_string(qs)
+            output.append('<li><a href="%s">All</a></li>\n' % get_query_string(qs))
         else:
-            output += '<li class="selected"><a href="%s">All</a></li>\n' % get_query_string(qs)
+            output.append('<li class="selected"><a href="%s">All</a></li>\n' % get_query_string(qs))
         for k, v in filters:
             if str(self.selected) == str(k):
                 style = 'class="selected" '
             else:
                 style = ""
             qs[self.name] = k
-            output += '<li %s><a href="%s">%s</a></li>\n' % (style, get_query_string(qs), v)
+            output.append('<li %s><a href="%s">%s</a></li>\n' % (style, get_query_string(qs), v))
 
-        output += '</ul>'
+        output.append('</ul>\n')
+        output.append('</div>')
 
         return output
 
@@ -83,12 +85,12 @@ class FilterBar(object):
 
     def output(self):
 
-        output = ''
+        output = []
 
         for f in self.filter_list:
-            output += f.output(self.qs.copy())
+            output.extend(f.output(self.qs.copy()))
 
-        return output
+        return "".join(output)
 
     def __str__(self):
         return mark_safe(self.output())
