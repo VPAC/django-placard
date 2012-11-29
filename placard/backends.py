@@ -22,42 +22,12 @@ from django.core.exceptions import ImproperlyConfigured
 
 import django.conf
 
-import ldap
-import ldap.filter
-
-
-settings = django.conf.settings.LDAP['default']
-
-if settings['USE_TLS']:
-    ldap.set_option(ldap.OPT_X_TLS_CACERTFILE, settings['TLS_CA'])
+import placard.models
 
 class LDAPBackend(ModelBackend):
     def authenticate(self, username=None, password=None):
-        scope = ldap.SCOPE_SUBTREE
-        filter = ldap.filter.filter_format("(uid=%s)", [username])
-        ret = ['dn']
-
-        try:
-            l = ldap.initialize(settings['URI'])
-        except ldap.LDAPError:
-            return None
-
-        if settings['USE_TLS']:
-            l.set_option(ldap.OPT_X_TLS,ldap.OPT_X_TLS_DEMAND)
-            l.start_tls_s()
-            
-        l.simple_bind_s(settings['USER'], settings['PASSWORD'])
-
-        try:
-            result_id = l.search(django.conf.settings.LDAP_USER_BASE, scope, filter, ret)
-            result_type, result_data = l.result(result_id, 0)
-
-            # If the user does not exist in LDAP, Fail.
-            if (len(result_data) != 1):
-                return None
-
-            # Attempt to bind to the user's DN
-            l.simple_bind_s(result_data[0][0], password)
+        ldap_user = placard.models.account.objects.get(pk=username)
+        if ldap_user.check_password(password):
 
             # The user existed and authenticated. Get the user
             # record or create one with no privileges.
@@ -80,11 +50,6 @@ class LDAPBackend(ModelBackend):
                 user.save()
             # Success.
             return user
-           
-        except ldap.INVALID_CREDENTIALS:
-            # Name or password were bad. Fail.
+
+        else:
             return None
-        except ldap.UNWILLING_TO_PERFORM:
-            # User set inactive
-            return None
-            
