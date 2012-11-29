@@ -26,7 +26,11 @@ import placard.models
 
 class LDAPBackend(ModelBackend):
     def authenticate(self, username=None, password=None):
-        ldap_user = placard.models.account.objects.get(pk=username)
+        try:
+            ldap_user = placard.models.account.objects.get(pk=username)
+        except placard.models.account.DoesNotExist:
+            return None
+
         if ldap_user.check_password(password):
 
             # The user existed and authenticated. Get the user
