@@ -1,9 +1,27 @@
-from tldap.schemas import rfc, ad, helpers
+# Copyright 2012 VPAC
+#
+# This file is part of django-placard.
+#
+# django-placard is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# django-placard is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with django-placard  If not, see <http://www.gnu.org/licenses/>.
+
+from tldap.schemas import rfc, ad
+from placard.schemas import common
+from placard.schemas.ad import adUserMixin, adGroupMixin
 import tldap.manager
 import django.conf
 import time
 import datetime
-import smbpasswd
 
 import placard.ldap_passwd
 
@@ -11,7 +29,7 @@ import placard.ldap_passwd
 # person #
 ##########
 
-class person(ad.person, rfc.organizationalPerson, rfc.inetOrgPerson, ad.user):
+class person(ad.person, rfc.organizationalPerson, rfc.inetOrgPerson, ad.user, common.personMixin, adUserMixin):
 
     class Meta:
         base_dn_setting = "LDAP_ACCOUNT_BASE"
@@ -19,48 +37,40 @@ class person(ad.person, rfc.organizationalPerson, rfc.inetOrgPerson, ad.user):
         search_classes = set([ 'person' ])
         pk = 'cn'
 
-    def __unicode__(self):
-        return u"P:%s"%(self.displayName or self.cn)
-
-    def check_password(self, password):
-        return tldap.connection.check_password(self.dn, password)
-
     def change_password(self, password):
-        self.userPassword = None
-        self.unicodePwd = '"' + password + '"'
-
-        self.force_replace.add('unicodePwd')
+        self.account_change_password(password)
 
     def set_defaults(self):
-        self.userAccountControl = 512
+        self.set_inet_org_person_defaults()
+        self.account_set_defaults()
 
     def save(self, *args, **kwargs):
+        self.save_inet_org_person_defaults()
+        self.account_save_defaults()
         if self.cn is None:
             self.cn = self.uid
-        self.displayName = '%s %s' % (self.givenName, self.sn)
         super(person, self).save(*args, **kwargs)
 
     def is_locked(self):
-        return self.userAccountControl & 0x2
+        return self.account_is_locked()
 
     def lock(self):
-        if not self.loginShell.startswith("/locked"):
-            self.loginShell = '/locked' + self.loginShell
-        self.userAccountControl = self.userAccountControl | 0x2
+        self.lock_shell()
+        self.account_lock()
 
     def unlock(self):
-        if self.loginShell.startswith("/locked"):
-            self.loginShell = self.loginShell[7:]
-        self.userAccountControl = self.userAccountControl & 0xFFFFFFFD
+        self.unlock_shell()
+        self.account_unlock()
 
     managed_by = tldap.manager.ManyToOneDescriptor('manager', 'demo.ad_models.person', 'dn')
     manager_of = tldap.manager.OneToManyDescriptor('dn', 'demo.ad_models.person', 'manager')
+
 
 ###########
 # account #
 ###########
 
-class account(person, ad.posixAccount, helpers.accountMixin):
+class account(person, ad.posixAccount, common.accountMixin):
 
     class Meta:
         base_dn_setting = "LDAP_ACCOUNT_BASE"
@@ -68,66 +78,44 @@ class account(person, ad.posixAccount, helpers.accountMixin):
         search_classes = set([ 'user' ])
         pk = 'cn'
 
-    def __unicode__(self):
-        return u"A:%s"%(self.displayName or self.cn)
-
     managed_by = tldap.manager.ManyToOneDescriptor('manager', 'demo.ad_models.account', 'dn')
     manager_of = tldap.manager.OneToManyDescriptor('dn', 'demo.ad_models.account', 'manager')
 
     def set_defaults(self):
         super(account, self).set_defaults()
-
-        self.set_free_uidNumber()
-
-        self.secondary_groups.add(group.objects.get(cn="Domain Users"))
-
-        self.loginShell = '/bin/bash'
-        self.shadowInactive = 10
-        self.shadowLastChange = 13600
-        self.shadowMax = 365
-        self.shadowMin = 1
-        self.shadowWarning = 10
-        self.objectSid = "S-1-5-" + django.conf.settings.AD_DOMAIN_SID + "-" + str(int(self.uidNumber)*2)
+        self.set_posix_account_defaults()
+        self.set_shadow_account_defaults()
 
     def delete(self, using=None):
-        self.manager_of.clear()
+        self.prepare_for_delete()
         super(account, self).delete(using)
 
     def save(self, *args, **kwargs):
-        self.gecos = '%s %s' % (self.givenName, self.sn)
-        if self.uid is not None:
-            self.unixHomeDirectory =  '/home/%s' % self.uid
-
+        self.save_posix_account_defaults()
+        self.save_shadow_account_defaults()
         super(account, self).save(*args, **kwargs)
+
 
 #########
 # group #
 #########
 
-class group(rfc.posixGroup, ad.group, helpers.groupMixin):
+class group(rfc.posixGroup, ad.group, common.groupMixin, adGroupMixin):
     class Meta:
         base_dn_setting = "LDAP_GROUP_BASE"
         object_classes = set([ 'top' ])
         search_classes = set([ 'group' ])
         pk = 'cn'
 
-    def __unicode__(self):
-        return u"G:%s"%self.cn
-
     # accounts
     primary_accounts = tldap.manager.OneToManyDescriptor('gidNumber', account, 'gidNumber', "primary_group")
-#    secondary_accounts = tldap.manager.ManyToManyDescriptor('memberUid', account, 'uid', False, "secondary_groups")
-#    secondary_accounts = tldap.manager.ManyToManyDescriptor('member', account, 'dn', False, "secondary_groups")
     secondary_accounts = tldap.manager.AdAccountLinkDescriptor(account, "secondary_groups")
 
     def set_defaults(self):
-        self.set_free_gidNumber()
-        self.objectSid = "S-1-5-" + django.conf.settings.AD_DOMAIN_SID + "-" + str(int(self.uidNumber)*2 + 1001)
+        self.set_posix_group_defaults()
+        self.set_ad_group_defaults()
 
     def save(self, *args, **kwargs):
-        if self.description is None:
-            self.description = self.cn
+        self.save_posix_group_defaults()
+        self.save_ad_group_defaults()
         super(group, self).save(*args, **kwargs)
-
-    def delete(self, using=None):
-        super(group, self).delete(using)
