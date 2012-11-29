@@ -133,11 +133,11 @@ class FormView(PermissionMixin, django.views.generic.FormView):
 class AccountMixin(object):
     def get_slave_objs(self):
         objs = {}
-        for slave_id, module in placard.models.get_slave_modules().iteritems():
+        for slave_id, account in placard.models.get_slave_accounts().iteritems():
             try:
-                obj = module.account.objects.using(slave_id).get(pk=self.object.pk)
+                obj = account.objects.using(slave_id).get(pk=self.object.pk)
                 objs[slave_id] = obj
-            except module.account.DoesNotExist:
+            except account.DoesNotExist:
                 pass
         return objs
 
@@ -202,7 +202,7 @@ class AccountDetail(DetailView, AccountMixin):
     def get_object(self):
         if 'slave' in self.kwargs:
             slave_id = self.kwargs['slave']
-            model = placard.models.get_slave_module_by_id(slave_id).account
+            model = placard.models.get_slave_account_by_id(slave_id)
         else:
             slave_id = None
             model = placard.models.account
@@ -341,11 +341,11 @@ class AccountDelete(AccountGeneric):
 class GroupMixin(object):
     def get_slave_objs(self):
         objs = {}
-        for slave_id, module in placard.models.get_slave_modules().iteritems():
+        for slave_id, group in placard.models.get_slave_groups().iteritems():
             try:
-                obj = module.group.objects.using(slave_id).get(pk=self.object.pk)
+                obj = group.objects.using(slave_id).get(pk=self.object.pk)
                 objs[slave_id] = obj
-            except module.group.DoesNotExist:
+            except group.DoesNotExist:
                 pass
         return objs
 
@@ -373,7 +373,7 @@ class GroupDetail(DetailView, GroupMixin):
     def get_object(self):
         if 'slave' in self.kwargs:
             slave_id = self.kwargs['slave']
-            model = placard.models.get_slave_module_by_id(slave_id).group
+            model = placard.models.get_slave_group_by_id(slave_id)
         else:
             slave_id = None
             model = placard.models.group

@@ -18,18 +18,48 @@
 import django.conf
 import django.utils.importlib
 
-module = django.utils.importlib.import_module(django.conf.settings.PLACARD_MODELS)
+def _lookup(cls):
+    if isinstance(cls, str):
+        module_name, _, name = cls.rpartition(".")
+        module = django.utils.importlib.import_module(module_name)
+        try:
+            cls = getattr(module, name)
+        except AttributeError:
+            raise AttributeError("%s reference cannot be found" % cls)
+    return(cls)
 
-account = module.account
-group = module.group
+account = _lookup(django.conf.settings.PLACARD_SCHEMA_ACCOUNT)
+group = _lookup(django.conf.settings.PLACARD_SCHEMA_GROUP)
 
-def get_slave_modules():
+def get_slave_accounts():
     models = getattr(django.conf.settings, 'PLACARD_SLAVES', {})
     modules = {}
     for slave_id, s in models.iteritems():
-        module = django.utils.importlib.import_module(s['MODULE'])
+        module = _lookup(s['ACCOUNT'])
         modules[slave_id] = module
     return modules
+
+
+def get_slave_account_by_id(slave_id):
+    models = getattr(django.conf.settings, 'PLACARD_SLAVES', {})
+    s = models[slave_id]
+    return _lookup(s['ACCOUNT'])
+
+
+def get_slave_groups():
+    models = getattr(django.conf.settings, 'PLACARD_SLAVES', {})
+    modules = {}
+    for slave_id, s in models.iteritems():
+        module = _lookup(s['GROUP'])
+        modules[slave_id] = module
+    return modules
+
+
+def get_slave_group_by_id(slave_id):
+    models = getattr(django.conf.settings, 'PLACARD_SLAVES', {})
+    s = models[slave_id]
+    return _lookup(s['GROUP'])
+
 
 def get_slave_ids():
     models = getattr(django.conf.settings, 'PLACARD_SLAVES', {})
@@ -38,11 +68,6 @@ def get_slave_ids():
         ids.append(slave_id)
     return ids
 
-
-def get_slave_module_by_id(slave_id):
-    models = getattr(django.conf.settings, 'PLACARD_SLAVES', {})
-    s = models[slave_id]
-    return django.utils.importlib.import_module(s['MODULE'])
 
 def get_slave_name_by_id(slave_id):
     models = getattr(django.conf.settings, 'PLACARD_SLAVES', {})

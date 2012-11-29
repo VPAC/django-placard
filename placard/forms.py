@@ -35,13 +35,13 @@ class AutoCompleteSelectField(ajax_select.fields.AutoCompleteSelectField):
 
 
 def _get_slave_account(slave_id, pk):
-    slave_module = placard.models.get_slave_module_by_id(slave_id)
-    return slave_module.account.objects.using(slave_id).get(pk=pk)
+    slave_account = placard.models.get_slave_account_by_id(slave_id)
+    return slave_account.objects.using(slave_id).get(pk=pk)
 
 
 def _get_slave_group(slave_id, pk):
-    slave_module = placard.models.get_slave_module_by_id(slave_id)
-    return slave_module.group.objects.using(slave_id).get(pk=pk)
+    slave_group = placard.models.get_slave_group_by_id(slave_id)
+    return slave_group.objects.using(slave_id).get(pk=pk)
 
 
 class LDAPForm(forms.Form):
@@ -99,8 +99,8 @@ class AccountForm(LDAPForm):
     model = placard.models.account
     def create_slave_objs():
         objs = [ self.object ]
-        for name, module in placard.models.get_slave_modules().iteritems():
-            obj = module.account(using=name)
+        for name, account in placard.models.get_slave_accounts().iteritems():
+            obj = account(using=name)
             objs.append(obj)
         return objs
 
@@ -109,8 +109,8 @@ class GroupForm(LDAPForm):
     model = placard.models.group
     def create_slave_objs():
         objs = [ self.object ]
-        for name, module in placard.models.get_slave_modules().iteritems():
-            obj = module.group(using=name)
+        for name, group in placard.models.get_slave_groups().iteritems():
+            obj = group(using=name)
             objs.append(obj)
         return objs
 
