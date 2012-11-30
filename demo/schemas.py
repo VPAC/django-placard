@@ -27,7 +27,7 @@ import tldap.manager
 
 class localRfcAccountMixin(object):
     @classmethod
-    def save_defaults(cls, self):
+    def prepare_for_save(cls, self):
         if self.cn is None:
             self.cn = '%s %s' % (self.givenName, self.sn)
 
@@ -68,7 +68,7 @@ class rfc_group(rfc.posixGroup, common.baseMixin):
 
 class localAdAccountMixin(object):
     @classmethod
-    def save_defaults(cls, self):
+    def prepare_for_save(cls, self):
         if self.cn is None:
             self.cn = self.uid
 

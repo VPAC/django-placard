@@ -97,21 +97,21 @@ class LDAPForm(forms.Form):
 
 class AccountForm(LDAPForm):
     model = placard.models.account
-    def create_slave_objs():
-        objs = [ self.object ]
+    def create_slave_objs(self):
+        objs = {}
         for name, account in placard.models.get_slave_accounts().iteritems():
             obj = account(using=name)
-            objs.append(obj)
+            objs[name] = obj
         return objs
 
 
 class GroupForm(LDAPForm):
     model = placard.models.group
-    def create_slave_objs():
-        objs = [ self.object ]
+    def create_slave_objs(self):
+        objs = {}
         for name, group in placard.models.get_slave_groups().iteritems():
             obj = group(using=name)
-            objs.append(obj)
+            objs[name] = obj
         return objs
 
 

@@ -101,15 +101,21 @@ class personMixin(object):
 
     @classmethod
     def is_locked(cls, self):
+        if self.loginShell is None:
+            return False
         return self.loginShell.startswith("/locked")
 
     @classmethod
     def lock(cls, self):
+        if self.loginShell is None:
+            return
         if not self.loginShell.startswith("/locked"):
             self.loginShell = '/locked' + self.loginShell
 
     @classmethod
     def unlock(cls, self):
+        if self.loginShell is None:
+            return
         if self.loginShell.startswith("/locked"):
             self.loginShell = self.loginShell[7:]
 
@@ -124,7 +130,7 @@ class accountMixin(object):
         return u"A:%s"%(self.displayName or self.cn)
 
     @classmethod
-    def set_free_uidNumber(self):
+    def set_free_uidNumber(cls, self):
         model = self.__class__
         uid = None
         for u in model.objects.all():
@@ -143,7 +149,7 @@ class accountMixin(object):
         self.shadowWarning = 10
 
     @classmethod
-    def save(cls, self):
+    def prepare_for_save(cls, self):
         self.gecos = '%s %s' % (self.givenName, self.sn)
         if self.uid is not None:
             self.unixHomeDirectory =  '/home/%s' % self.uid
@@ -159,7 +165,7 @@ class groupMixin(object):
         return u"G:%s"%self.cn
 
     @classmethod
-    def set_free_gidNumber(self):
+    def set_free_gidNumber(cls, self):
         model = self.__class__
         gid = None
         for g in model.objects.all():
