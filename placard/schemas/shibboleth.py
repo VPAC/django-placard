@@ -16,7 +16,9 @@
 # along with django-tldap  If not, see <http://www.gnu.org/licenses/>.
 
 class shibbolethMixin(object):
-    def _generate_shared_token(self):
+
+    @classmethod
+    def _generate_shared_token(cls, self):
         try:
             from hashlib import sha
         except:
@@ -28,16 +30,16 @@ class shibbolethMixin(object):
         salt = django.conf.settings.SHIBBOLETH_SALT
         return base64.urlsafe_b64encode(sha(uid + mail + entityID + salt).digest())[:-1]
 
-    def set_shibboleth_defaults(self):
-        pass
-
-    def save_shibboleth_defaults(self):
+    @classmethod
+    def prepare_for_save(cls, self):
         if self.auEduPersonSharedToken is None:
-            self.auEduPersonSharedToken = self._generate_shared_token()
+            self.auEduPersonSharedToken = cls._generate_shared_token(self)
 
-    def shibboleth_lock(self):
+    @classmethod
+    def lock(cls, self):
         self.eduPersonAffiliation = 'affiliate'
 
-    def shibboleth_unlock(self):
+    @classmethod
+    def unlock(cls, self):
         self.edupersonaffiliation = 'staff'
 

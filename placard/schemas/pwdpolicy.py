@@ -16,26 +16,32 @@
 # along with django-tldap  If not, see <http://www.gnu.org/licenses/>.
 
 class pwdPolicyMixin(object):
-    def account_set_defaults(self):
+    @classmethod
+    def set_defaults(cls, self):
         self.pwdAttribute = 'userPassword'
 
-    def account_save_defaults(self):
+    @classmethod
+    def prepare_for_save(cls, self):
         if self.pwdAttribute is None:
             self.pwdAttribute = 'userPassword'
 
-    def account_is_locked(self):
+    @classmethod
+    def is_locked(cls, self):
         return self.pwdAccountLockedTime is not None
 
-    def account_lock(self):
+    @classmethod
+    def lock(cls, self):
         self.pwdAccountLockedTime='000001010000Z'
 
-    def account_unlock(self):
+    @classmethod
+    def unlock(cls, self):
         self.pwdAccountLockedTime=None
 
         if isinstance(password, unicode):
             password = password.encode()
 
-    def account_change_password(self, password):
+    @classmethod
+    def change_password(cls, self, password):
         up = placard.ldap_passwd.UserPassword()
         self.userPassword = up.encodePassword(password, "ssha")
 

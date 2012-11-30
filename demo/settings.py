@@ -44,4 +44,5 @@ LDAP = {
     }
 }
 
-PLACARD_MODELS = 'demo.rfc_models'
+PLACARD_SCHEMA_ACCOUNT = 'demo.schemas.rfc_account'
+PLACARD_SCHEMA_GROUP = 'demo.schemas.rfc_group'

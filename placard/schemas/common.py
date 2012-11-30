@@ -17,30 +17,113 @@
 
 import tldap
 
-class personMixin(object):
-    def __unicode__(self):
-        return u"%s"%(self.displayName or self.cn)
 
-    def check_password(self, password):
+class baseMixin(tldap.base.LDAPobject):
+    mixin_list = []
+
+    def change_password(self, password):
+        for mixin in self.mixin_list:
+            if hasattr(mixin, 'change_password'):
+                mixin.change_password(self, password)
+
+    def set_defaults(self):
+        for mixin in self.mixin_list:
+            if hasattr(mixin, 'set_defaults'):
+                mixin.set_defaults(self)
+
+    def save(self, *args, **kwargs):
+        for mixin in self.mixin_list:
+            if hasattr(mixin, 'prepare_for_save'):
+                mixin.prepare_for_save(self)
+        super(baseMixin, self).save(*args, **kwargs)
+
+    def delete(self, using=None):
+        for mixin in self.mixin_list:
+            if hasattr(mixin, 'prepare_for_delete'):
+                mixin.prepare_for_delete(self)
+        super(baseMixin, self).delete(using)
+
+    def lock(self):
+        for mixin in self.mixin_list:
+            if hasattr(mixin, 'lock'):
+                mixin.lock(self)
+
+    def unlock(self):
+        for mixin in self.mixin_list:
+            if hasattr(mixin, 'unlock'):
+                mixin.unlock(self)
+
+    def check_password(self):
+        locked = True
+        num = 0
+
+        for mixin in self.mixin_list:
+            if hasattr(mixin, 'check_password'):
+                num = num + 1
+                if not mixin.check_password(self):
+                    locked = False
+
+        if num == 0:
+            locked = False
+
+        return locked
+
+    def is_locked(self):
+        locked = True
+        num = 0
+
+        for mixin in self.mixin_list:
+            if hasattr(mixin, 'is_locked'):
+                num = num + 1
+                if not mixin.is_locked(self):
+                    locked = False
+
+        if num == 0:
+            locked = False
+
+        return locked
+
+    def __unicode__(self):
+        for mixin in self.mixin_list:
+            if hasattr(mixin, '__unicode__'):
+                return mixin.__unicode__(self)
+
+
+class personMixin(object):
+    @classmethod
+    def __unicode__(cls, self):
+        return u"P:%s"%(self.displayName or self.cn)
+
+    @classmethod
+    def check_password(cls, self, password):
         using = self._alias
         return tldap.connections[using].check_password(self.dn, password)
 
-    def lock_shell(self):
+    @classmethod
+    def is_locked(cls, self):
+        return self.loginShell.startswith("/locked")
+
+    @classmethod
+    def lock(cls, self):
         if not self.loginShell.startswith("/locked"):
             self.loginShell = '/locked' + self.loginShell
 
-    def unlock_shell(self):
+    @classmethod
+    def unlock(cls, self):
         if self.loginShell.startswith("/locked"):
             self.loginShell = self.loginShell[7:]
 
-    def set_inet_org_person_defaults(self):
-        pass
-
-    def save_inet_org_person_defaults(self):
+    @classmethod
+    def prepare_for_save(cls, self):
         self.displayName = '%s %s' % (self.givenName, self.sn)
 
 
 class accountMixin(object):
+    @classmethod
+    def __unicode__(cls, self):
+        return u"A:%s"%(self.displayName or self.cn)
+
+    @classmethod
     def set_free_uidNumber(self):
         model = self.__class__
         uid = None
@@ -49,33 +132,33 @@ class accountMixin(object):
                 uid = u.uidNumber
         self.uidNumber = uid + 1
 
-    def set_posix_account_defaults(self):
-        self.set_free_uidNumber()
+    @classmethod
+    def set_defaults(cls, self):
+        cls.set_free_uidNumber(self)
         self.loginShell = '/bin/bash'
-
-    def set_shadow_account_defaults(self):
         self.shadowInactive = 10
         self.shadowLastChange = 13600
         self.shadowMax = 365
         self.shadowMin = 1
         self.shadowWarning = 10
 
-    def save_posix_account_defaults(self):
+    @classmethod
+    def save(cls, self):
         self.gecos = '%s %s' % (self.givenName, self.sn)
         if self.uid is not None:
             self.unixHomeDirectory =  '/home/%s' % self.uid
 
-    def save_shadow_account_defaults(self):
-        pass
-
-    def prepare_for_delete(self):
+    @classmethod
+    def prepare_for_delete(cls, self):
         self.manager_of.clear()
 
 
 class groupMixin(object):
-    def __unicode__(self):
-        return u"%s"%self.cn
+    @classmethod
+    def __unicode__(cls, self):
+        return u"G:%s"%self.cn
 
+    @classmethod
     def set_free_gidNumber(self):
         model = self.__class__
         gid = None
@@ -84,10 +167,12 @@ class groupMixin(object):
                 gid = g.gidNumber
         self.gidNumber = gid + 1
 
-    def set_posix_group_defaults(self):
-        self.set_free_gidNumber()
+    @classmethod
+    def set_defaults(cls, self):
+        cls.set_free_gidNumber(self)
 
-    def save_posix_group_defaults(self):
+    @classmethod
+    def prepare_for_save(cls, self):
         if self.description is None:
             self.description = self.cn
 

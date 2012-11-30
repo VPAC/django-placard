@@ -20,23 +20,24 @@ import smbpasswd
 
 class sambaAccountMixin(object):
 
-    def set_samba_account_defaults(self):
+    @classmethod
+    def set_defaults(cls, self):
         self.secondary_groups.add(group.objects.get(cn="Domain Users"))
         self.sambaDomainName = django.conf.settings.SAMBA_DOMAIN_NAME
         self.sambaAcctFlags = '[ U         ]'
         self.sambaSID = "S-1-5-" + django.conf.settings.SAMBA_DOMAIN_SID + "-" + str(int(self.uidNumber)*2)
         self.sambaPwdLastSet = str(int(time.mktime(datetime.datetime.now().timetuple())))
 
-    def save_samba_account_defaults(self):
-        pass
-
-    def samba_account_lock(self):
+    @classmethod
+    def lock(cls, self):
         self.sambaAcctFlags = '[DU         ]'
 
-    def samba_account_unlock(self):
+    @classmethod
+    def unlock(cls, self):
         self.sambaAcctFlags = '[ U         ]'
 
-    def samba_account_change_password(self, password):
+    @classmethod
+    def change_password(cls, self, password):
         if isinstance(password, unicode):
             password = password.encode()
         self.sambaNTPassword=smbpasswd.nthash(password)
@@ -46,10 +47,9 @@ class sambaAccountMixin(object):
 
 
 class sambaGroupMixin(object):
-    def set_samba_group_defaults(self):
+
+    @classmethod
+    def set_defaults(cls, self):
         self.sambaGroupType = 2
         self.sambaSID = "S-1-5-" + django.conf.settings.SAMBA_DOMAIN_SID + "-" + str(int(self.uidNumber)*2 + 1001)
-
-    def save_samba_group_defaults(self):
-        pass
 

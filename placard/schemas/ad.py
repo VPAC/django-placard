@@ -15,26 +15,29 @@
 # You should have received a copy of the GNU General Public License
 # along with django-tldap  If not, see <http://www.gnu.org/licenses/>.
 
+import django.conf
+
 class adUserMixin(object):
 
-    def account_set_defaults(self):
+    @classmethod
+    def set_defaults(cls, self):
         self.userAccountControl = 512
-        self.secondary_groups.add(group.objects.get(cn="Domain Users"))
         self.objectSid = "S-1-5-" + django.conf.settings.AD_DOMAIN_SID + "-" + str(int(self.uidNumber)*2)
 
-    def account_save_defaults(self):
-        pass
-
-    def account_is_locked(self):
+    @classmethod
+    def is_locked(cls, self):
         return self.userAccountControl & 0x2
 
-    def account_lock(self):
+    @classmethod
+    def lock(cls, self):
         self.userAccountControl = self.userAccountControl | 0x2
 
-    def account_unlock(self):
+    @classmethod
+    def unlock(cls, self):
         self.userAccountControl = self.userAccountControl & 0xFFFFFFFD
 
-    def account_change_password(self, password):
+    @classmethod
+    def change_password(cls, self, password):
         self.account_change_password(password)
         self.userPassword = None
         self.unicodePwd = '"' + password + '"'
@@ -43,11 +46,6 @@ class adUserMixin(object):
 
 class adGroupMixin(object):
 
-    def set_ad_group_defaults(self):
+    @classmethod
+    def set_defaults(cls, self):
         self.objectSid = "S-1-5-" + django.conf.settings.AD_DOMAIN_SID + "-" + str(int(self.uidNumber)*2)
-
-    def save_ad_group_defaults(self):
-        pass
-
-
-
