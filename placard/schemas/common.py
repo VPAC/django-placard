@@ -130,17 +130,7 @@ class accountMixin(object):
         return u"A:%s"%(self.displayName or self.cn)
 
     @classmethod
-    def set_free_uidNumber(cls, self):
-        model = self.__class__
-        uid = None
-        for u in model.objects.all():
-            if uid is None or u.uidNumber > uid:
-                uid = u.uidNumber
-        self.uidNumber = uid + 1
-
-    @classmethod
     def set_defaults(cls, self):
-        cls.set_free_uidNumber(self)
         self.loginShell = '/bin/bash'
         self.shadowInactive = 10
         self.shadowLastChange = 13600
@@ -163,19 +153,6 @@ class groupMixin(object):
     @classmethod
     def __unicode__(cls, self):
         return u"G:%s"%self.cn
-
-    @classmethod
-    def set_free_gidNumber(cls, self):
-        model = self.__class__
-        gid = None
-        for g in model.objects.all():
-            if gid is None or g.gidNumber > gid:
-                gid = g.gidNumber
-        self.gidNumber = gid + 1
-
-    @classmethod
-    def set_defaults(cls, self):
-        cls.set_free_gidNumber(self)
 
     @classmethod
     def prepare_for_save(cls, self):

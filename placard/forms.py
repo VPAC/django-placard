@@ -30,6 +30,24 @@ import placard.util
 
 import ajax_select.fields
 
+def get_free_uidNumber():
+    model = account.__class__
+    uid = None
+    for u in model.objects.all():
+        if uid is None or u.uidNumber > uid:
+            uid = u.uidNumber
+    return uid + 1
+
+
+def get_free_gidNumber():
+    model = group.__class__
+    gid = None
+    for g in model.objects.all():
+        if gid is None or g.gidNumber > gid:
+            gid = g.gidNumber
+    return gid + 1
+
+
 class AutoCompleteSelectField(ajax_select.fields.AutoCompleteSelectField):
     pass
 
@@ -94,9 +112,35 @@ class LDAPForm(forms.Form):
 class AccountForm(LDAPForm):
     model = placard.models.account
 
+    def save(self, commit=True):
+        self.object = super(AccountForm, self).save(commit=False)
+
+        if self.created:
+            if self.object.uidNumber is None:
+                self.object.uidNumber = get_free_uidNumber()
+
+        for slave_id, obj in self.slave_objs.iteritems():
+            obj.uidNumber = self.object.uidNumber
+
+        self.commit(commit)
+        return self.object
+
 
 class GroupForm(LDAPForm):
     model = placard.models.group
+
+    def save(self, commit=True):
+        self.object = super(GroupForm, self).save(commit=False)
+
+        if self.created:
+            if self.object.gidNumber is None:
+                self.object.gidNumber = get_free_gidNumber()
+
+        for slave_id, obj in self.slave_objs.iteritems():
+            obj.gidNumber = self.object.gidNumber
+
+        self.commit(commit)
+        return self.object
 
 
 class LDAPUserForm(AccountForm):

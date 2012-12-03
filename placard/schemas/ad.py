@@ -22,7 +22,11 @@ class adUserMixin(object):
     @classmethod
     def set_defaults(cls, self):
         self.userAccountControl = 512
-        self.objectSid = "S-1-5-" + django.conf.settings.AD_DOMAIN_SID + "-" + str(int(self.uidNumber)*2)
+
+    @classmethod
+    def prepare_for_save(cls, self):
+        if self.objectSid is None:
+            self.objectSid = "S-1-5-" + django.conf.settings.AD_DOMAIN_SID + "-" + str(int(self.uidNumber)*2)
 
     @classmethod
     def is_locked(cls, self):
@@ -47,5 +51,6 @@ class adUserMixin(object):
 class adGroupMixin(object):
 
     @classmethod
-    def set_defaults(cls, self):
-        self.objectSid = "S-1-5-" + django.conf.settings.AD_DOMAIN_SID + "-" + str(int(self.uidNumber)*2)
+    def prepare_for_save(cls, self):
+        if self.objectSid is None:
+            self.objectSid = "S-1-5-" + django.conf.settings.AD_DOMAIN_SID + "-" + str(int(self.uidNumber)*2)

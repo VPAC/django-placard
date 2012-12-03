@@ -25,8 +25,12 @@ class sambaAccountMixin(object):
         self.secondary_groups.add(group.objects.get(cn="Domain Users"))
         self.sambaDomainName = django.conf.settings.SAMBA_DOMAIN_NAME
         self.sambaAcctFlags = '[ U         ]'
-        self.sambaSID = "S-1-5-" + django.conf.settings.SAMBA_DOMAIN_SID + "-" + str(int(self.uidNumber)*2)
         self.sambaPwdLastSet = str(int(time.mktime(datetime.datetime.now().timetuple())))
+
+    @classmethod
+    def prepare_for_save(cls, self):
+        if self.sambaSID is None:
+            self.sambaSID = "S-1-5-" + django.conf.settings.SAMBA_DOMAIN_SID + "-" + str(int(self.uidNumber)*2)
 
     @classmethod
     def lock(cls, self):
@@ -51,5 +55,9 @@ class sambaGroupMixin(object):
     @classmethod
     def set_defaults(cls, self):
         self.sambaGroupType = 2
-        self.sambaSID = "S-1-5-" + django.conf.settings.SAMBA_DOMAIN_SID + "-" + str(int(self.uidNumber)*2 + 1001)
+
+    @classmethod
+    def prepare_for_save(cls, self):
+        if self.sambaSID is None:
+            self.sambaSID = "S-1-5-" + django.conf.settings.SAMBA_DOMAIN_SID + "-" + str(int(self.uidNumber)*2 + 1001)
 
