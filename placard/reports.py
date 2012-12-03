@@ -48,7 +48,7 @@ class PdfAccountList(PdfResponseMixin, placard.views.AccountList):
     paginate_by = None
 
     def convert_context_to_pdf(self, context):
-        user_list = context['user_list']
+        account_list = context['account_list']
 
         today = datetime.date.today()
 
@@ -71,7 +71,7 @@ class PdfAccountList(PdfResponseMixin, placard.views.AccountList):
             canvas.drawString(50, 30, defaultfilters.date(today, "j, F Y"))
             canvas.restoreState()
 
-        data_dic = [[str(x.cn), str(getattr(x, 'telephoneNumber', '')), str(getattr(x, 'mobile', '')), str(getattr(x, 'mail', '')), str(getattr(x, 'l', ''))] for x in user_list ]
+        data_dic = [[str(x.cn), str(getattr(x, 'telephoneNumber', '')), str(getattr(x, 'mobile', '')), str(getattr(x, 'mail', '')), str(getattr(x, 'l', ''))] for x in account_list ]
 
         data_list = list(data_dic)
 
