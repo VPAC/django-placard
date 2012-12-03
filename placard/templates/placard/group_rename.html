@@ -7,8 +7,8 @@
 {% block breadcrumbs %}
 <div class="breadcrumbs">
 <a href='{{ base_url|default:"/" }}'>Home</a>
- &rsaquo; <a href="{% url plac_grp_list %}">Groups</a>
- &rsaquo; <a href="{% url plac_grp_detail group.pk %}">{{ group }}</a>
+ &rsaquo; <a href="{% url plac_group_list %}">Groups</a>
+ &rsaquo; <a href="{% url plac_group_detail group.pk %}">{{ group }}</a>
  &rsaquo; Rename Group
 </div>
 {% endblock %}

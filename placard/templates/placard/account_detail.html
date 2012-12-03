@@ -155,7 +155,7 @@
                 <th>Primary Group:</th>
             </tr>
             <tr>
-                <td><a href="{% slave_url 'plac_grp_detail' primary_group.pk slave_id %}">{{ primary_group }}</a></td>
+                <td><a href="{% slave_url 'plac_group_detail' primary_group.pk slave_id %}">{{ primary_group }}</a></td>
             </tr>
             {% endif %}
             {% endwith %}
@@ -164,7 +164,7 @@
             </tr>
             {% for g in account.secondary_groups.all %}
                 <tr class="{% cycle row1,row2 %}">
-                    <td><a href="{% slave_url 'plac_grp_detail' g.pk slave_id %}">{{ g }}</a></td>
+                    <td><a href="{% slave_url 'plac_group_detail' g.pk slave_id %}">{{ g }}</a></td>
                     {% if perms.placard.change_account and not slave_id %}
                     <td><a href="{% url plac_account_rm_group account.pk,g.pk %}" class="deletelink">remove</a></td>
                     {% endif %}

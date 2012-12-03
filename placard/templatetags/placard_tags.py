@@ -36,9 +36,9 @@ def slave_url(name, *args):
 @register.simple_tag
 def group_detail_url(group, slave_id):
     if slave_id is None:
-        return reverse("plac_grp_detail", kwargs={ 'group': group })
+        return reverse("plac_group_detail", kwargs={ 'group': group })
     else:
-        return reverse("plac_grp_detail", kwargs={ 'group': group, 'slave': slave_id })
+        return reverse("plac_group_detail", kwargs={ 'group': group, 'slave': slave_id })
 
 @register.simple_tag
 def slave_name(slave_id):

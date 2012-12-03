@@ -450,7 +450,7 @@ class GroupGeneric(FormView, GroupMixin):
         return super(GroupGeneric, self).form_valid(form)
 
     def get_success_url(self):
-        return reverse("plac_grp_detail",kwargs={ 'group': self.object.cn })
+        return reverse("plac_group_detail",kwargs={ 'group': self.object.cn })
 
 
 class GroupEdit(GroupGeneric):
@@ -506,6 +506,6 @@ class GroupDelete(GroupGeneric):
     permissions = [ 'placard.delete_group' ]
 
     def get_success_url(self):
-        return reverse("plac_grp_list")
+        return reverse("plac_group_list")
 
 

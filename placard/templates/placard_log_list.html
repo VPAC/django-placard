@@ -38,7 +38,7 @@
                             <a href="{% url plac_user_detail l.object_pk %}">{{ l.object_repr }}</a>
                         {% endifequal %}
                         {% ifequal l.object_type "group" %}
-                            <a href="{% url plac_grp_detail l.object_pk %}">{{ l.object_repr }}</a>
+                            <a href="{% url plac_group_detail l.object_pk %}">{{ l.object_repr }}</a>
                         {% endifequal %}
                     </td>
                     {% endif %}
