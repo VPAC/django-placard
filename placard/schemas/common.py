@@ -37,11 +37,11 @@ class baseMixin(tldap.base.LDAPobject):
                 mixin.prepare_for_save(self)
         super(baseMixin, self).save(*args, **kwargs)
 
-    def delete(self, using=None):
+    def delete(self, *args, **kwargs):
         for mixin in self.mixin_list:
             if hasattr(mixin, 'prepare_for_delete'):
                 mixin.prepare_for_delete(self)
-        super(baseMixin, self).delete(using)
+        super(baseMixin, self).delete(using, *args, **kwargs)
 
     def lock(self):
         for mixin in self.mixin_list:
