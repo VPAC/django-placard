@@ -81,7 +81,7 @@ class LDAPForm(forms.Form):
             value = getattr(self.object, name)
             self.initial[name] = value
 
-    def commit(commit):
+    def commit(self, commit):
         if not commit:
             return
 
