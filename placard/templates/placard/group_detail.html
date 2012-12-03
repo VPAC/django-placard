@@ -44,7 +44,7 @@
         {% endif %}
         {% if slave_objs %}
         <li>source:
-        <a href="{% url plac_group_detail group.pk %}">master</a>, {% for slave_id, obj in slave_objs.items %}<a href="{% url plac_grp_detail group.pk slave_id %}">{% slave_name slave_id %}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
+        <a href="{% url plac_group_detail group.pk %}">master</a>, {% for slave_id, obj in slave_objs.items %}<a href="{% url plac_group_detail group.pk slave_id %}">{% slave_name slave_id %}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
         </li>
         {% endif %}
     </ul>
