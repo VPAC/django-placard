@@ -63,7 +63,7 @@ class ad_account(
         ad.person, rfc.organizationalPerson, rfc.inetOrgPerson, ad.user,
         ad.posixAccount,
         common.baseMixin):
-    mixin_list = [ common.personMixin, adUserMixin, common.accountMixin ]
+    mixin_list = [ common.personMixin, common.accountMixin, adUserMixin ]
 
     class Meta:
         base_dn_setting = "LDAP_ACCOUNT_BASE"
