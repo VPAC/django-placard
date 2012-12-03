@@ -266,7 +266,7 @@ class AccountGeneric(FormView, AccountMixin):
 
 class AccountAdd(AccountGeneric):
     template_name = "placard/account_form.html"
-    form_class = placard.forms.LDAPAddUserForm
+    form_class = placard.forms.LDAPAddAccountForm
     permissions = [ 'placard.add_account' ]
 
 
@@ -287,10 +287,10 @@ class AccountEdit(AccountGeneric):
             raise RuntimeError("Bad permissions")
 
     def get_admin_form_class(self):
-            return placard.forms.LDAPUserForm
+            return placard.forms.LDAPAccountForm
 
     def get_hr_form_class(self):
-            return placard.forms.LDAPHrUserForm
+            return placard.forms.LDAPHrAccountForm
 
 
 class AccountChangePassword(AccountGeneric):

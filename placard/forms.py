@@ -143,7 +143,7 @@ class GroupForm(LDAPForm):
         return self.object
 
 
-class LDAPUserForm(AccountForm):
+class LDAPAccountForm(AccountForm):
     givenName = fields.CharField(label='First Name')
     sn = fields.CharField(label='Last Name')
     telephoneNumber = fields.CharField(label="Phone", required=False)
@@ -162,7 +162,7 @@ class LDAPUserForm(AccountForm):
     def __init__(self, account, slave_objs, *args, **kwargs):
         self.object = account
         self.slave_objs = slave_objs
-        super(LDAPUserForm, self).__init__(*args, **kwargs)
+        super(LDAPAccountForm, self).__init__(*args, **kwargs)
 
         if getattr(self, 'primary_groups', None) is not None:
             all_groups = placard.models.group.objects.none()
@@ -209,7 +209,7 @@ class LDAPUserForm(AccountForm):
         return pg
 
     def save(self, commit=True):
-        self.object = super(LDAPUserForm, self).save(commit=False)
+        self.object = super(LDAPAccountForm, self).save(commit=False)
 
         self.object.managed_by = self.cleaned_data['managed_by']
         self.object.primary_group = self.cleaned_data['primary_group']
@@ -222,7 +222,7 @@ class LDAPUserForm(AccountForm):
         return self.object
 
 
-class LDAPHrUserForm(AccountForm):
+class LDAPHrAccountForm(AccountForm):
     givenName = fields.CharField(label='First Name')
     sn = fields.CharField(label='Last Name')
     telephoneNumber = fields.CharField(label="Phone", required=False)
@@ -240,7 +240,7 @@ class LDAPHrUserForm(AccountForm):
     def __init__(self, account, slave_objs, *args, **kwargs):
         self.object = account
         self.slave_objs = slave_objs
-        super(LDAPHrUserForm, self).__init__(*args, **kwargs)
+        super(LDAPHrAccountForm, self).__init__(*args, **kwargs)
 
         all_users =  placard.models.account.objects.all()
         if self.object is not None:
@@ -268,7 +268,7 @@ class LDAPHrUserForm(AccountForm):
         return jpegPhoto
 
     def save(self, commit=True):
-        self.object = super(LDAPUserForm, self).save(commit=False)
+        self.object = super(LDAPAccountForm, self).save(commit=False)
 
         self.object.managed_by = self.cleaned_data['managed_by']
 
@@ -279,7 +279,7 @@ class LDAPHrUserForm(AccountForm):
         return self.object
 
 
-class LDAPAddUserForm(LDAPUserForm):
+class LDAPAddAccountForm(LDAPAccountForm):
     uid = forms.RegexField(label="Username", max_length=15, regex=r'^\w+$')
     raw_password = fields.CharField(widget=forms.PasswordInput(), label=u'New Password')
     raw_password2 = fields.CharField(widget=forms.PasswordInput(), label=u'New Password (again)')
@@ -313,7 +313,7 @@ class LDAPAddUserForm(LDAPUserForm):
         raise forms.ValidationError(u'Username exists')
 
     def clean(self):
-        data = super(LDAPAddUserForm, self).clean()
+        data = super(LDAPAddAccountForm, self).clean()
 
         if 'raw_password' not in data or 'raw_password2' not in data:
             return data
