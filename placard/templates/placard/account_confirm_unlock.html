@@ -1,0 +1,28 @@
+{% extends "forms.html" %}
+
+
+{% block title %}{{ luser }} unlock | Users{% endblock %}
+
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href='{{ base_url|default:"/" }}'>Home</a>
+ &rsaquo; <a href="{% url plac_account_list %}">Users</a>
+ &rsaquo; <a href="{% url plac_account_detail luser.pk %}">{{ luser }}</a>
+ &rsaquo; Unlock user
+</div>
+{% endblock %}
+
+
+{% block content %}
+<form method="post" action="." class="module">{% csrf_token %}
+    <h2>Unlock {{ luser }}</h2>
+
+    {% block confirm-details %}{% endblock %}
+
+    <p>Are you sure you want to unlock {{ luser }}'s user account? </p>
+    <div class="submit-row">
+        <input type="submit" value="Yes, I'm sure" />
+    </div>
+</form>
+{% endblock %}

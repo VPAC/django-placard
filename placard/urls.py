@@ -21,7 +21,7 @@ from django.contrib import admin
 import placard.views as views
 import placard.reports as reports
 
-import placard.user_urls
+import placard.account_urls
 import placard.group_urls
 
 import ajax_select.urls
@@ -37,8 +37,8 @@ urlpatterns = patterns('',
     url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout'),
 
     url(r'^search/$', views.search, name='plac_search'),
-    url(r'^password/$', views.UserChangePassword.as_view(), name='plac_user_password'),
+    url(r'^password/$', views.UserChangePassword.as_view(), name='plac_account_password'),
 
-    url(r'^users/', include(placard.user_urls)),
+    url(r'^accounts/', include(placard.account_urls)),
     url(r'^groups/', include(placard.group_urls)),
 )

@@ -23,9 +23,9 @@
     <h2>User links</h2>
     <ul>
         {% if perms.placard.add_account %}
-            <li><a href="{% url plac_user_add %}" class="addlink">Add User</a></li>
+            <li><a href="{% url plac_account_add %}" class="addlink">Add User</a></li>
         {% endif %}
-        <li><a href="{% url plac_user_list_pdf %}?{{ request.META.QUERY_STRING }}">Printable</a></li>
+        <li><a href="{% url plac_account_list_pdf %}?{{ request.META.QUERY_STRING }}">Printable</a></li>
     </ul>
 </div>
 {% endblock %}
@@ -55,9 +55,9 @@
                 </tr>
             </thead>
             <tbody>
-                {% for u in user_list|dictsort:"cn" %}
+                {% for u in account_list|dictsort:"cn" %}
                     <tr class="{% cycle row1,row2  as rowcolours %} {% if u.is_locked %}locked{% endif %}">
-                        <td><a href="{% url plac_user_detail u.pk %}">{{ u }}</a></td>
+                        <td><a href="{% url plac_account_detail u.pk %}">{{ u }}</a></td>
                         <td>{{ u.telephoneNumber }}</td>
                         <td>{{ u.mobile }}</td>
                         <td>{{ u.mail|urlize }}</td>

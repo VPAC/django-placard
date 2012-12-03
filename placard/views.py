@@ -38,12 +38,12 @@ def search(request):
     if request.method == 'POST':
         term_list = request.REQUEST['sitesearch'].lower().split(' ')
 
-        user_list = placard.models.account.objects.all()
+        account_list = placard.models.account.objects.all()
         group_list = placard.models.group.objects.all()
 
         for term in term_list:
             if term != "":
-                user_list = user_list.filter(tldap.Q(pk__contains=term) | tldap.Q(cn__contains=term) | tldap.Q(description__contains=term))
+                account_list = account_list.filter(tldap.Q(pk__contains=term) | tldap.Q(cn__contains=term) | tldap.Q(description__contains=term))
                 group_list = group_list.filter(tldap.Q(pk__contains=term) | tldap.Q(description__contains=term))
 
         return render_to_response('search.html', locals(), context_instance=RequestContext(request))
@@ -151,29 +151,29 @@ class AccountMixin(object):
 
 class AccountList(ListView, AccountMixin):
     model = placard.models.account
-    template_name = "placard/user_list.html"
-    context_object_name = "user_list"
+    template_name = "placard/account_list.html"
+    context_object_name = "account_list"
 
     def get_queryset(self):
         request = self.request
 
-        user_list = self.get_default_queryset()
+        account_list = self.get_default_queryset()
 
         if request.GET.has_key('group'):
             try:
                 group = placard.models.group.objects.get(cn=request.GET['group'])
-                user_list = user_list.filter(tldap.Q(primary_group=group) | tldap.Q(secondary_groups=group))
+                account_list = account_list.filter(tldap.Q(primary_group=group) | tldap.Q(secondary_groups=group))
             except  placard.models.group.DoesNotExist:
                 pass
 
         if request.GET.has_key('exclude'):
             try:
                 group = placard.models.group.objects.get(cn=request.GET['exclude'])
-                user_list = user_list.filter(~(tldap.Q(primary_group=group) | tldap.Q(secondary_groups=group)))
+                account_list = account_list.filter(~(tldap.Q(primary_group=group) | tldap.Q(secondary_groups=group)))
             except  placard.models.group.DoesNotExist:
                 pass
 
-        return user_list
+        return account_list
 
     def get_default_queryset(self):
         return placard.models.account.objects.all()
@@ -194,7 +194,7 @@ class AccountList(ListView, AccountMixin):
 
 class AccountDetail(DetailView, AccountMixin):
     model = placard.models.account
-    template_name = "placard/user_detail.html"
+    template_name = "placard/account_detail.html"
     context_object_name = "luser"
 
     def get_context_data(self, **kwargs):
@@ -223,7 +223,7 @@ class AccountDetail(DetailView, AccountMixin):
 
 
 class AccountVerbose(AccountDetail, AccountMixin):
-    template_name = "placard/user_detail_verbose.html"
+    template_name = "placard/account_detail_verbose.html"
 
 
 class AccountGeneric(FormView, AccountMixin):
@@ -261,17 +261,17 @@ class AccountGeneric(FormView, AccountMixin):
         return super(AccountGeneric, self).form_valid(form)
 
     def get_success_url(self):
-        return reverse("plac_user_detail",kwargs={ 'username': self.object.pk })
+        return reverse("plac_account_detail",kwargs={ 'username': self.object.pk })
 
 
 class AccountAdd(AccountGeneric):
-    template_name = "placard/user_form.html"
+    template_name = "placard/account_form.html"
     form_class = placard.forms.LDAPAddUserForm
     permissions = [ 'placard.add_account' ]
 
 
 class AccountEdit(AccountGeneric):
-    template_name = "placard/user_form.html"
+    template_name = "placard/account_form.html"
     context_object_name = "luser"
     permissions = [ 'placard.change_account', 'placard.hr_change_account' ]
 
@@ -312,13 +312,13 @@ class UserChangePassword(AccountChangePassword):
 
 
 class AccountLock(AccountGeneric):
-    template_name = "placard/user_confirm_lock.html"
+    template_name = "placard/account_confirm_lock.html"
     form_class = placard.forms.LockAccountForm
     permissions = [ 'placard.lock_account' ]
 
 
 class AccountUnlock(AccountGeneric):
-    template_name = "placard/user_confirm_unlock.html"
+    template_name = "placard/account_confirm_unlock.html"
     form_class = placard.forms.UnlockAccountForm
     permissions = [ 'placard.lock_account' ]
 
@@ -347,12 +347,12 @@ class AccountRemoveGroup(AccountGeneric):
 
 
 class AccountDelete(AccountGeneric):
-    template_name = "placard/user_confirm_delete.html"
+    template_name = "placard/account_confirm_delete.html"
     form_class = placard.forms.DeleteAccountForm
     permissions = [ 'placard.delete_account' ]
 
     def get_success_url(self):
-        return reverse("plac_user_list")
+        return reverse("plac_account_list")
 
 
 class GroupMixin(object):

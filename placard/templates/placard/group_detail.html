@@ -88,7 +88,7 @@
             </tr>
             {% for m in group.primary_accounts.all %}
                 <tr class="{% cycle row1,row2 %} {% if m.is_locked %}locked{% endif %}">
-                    <td><a href="{% slave_url 'plac_user_detail' m.pk slave_id %}" >{{ m }}</a></td>
+                    <td><a href="{% slave_url 'plac_account_detail' m.pk slave_id %}" >{{ m }}</a></td>
                 </tr>
             {% endfor %}
             <tr>
@@ -96,7 +96,7 @@
             </tr>
             {% for m in group.secondary_accounts.all %}
                 <tr class="{% cycle row1,row2 %}">
-                    <td class="{% if m.is_locked %}locked{% endif %}"><a href="{% slave_url 'plac_user_detail' m.pk slave_id %}" >{{ m }}</a></td>
+                    <td class="{% if m.is_locked %}locked{% endif %}"><a href="{% slave_url 'plac_account_detail' m.pk slave_id %}" >{{ m }}</a></td>
                     {% if perms.placard.change_group and not slave_id %}
                     <td><a href="{% url plac_grp_rm_member group.pk m.pk %}" class="deletelink">Remove</a></td>
                     {% endif %}
