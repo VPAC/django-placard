@@ -73,16 +73,11 @@ class baseMixin(tldap.base.LDAPobject):
 
     def is_locked(self):
         locked = True
-        num = 0
 
         for mixin in self.mixin_list:
             if hasattr(mixin, 'is_locked'):
-                num = num + 1
                 if not mixin.is_locked(self):
                     locked = False
-
-        if num == 0:
-            locked = False
 
         return locked
 
