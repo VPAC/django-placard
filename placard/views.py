@@ -141,6 +141,13 @@ class AccountMixin(object):
                 pass
         return objs
 
+    def create_slave_objs(self):
+        objs = {}
+        for slave_id, account in placard.models.get_slave_accounts().iteritems():
+            obj = account(using=slave_id)
+            obj.set_defaults()
+            objs[slave_id] = obj
+        return objs
 
 class AccountList(ListView, AccountMixin):
     model = placard.models.account
@@ -224,20 +231,31 @@ class AccountGroups(AccountDetail, AccountMixin):
 class AccountGeneric(FormView, AccountMixin):
     def get_context_data(self, **kwargs):
         context = super(AccountGeneric, self).get_context_data(**kwargs)
-        if 'username' in self.kwargs:
-            context['luser'] = self.object
+        context['luser'] = self.object
+        context['created'] = self.created
         return context
 
     def get_form_kwargs(self):
         kwargs = super(AccountGeneric, self).get_form_kwargs()
         if 'username' in self.kwargs:
             kwargs['account'] = self.get_object()
-            self.object = kwargs['account']
             kwargs['slave_objs'] = self.get_slave_objs()
+            kwargs['created'] = False
+        else:
+            kwargs['account'] = self.create_object()
+            kwargs['slave_objs'] = self.create_slave_objs()
+            kwargs['created'] = True
+        self.object = kwargs['account']
+        self.created = kwargs['created']
         return kwargs
 
     def get_object(self):
-            return get_object_or_404(placard.models.account, pk=self.kwargs['username'])
+        return get_object_or_404(placard.models.account, pk=self.kwargs['username'])
+
+    def create_object(self):
+        obj = placard.models.account()
+        obj.set_defaults()
+        return obj
 
     def form_valid(self, form):
         self.object = form.save()
@@ -349,6 +367,14 @@ class GroupMixin(object):
                 pass
         return objs
 
+    def create_slave_objs(self):
+        objs = {}
+        for slave_id, group in placard.models.get_slave_groups().iteritems():
+            obj = group(using=slave_id)
+            obj.set_defaults()
+            objs[slave_id] = obj
+        return objs
+
 
 class GroupList(ListView, GroupMixin):
     model = placard.models.group
@@ -391,20 +417,31 @@ class GroupVerbose(GroupDetail, GroupMixin):
 class GroupGeneric(FormView, GroupMixin):
     def get_context_data(self, **kwargs):
         context = super(GroupGeneric, self).get_context_data(**kwargs)
-        if 'group' in self.kwargs:
-            context['group'] = self.object
+        context['group'] = self.object
+        context['created'] = self.created
         return context
 
     def get_form_kwargs(self):
         kwargs = super(GroupGeneric, self).get_form_kwargs()
         if 'group' in self.kwargs:
             kwargs['group'] = self.get_object()
-            self.object = kwargs['group']
             kwargs['slave_objs'] = self.get_slave_objs()
+            kwargs['created'] = True
+        else:
+            kwargs['group'] = self.create_object()
+            kwargs['slave_objs'] = self.create_slave_objs()
+            kwargs['created'] = False
+        self.object = kwargs['group']
+        self.created = kwargs['created']
         return kwargs
 
     def get_object(self):
-            return get_object_or_404(placard.models.group, cn=self.kwargs['group'])
+        return get_object_or_404(placard.models.group, cn=self.kwargs['group'])
+
+    def create_object(self):
+        obj = placard.models.group()
+        obj.set_defaults()
+        return obj
 
     def form_valid(self, form):
         self.object = form.save()
