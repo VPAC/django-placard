@@ -57,6 +57,9 @@ class baseMixin(tldap.base.LDAPobject):
         locked = True
         num = 0
 
+        if self.is_locked():
+            return False
+
         for mixin in self.mixin_list:
             if hasattr(mixin, 'check_password'):
                 num = num + 1
