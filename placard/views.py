@@ -237,13 +237,14 @@ class AccountGeneric(FormView, AccountMixin):
         kwargs = super(AccountGeneric, self).get_form_kwargs()
         if 'username' in self.kwargs:
             kwargs['account'] = self.get_object()
+            self.object = kwargs['account']
             kwargs['slave_objs'] = self.get_slave_objs()
             kwargs['created'] = False
         else:
             kwargs['account'] = self.create_object()
+            self.object = kwargs['account']
             kwargs['slave_objs'] = self.create_slave_objs()
             kwargs['created'] = True
-        self.object = kwargs['account']
         self.created = kwargs['created']
         return kwargs
 
@@ -425,13 +426,14 @@ class GroupGeneric(FormView, GroupMixin):
         kwargs = super(GroupGeneric, self).get_form_kwargs()
         if 'group' in self.kwargs:
             kwargs['group'] = self.get_object()
+            self.object = kwargs['group']
             kwargs['slave_objs'] = self.get_slave_objs()
             kwargs['created'] = True
         else:
             kwargs['group'] = self.create_object()
+            self.object = kwargs['group']
             kwargs['slave_objs'] = self.create_slave_objs()
             kwargs['created'] = False
-        self.object = kwargs['group']
         self.created = kwargs['created']
         return kwargs
 
