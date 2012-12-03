@@ -98,26 +98,6 @@ class personMixin(object):
         return tldap.connections[using].check_password(self.dn, password)
 
     @classmethod
-    def is_locked(cls, self):
-        if self.loginShell is None:
-            return False
-        return self.loginShell.startswith("/locked")
-
-    @classmethod
-    def lock(cls, self):
-        if self.loginShell is None:
-            return
-        if not self.loginShell.startswith("/locked"):
-            self.loginShell = '/locked' + self.loginShell
-
-    @classmethod
-    def unlock(cls, self):
-        if self.loginShell is None:
-            return
-        if self.loginShell.startswith("/locked"):
-            self.loginShell = self.loginShell[7:]
-
-    @classmethod
     def prepare_for_save(cls, self):
         self.displayName = '%s %s' % (self.givenName, self.sn)
         if self.cn is None:
@@ -147,6 +127,26 @@ class accountMixin(object):
     @classmethod
     def prepare_for_delete(cls, self):
         self.manager_of.clear()
+
+    @classmethod
+    def is_locked(cls, self):
+        if self.loginShell is None:
+            return False
+        return self.loginShell.startswith("/locked")
+
+    @classmethod
+    def lock(cls, self):
+        if self.loginShell is None:
+            return
+        if not self.loginShell.startswith("/locked"):
+            self.loginShell = '/locked' + self.loginShell
+
+    @classmethod
+    def unlock(cls, self):
+        if self.loginShell is None:
+            return
+        if self.loginShell.startswith("/locked"):
+            self.loginShell = self.loginShell[7:]
 
 
 class groupMixin(object):
