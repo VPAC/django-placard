@@ -18,11 +18,27 @@
 
 from django.http import QueryDict
 from django import template
+from django.core.urlresolvers import reverse
 import re
 
 import placard.models
 
 register = template.Library()
+
+@register.simple_tag
+def slave_url(name, *args):
+    args = list(args)
+    slave_id = args.pop(-1)
+    if slave_id is not None:
+        args.append(slave_id)
+    return reverse(name, args=args)
+
+@register.simple_tag
+def group_detail_url(group, slave_id):
+    if slave_id is None:
+        return reverse("plac_grp_detail", kwargs={ 'group': group })
+    else:
+        return reverse("plac_grp_detail", kwargs={ 'group': group, 'slave': slave_id })
 
 @register.simple_tag
 def slave_name(slave_id):

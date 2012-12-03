@@ -204,6 +204,8 @@ class AccountDetail(DetailView, AccountMixin):
         context['slave_objs'] = slave_objs
         if 'slave' in self.kwargs:
             context['slave_id'] = self.kwargs['slave']
+        else:
+            context['slave_id'] = None
         return context
 
     def get_object(self):
@@ -394,6 +396,8 @@ class GroupDetail(DetailView, GroupMixin):
         context['slave_objs'] = slave_objs
         if 'slave' in self.kwargs:
             context['slave_id'] = self.kwargs['slave']
+        else:
+            context['slave_id'] = None
         return context
 
     def get_object(self):

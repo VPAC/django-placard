@@ -5,6 +5,7 @@
 
 
 {% block breadcrumbs %}
+{% load placard_tags %}
 <div class="breadcrumbs">
 <a href='{{ base_url|default:"/" }}'>Home</a>
  &rsaquo; <a href="{% url plac_user_list %}">Users</a>
@@ -17,24 +18,37 @@
 {% block content %}
 <div id="content-main">
     <div class="module">
-        <h2>Groups for {{ luser }}</h2>
+    <h2>Groups</h2>
         <table>
             {% with luser.primary_group.get_obj as primary_group %}
             {% if primary_group %}
             <tr>
-                <td>Primary Group:</td><td><a href="{% url plac_grp_detail primary_group.cn %}">{{ primary_group }}</a></td>
+                <th>Primary Group:</th>
+            </tr>
+            <tr>
+                <td><a href="{% slave_url 'plac_grp_detail' primary_group.pk slave_id %}">{{ primary_group }}</a></td>
             </tr>
             {% endif %}
             {% endwith %}
+            <tr>
+                <th>Secondary Groups:</th>
+            </tr>
             {% for g in luser.secondary_groups.all %}
-                <tr>
-                    <td>Secondary Groups:</td><td><a href="{% url plac_grp_detail g.cn %}">{{ g }}</a></td>
-                    {% if perms.placard.change_account %}
-                        <td><a href="{% url plac_grp_rm_member g.cn,luser.pk %}" class="deletelink">remove</a></td>
+                <tr class="{% cycle row1,row2 %}">
+                    <td><a href="{% slave_url 'plac_grp_detail' g.pk slave_id %}">{{ g }}</a></td>
+                    {% if perms.placard.change_account and not slave_id %}
+                    <td><a href="{% url plac_user_rm_group luser.pk,g.pk %}" class="deletelink">remove</a></td>
                     {% endif %}
                 </tr>
             {% endfor %}
         </table>
+        {% if perms.placard.change_account and not slave_id %}
+            <form method="post" action="{% url plac_user_add_group luser.pk %}" class="simple">{% csrf_token %}
+                <fieldset>
+                    {{ form }}<input type="submit" value="Add" class="default" />
+                </fieldset>
+            </form>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

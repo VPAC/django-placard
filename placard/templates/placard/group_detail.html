@@ -29,20 +29,18 @@
 <div class="module object-tools">
     <h2>Group links</h2>
     <ul>
-        {% if slave_id %}
-        <li><a href="{% url plac_grp_detail_verbose group.pk slave_id %}">Verbose output</a></li>
-        {% else %}
-        <li><a href="{% url plac_grp_detail_verbose group.pk %}">Verbose output</a></li>
-        {% endif %}
+        <li><a href="{% slave_url 'plac_grp_detail_verbose' group.pk slave_id %}">Verbose output</a></li>
         {% block object-tools-view %}{% endblock %}
-        {% if perms.placard.change_group %}
-        <li><a href="{% url plac_grp_edit group.pk %}">Edit details</a></li>
-        {% endif %}
-        {% if perms.placard.rename_group %}
-        <li><a href="{% url plac_grp_rename group.pk %}">Rename Group</a></li>
-        {% endif %}
-        {% if perms.placard.email_group %}
-        <li><a href="{% url plac_group_email group.pk %}">Sends members an Email</a></li>
+        {% if not slave_id %}
+            {% if perms.placard.change_group %}
+            <li><a href="{% url plac_grp_edit group.pk %}">Edit details</a></li>
+            {% endif %}
+            {% if perms.placard.rename_group %}
+            <li><a href="{% url plac_grp_rename group.pk %}">Rename Group</a></li>
+            {% endif %}
+            {% if perms.placard.email_group %}
+            <li><a href="{% url plac_group_email group.pk %}">Sends members an Email</a></li>
+            {% endif %}
         {% endif %}
         {% if slave_objs %}
         <li>source:
@@ -90,7 +88,7 @@
             </tr>
             {% for m in group.primary_accounts.all %}
                 <tr class="{% cycle row1,row2 %} {% if m.is_locked %}locked{% endif %}">
-                    <td><a href="{% url plac_user_detail m.pk %}" >{{ m }}</a></td>
+                    <td><a href="{% slave_url 'plac_user_detail' m.pk slave_id %}" >{{ m }}</a></td>
                 </tr>
             {% endfor %}
             <tr>
@@ -98,14 +96,14 @@
             </tr>
             {% for m in group.secondary_accounts.all %}
                 <tr class="{% cycle row1,row2 %}">
-                    <td class="{% if m.is_locked %}locked{% endif %}"><a href="{% url plac_user_detail m.pk %}" >{{ m }}</a></td>
-                    {% if perms.placard.change_group %}
+                    <td class="{% if m.is_locked %}locked{% endif %}"><a href="{% slave_url 'plac_user_detail' m.pk slave_id %}" >{{ m }}</a></td>
+                    {% if perms.placard.change_group and not slave_id %}
                     <td><a href="{% url plac_grp_rm_member group.pk m.pk %}" class="deletelink">Remove</a></td>
                     {% endif %}
                 </tr>
             {% endfor %}
         </table>
-        {% if perms.placard.change_group %}
+        {% if perms.placard.change_group and not slave_id %}
             <form method="post" action="{% url plac_grp_add_member group.pk %}" class="simple">{% csrf_token %}
                 <fieldset>
                     {{ form }}<input type="submit" value="Add" class="default" />
