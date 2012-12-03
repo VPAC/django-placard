@@ -590,6 +590,7 @@ class EmailForm(LDAPForm):
                         'first_name': member.givenName,
                         'last_name': member.sn,
                         })
+                print ctx
                 subject = django.template.Template(subject_t).render(ctx)
                 body = django.template.Template(body_t).render(ctx)
                 emails.append((subject, body, django.conf.settings.DEFAULT_FROM_EMAIL, [member.mail]))

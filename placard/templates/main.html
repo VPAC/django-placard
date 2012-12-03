@@ -18,7 +18,7 @@
     <h2>Quick links</h2>
     <ul>
       <li><a class="{% active request "$" %}" href="{% url plac_index %}">Home</a></li>
-      <li><a class="{% active request "users/" %}" href="{% url plac_account_list %}">Users</a></li>
+      <li><a class="{% active request "users/" %}" href="{% url plac_account_list %}">Accounts</a></li>
       <li><a class="{% active request "groups/" %}" href="{% url plac_group_list %}">Groups</a></li>
       {% if user.is_staff %}
       <li><a href="{% url admin:index %}">Admin</a></h3></li>

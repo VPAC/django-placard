@@ -1,7 +1,7 @@
 {% extends "main.html" %}
 
 
-{% block title %}{{ account }} detail | Users{% endblock %}
+{% block title %}{{ account }} detail | Accounts{% endblock %}
 
 
 {% block extrastyle %}
@@ -14,7 +14,7 @@
 {% load placard_tags %}
 <div class="breadcrumbs">
 <a href='{{ base_url|default:"/" }}'>Home</a>
- &rsaquo; <a href="{% url plac_account_list %}">Users</a>
+ &rsaquo; <a href="{% url plac_account_list %}">Accounts</a>
 {% if slave_id %}
  &rsaquo; <a href="{% url plac_account_detail account.pk %}">{{ account }} detail</a>
  &rsaquo; {% slave_name slave_id %}
@@ -27,7 +27,7 @@
 
 {% block object-tools %}
 <div class="module object-tools">
-    <h2>User links</h2>
+    <h2>Account links</h2>
     <ul>
         <li><a href="{% slave_url 'plac_account_detail_verbose' account.pk slave_id %}">Verbose output</a></li>
         {% block object-tools-view %}{% endblock %}
@@ -60,7 +60,7 @@
 <div id="content-main">
 
     <div class="module {% if account.is_locked %}locked{% endif %}">
-        <h2>User {{ account }} detail</h2>
+        <h2>Account {{ account }} detail</h2>
 
         <h3>{{ account }}</h3>
         <table>

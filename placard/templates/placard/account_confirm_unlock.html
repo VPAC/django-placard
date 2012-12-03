@@ -1,13 +1,13 @@
 {% extends "forms.html" %}
 
 
-{% block title %}{{ account }} unlock | Users{% endblock %}
+{% block title %}{{ account }} unlock | Accounts{% endblock %}
 
 
 {% block breadcrumbs %}
 <div class="breadcrumbs">
 <a href='{{ base_url|default:"/" }}'>Home</a>
- &rsaquo; <a href="{% url plac_account_list %}">Users</a>
+ &rsaquo; <a href="{% url plac_account_list %}">Accounts</a>
  &rsaquo; <a href="{% url plac_account_detail account.pk %}">{{ account }}</a>
  &rsaquo; Unlock user
 </div>

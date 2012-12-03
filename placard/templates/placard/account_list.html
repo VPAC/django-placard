@@ -1,13 +1,13 @@
 {% extends "main.html" %}
 
 
-{% block title %}List | Users{% endblock %}
+{% block title %}List | Accounts{% endblock %}
 
 
 {% block breadcrumbs %}
 <div class="breadcrumbs">
 <a href='{{ base_url|default:"/" }}'>Home</a>
- &rsaquo; Users
+ &rsaquo; Accounts
 </div>
 {% endblock %}
 
@@ -20,10 +20,10 @@
 
 {% block object-tools %}
 <div class="module object-tools">
-    <h2>User links</h2>
+    <h2>Account links</h2>
     <ul>
         {% if perms.placard.add_account %}
-            <li><a href="{% url plac_account_add %}" class="addlink">Add User</a></li>
+            <li><a href="{% url plac_account_add %}" class="addlink">Add Account</a></li>
         {% endif %}
         <li><a href="{% url plac_account_list_pdf %}?{{ request.META.QUERY_STRING }}">Printable</a></li>
     </ul>
@@ -34,7 +34,7 @@
 {% block content %}
 <div id="content-main">
     <div class="module filtered">
-        <h2>User List</h2>
+        <h2>Account List</h2>
 
         <script type="text/javascript">document.getElementById("searchbar").focus();</script>
 

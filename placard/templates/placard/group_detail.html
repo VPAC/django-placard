@@ -84,7 +84,7 @@
         </table>
         <table>
             <tr>
-                <th>Primary Users</th>
+                <th>Primary Accounts</th>
             </tr>
             {% for m in group.primary_accounts.all %}
                 <tr class="{% cycle row1,row2 %} {% if m.is_locked %}locked{% endif %}">
@@ -92,7 +92,7 @@
                 </tr>
             {% endfor %}
             <tr>
-                <th>Secondary Users</th>
+                <th>Secondary Accounts</th>
             </tr>
             {% for m in group.secondary_accounts.all %}
                 <tr class="{% cycle row1,row2 %}">
