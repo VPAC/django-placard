@@ -74,7 +74,7 @@ class url_with_param_node(template.Node):
 
     def render(self, context):
         if 'request' not in context:
-            raise template.TemplateSyntaxError, "request not in context"
+            return ""
 
         request = context['request']
 
