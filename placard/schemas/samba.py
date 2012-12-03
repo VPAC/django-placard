@@ -17,12 +17,13 @@
 
 import django.conf
 import smbpasswd
+import time
+import datetime
 
 class sambaAccountMixin(object):
 
     @classmethod
     def set_defaults(cls, self):
-        self.secondary_groups.add(group.objects.get(cn="Domain Users"))
         self.sambaDomainName = django.conf.settings.SAMBA_DOMAIN_NAME
         self.sambaAcctFlags = '[ U         ]'
         self.sambaPwdLastSet = str(int(time.mktime(datetime.datetime.now().timetuple())))
