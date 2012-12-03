@@ -30,7 +30,7 @@ class LogView(placard.views.ListView):
 
         context['Type'] = None
         context['object'] = None
-        if self.kwargs.has_key('username'):
+        if self.kwargs.has_key('account'):
             context['type'] = u"Account"
             context['object'] = self.object
         elif self.kwargs.has_key('group'):
@@ -45,8 +45,8 @@ class LogView(placard.views.ListView):
     def get_queryset(self):
         qs = self.model.objects.all()
 
-        if self.kwargs.has_key('username'):
-            self.object = get_object_or_404(placard.models.account, uid=self.kwargs['username'])
+        if self.kwargs.has_key('account'):
+            self.object = get_object_or_404(placard.models.account, uid=self.kwargs['account'])
             qs = qs.filter(object_dn = self.object.dn)
         elif self.kwargs.has_key('group'):
             self.object = get_object_or_404(placard.models.group, cn=self.kwargs['group'])

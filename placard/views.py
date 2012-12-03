@@ -51,8 +51,8 @@ def search(request):
     return HttpResponseRedirect(reverse('plac_index'))
 
 
-def account_photo(request, username):
-    account = get_object_or_404(placard.models.account, pk=username)
+def account_photo(request, account):
+    account = get_object_or_404(placard.models.account, pk=account)
     if account.jpegPhoto is not None:
         return HttpResponse(account.jpegPhoto, content_type="image/jpeg")
     else:
@@ -217,7 +217,7 @@ class AccountDetail(DetailView, AccountMixin):
             model = placard.models.account
 
         try:
-            return model.objects.using(slave_id).get(pk=self.kwargs['username'])
+            return model.objects.using(slave_id).get(pk=self.kwargs['account'])
         except model.DoesNotExist:
             raise Http404
 
@@ -235,7 +235,7 @@ class AccountGeneric(FormView, AccountMixin):
 
     def get_form_kwargs(self):
         kwargs = super(AccountGeneric, self).get_form_kwargs()
-        if 'username' in self.kwargs:
+        if 'account' in self.kwargs:
             kwargs['account'] = self.get_object()
             self.object = kwargs['account']
             kwargs['slave_objs'] = self.get_slave_objs()
@@ -249,7 +249,7 @@ class AccountGeneric(FormView, AccountMixin):
         return kwargs
 
     def get_object(self):
-        return get_object_or_404(placard.models.account, pk=self.kwargs['username'])
+        return get_object_or_404(placard.models.account, pk=self.kwargs['account'])
 
     def create_object(self):
         obj = placard.models.account()
@@ -261,7 +261,7 @@ class AccountGeneric(FormView, AccountMixin):
         return super(AccountGeneric, self).form_valid(form)
 
     def get_success_url(self):
-        return reverse("plac_account_detail",kwargs={ 'username': self.object.pk })
+        return reverse("plac_account_detail",kwargs={ 'account': self.object.pk })
 
 
 class AccountAdd(AccountGeneric):
@@ -277,7 +277,7 @@ class AccountEdit(AccountGeneric):
 
     def get_form_class(self):
         request = self.request
-        if 'username' not in self.kwargs:
+        if 'account' not in self.kwargs:
             raise RuntimeError("Username parameter is required")
         elif request.user.has_perm('placard.change_account'):
             return self.get_admin_form_class()
@@ -307,7 +307,7 @@ class UserChangePassword(AccountChangePassword):
     def dispatch(self, *args, **kwargs):
         request = args[0]
         if request.user.is_authenticated():
-            kwargs['username'] = request.user.username
+            kwargs['account'] = request.user.username
         return super(UserChangePassword, self).dispatch(*args, **kwargs)
 
 
@@ -483,7 +483,7 @@ class GroupRemoveMember(GroupGeneric):
 
     def get_form_kwargs(self):
         kwargs = super(GroupRemoveMember, self).get_form_kwargs()
-        kwargs['account'] = get_object_or_404(placard.models.account, pk=self.kwargs['username'])
+        kwargs['account'] = get_object_or_404(placard.models.account, pk=self.kwargs['account'])
         self.account = kwargs['account']
         return kwargs
 
