@@ -1,7 +1,7 @@
 {% extends "main.html" %}
 
 
-{% block title %}{{ luser }} detail | Users{% endblock %}
+{% block title %}{{ account }} detail | Users{% endblock %}
 
 
 {% block extrastyle %}
@@ -16,10 +16,10 @@
 <a href='{{ base_url|default:"/" }}'>Home</a>
  &rsaquo; <a href="{% url plac_account_list %}">Users</a>
 {% if slave_id %}
- &rsaquo; <a href="{% url plac_account_detail luser.pk %}">{{ luser }} detail</a>
+ &rsaquo; <a href="{% url plac_account_detail account.pk %}">{{ account }} detail</a>
  &rsaquo; {% slave_name slave_id %}
 {% else %}
- &rsaquo; {{ luser }} detail
+ &rsaquo; {{ account }} detail
 {% endif %}
 </div>
 {% endblock %}
@@ -29,26 +29,26 @@
 <div class="module object-tools">
     <h2>User links</h2>
     <ul>
-        <li><a href="{% slave_url 'plac_account_detail_verbose' luser.pk slave_id %}">Verbose output</a></li>
+        <li><a href="{% slave_url 'plac_account_detail_verbose' account.pk slave_id %}">Verbose output</a></li>
         {% block object-tools-view %}{% endblock %}
         {% if not slave_id %}
             {% if perms.placard.change_account or perms.placard.hr_change_account %}
-            <li><a href="{% url plac_account_edit luser.pk %}">Edit details</a></li>
+            <li><a href="{% url plac_account_edit account.pk %}">Edit details</a></li>
             {% endif %}
             {% if perms.placard.change_account_password %}
-            <li><a href="{% url plac_change_password luser.pk %}">Change password</a></li>
+            <li><a href="{% url plac_change_password account.pk %}">Change password</a></li>
             {% endif %}
             {% if perms.placard.lock_account %}
-                {% if luser.is_locked %}
-                <li><a href="{% url plac_unlock_user luser.pk %}">Unlock</a></li>
+                {% if account.is_locked %}
+                <li><a href="{% url plac_unlock_user account.pk %}">Unlock</a></li>
                 {% else %}
-                <li><a href="{% url plac_lock_user luser.pk %}">Lock</a></li>
+                <li><a href="{% url plac_lock_user account.pk %}">Lock</a></li>
                 {% endif %}
             {% endif %}
         {% endif %}
         {% if slave_objs %}
         <li>source:
-        <a href="{% url plac_account_detail luser.pk %}">master</a>, {% for slave_id, slave_obj in slave_objs.items %}<a href="{% url plac_account_detail luser.pk slave_id %}">{% slave_name slave_id %}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
+        <a href="{% url plac_account_detail account.pk %}">master</a>, {% for slave_id, slave_obj in slave_objs.items %}<a href="{% url plac_account_detail account.pk slave_id %}">{% slave_name slave_id %}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
         </li>
         {% endif %}
     </ul>
@@ -59,12 +59,12 @@
 {% block content %}
 <div id="content-main">
 
-    <div class="module {% if luser.is_locked %}locked{% endif %}">
-        <h2>User {{ luser }} detail</h2>
+    <div class="module {% if account.is_locked %}locked{% endif %}">
+        <h2>User {{ account }} detail</h2>
 
-        <h3>{{ luser }}</h3>
+        <h3>{{ account }}</h3>
         <table>
-            {% if luser.is_locked %}
+            {% if account.is_locked %}
             <tr>
             <td>Status</td><td>LOCKED</td>
             </tr>
@@ -74,57 +74,57 @@
             </tr>
             {% endif %}
             <tr>
-            <td>Username</td><td>{{ luser.uid }}</td>
+            <td>Username</td><td>{{ account.uid }}</td>
             </tr>
             <tr>
-            <td>Title</td><td>{{ luser.title }}</td>
+            <td>Title</td><td>{{ account.title }}</td>
             </tr>
             <tr>
-            <td>Email</td><td>{{ luser.mail|urlize }}</td>
+            <td>Email</td><td>{{ account.mail|urlize }}</td>
             </tr>
             <tr>
-            <td>Phone</td><td>{{ luser.telephoneNumber }}</td>
+            <td>Phone</td><td>{{ account.telephoneNumber }}</td>
             </tr>
             <tr>
-            <td>Mobile</td><td>{{ luser.mobile }}</td>
+            <td>Mobile</td><td>{{ account.mobile }}</td>
             </tr>	
             <tr>
-            <td>Fax</td><td>{{ luser.facsimileTelephoneNumber }}</td>
+            <td>Fax</td><td>{{ account.facsimileTelephoneNumber }}</td>
             </tr>
-            {% if luser.jpegPhoto %}
+            {% if account.jpegPhoto %}
             <tr>
-            <td>Photo</td><td><img src="{% url plac_account_photo luser.pk %}" /></td>
+            <td>Photo</td><td><img src="{% url plac_account_photo account.pk %}" /></td>
             </tr>
             {% endif %}
             <tr>
-            <td>Description</td><td>{{ luser.description|linebreaks }}</td>
+            <td>Description</td><td>{{ account.description|linebreaks }}</td>
             </tr>
             <tr>
-            <td>dn</td><td>{{ luser.dn }}</td>
+            <td>dn</td><td>{{ account.dn }}</td>
             </tr>
             <tr>
-            <td>uidNumber</td><td>{{ luser.uidNumber }}</td>
+            <td>uidNumber</td><td>{{ account.uidNumber }}</td>
             </tr>
             <tr>
-            <td>gidNumber</td><td>{{ luser.gidNumber }}</td>
+            <td>gidNumber</td><td>{{ account.gidNumber }}</td>
             </tr>
             <tr>
-            <td>homeDirectory</td><td>{{ luser.homeDirectory }}</td>
+            <td>homeDirectory</td><td>{{ account.homeDirectory }}</td>
             </tr>
             <tr>
-            <td>unixHomeDirectory</td><td>{{ luser.unixHomeDirectory }}</td>
+            <td>unixHomeDirectory</td><td>{{ account.unixHomeDirectory }}</td>
             </tr>
             <tr>
-            <td>loginShell</td><td>{{ luser.loginShell }}</td>
+            <td>loginShell</td><td>{{ account.loginShell }}</td>
             </tr>
-            {% with luser.managed_by.get_obj as manager %}
+            {% with account.managed_by.get_obj as manager %}
             {% if manager %}
             <tr>
             <td>Manager</td><td class="{% if manager.is_locked %}locked{% endif %}"><a href="{% slave_url 'plac_account_detail' manager.pk slave_id %}">{{ manager }}</a></td>
             </tr>
             {% endif %}
             {% endwith %}
-            {% with luser.manager_of.all as manager_of %}
+            {% with account.manager_of.all as manager_of %}
             {% if manager_of %}
             <tr>
             <td>Manager of</td><td>
@@ -135,13 +135,13 @@
             {% endif %}
             {% endwith %}
             <tr>
-            <td>objectClass</td><td>{{ luser.objectClass }}</td>
+            <td>objectClass</td><td>{{ account.objectClass }}</td>
             </tr>
             <tr>
-            <td>givenName</td><td>{{ luser.givenName }}</td>
+            <td>givenName</td><td>{{ account.givenName }}</td>
             </tr>
             <tr>
-            <td>sn</td><td>{{ luser.sn }}</td>
+            <td>sn</td><td>{{ account.sn }}</td>
             </tr>
         </table>
     </div>
@@ -149,7 +149,7 @@
     <div class="module">
     <h2>Groups</h2>
         <table>
-            {% with luser.primary_group.get_obj as primary_group %}
+            {% with account.primary_group.get_obj as primary_group %}
             {% if primary_group %}
             <tr>
                 <th>Primary Group:</th>
@@ -162,17 +162,17 @@
             <tr>
                 <th>Secondary Groups:</th>
             </tr>
-            {% for g in luser.secondary_groups.all %}
+            {% for g in account.secondary_groups.all %}
                 <tr class="{% cycle row1,row2 %}">
                     <td><a href="{% slave_url 'plac_grp_detail' g.pk slave_id %}">{{ g }}</a></td>
                     {% if perms.placard.change_account and not slave_id %}
-                    <td><a href="{% url plac_account_rm_group luser.pk,g.pk %}" class="deletelink">remove</a></td>
+                    <td><a href="{% url plac_account_rm_group account.pk,g.pk %}" class="deletelink">remove</a></td>
                     {% endif %}
                 </tr>
             {% endfor %}
         </table>
         {% if perms.placard.change_account and not slave_id %}
-            <form method="post" action="{% url plac_account_add_group luser.pk %}" class="simple">{% csrf_token %}
+            <form method="post" action="{% url plac_account_add_group account.pk %}" class="simple">{% csrf_token %}
                 <fieldset>
                     {{ form }}<input type="submit" value="Add" class="default" />
                 </fieldset>

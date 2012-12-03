@@ -20,7 +20,7 @@
 {% endif %}
 
 <form method="post" action="." class="module">{% csrf_token %}
-    <h2>Add user {{ luser }} to {{ group }}</h2>
+    <h2>Add user {{ account }} to {{ group }}</h2>
     <fieldset class="aligned">
         {% for field in form %}{% formfield field %}{% endfor %}
     </fieldset>

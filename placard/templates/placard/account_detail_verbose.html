@@ -1,14 +1,14 @@
 {% extends "main.html" %}
 
 
-{% block title %}{{ luser }} verbose | Users{% endblock %}
+{% block title %}{{ account }} verbose | Users{% endblock %}
 
 
 {% block breadcrumbs %}
 <div class="breadcrumbs">
 <a href='{{ base_url|default:"/" }}'>Home</a>
  &rsaquo; <a href="{% url plac_account_list %}">Users</a>
- &rsaquo; {{ luser }} verbose
+ &rsaquo; {{ account }} verbose
 </div>
 {% endblock %}
 
@@ -17,10 +17,10 @@
 <div id="content-main">
 
     <div class="module">
-        <h2>User {{ luser }} verbose</h2>
-        <h3>{{ luser.dn }}</h3>
+        <h2>User {{ account }} verbose</h2>
+        <h3>{{ account.dn }}</h3>
         <table>
-            {% for i,j in luser.get_fields %}
+            {% for i,j in account.get_fields %}
                 <tr>
                     {% if j %}
                     <td>{{ i }}</td><td>{{ j }}</td>

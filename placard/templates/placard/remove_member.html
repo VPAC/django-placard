@@ -16,9 +16,9 @@
 
 {% block content %}
 <form method="post" action="." class="module">{% csrf_token %}
-    <h2>Remove user {{ luser }} from {{ group }}</h2>
+    <h2>Remove user {{ account }} from {{ group }}</h2>
 
-    <p>Are you sure you want to remove {{ luser }} from the group {{ group }}? </p>
+    <p>Are you sure you want to remove {{ account }} from the group {{ group }}? </p>
     <div class="submit-row">
         <input type="submit" value="Yes, I'm sure" />
     </div>

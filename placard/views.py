@@ -195,7 +195,7 @@ class AccountList(ListView, AccountMixin):
 class AccountDetail(DetailView, AccountMixin):
     model = placard.models.account
     template_name = "placard/account_detail.html"
-    context_object_name = "luser"
+    context_object_name = "account"
 
     def get_context_data(self, **kwargs):
         context = super(AccountDetail, self).get_context_data(**kwargs)
@@ -229,7 +229,7 @@ class AccountVerbose(AccountDetail, AccountMixin):
 class AccountGeneric(FormView, AccountMixin):
     def get_context_data(self, **kwargs):
         context = super(AccountGeneric, self).get_context_data(**kwargs)
-        context['luser'] = self.object
+        context['account'] = self.object
         context['created'] = self.created
         return context
 
@@ -272,7 +272,7 @@ class AccountAdd(AccountGeneric):
 
 class AccountEdit(AccountGeneric):
     template_name = "placard/account_form.html"
-    context_object_name = "luser"
+    context_object_name = "account"
     permissions = [ 'placard.change_account', 'placard.hr_change_account' ]
 
     def get_form_class(self):
@@ -478,7 +478,7 @@ class GroupRemoveMember(GroupGeneric):
 
     def get_context_data(self, **kwargs):
         context = super(GroupRemoveMember, self).get_context_data(**kwargs)
-        context['luser'] = self.account
+        context['account'] = self.account
         return context
 
     def get_form_kwargs(self):

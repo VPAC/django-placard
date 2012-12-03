@@ -1,14 +1,14 @@
 {% extends "forms.html" %}
 
 
-{% block title %}{% if not created %}Edit {{ luser }}{% else %}Create user{% endif %} | Groups{% endblock %}
+{% block title %}{% if not created %}Edit {{ account }}{% else %}Create user{% endif %} | Groups{% endblock %}
 
 
 {% block breadcrumbs %}
 <div class="breadcrumbs">
 <a href='{{ base_url|default:"/" }}'>Home</a>
  &rsaquo; <a href="{% url plac_account_list %}">Users</a>
- &rsaquo; {% if not created %}Edit {{ luser }}{% else %}Create User{% endif %} User
+ &rsaquo; {% if not created %}Edit {{ account }}{% else %}Create User{% endif %} User
 </div>
 {% endblock %}
 
@@ -20,12 +20,12 @@
 {% endif %}
 
 <form method="post" action="." class="module" enctype="multipart/form-data">
-    <h2> {% if not created %}Edit {{ luser }}{% else %}Create user{% endif %} </h2>
+    <h2> {% if not created %}Edit {{ account }}{% else %}Create user{% endif %} </h2>
 
     <fieldset class="aligned">
         {% block form-fields %}
         {{ form.non_field_errors }}
-        {% if not luser %}
+        {% if not account %}
         {% formfield form.uid %}
         {% formfield form.raw_password %}
         {% formfield form.raw_password2 %}
@@ -47,7 +47,7 @@
     <div class="submit-row">
         <input type="submit" value="Save" class="default" />
         {% if not created and perms.placard.delete_account %}
-        <p class="deletelink-box"><a href="{% url plac_account_delete luser.pk %}" class="deletelink">Delete</a></p>
+        <p class="deletelink-box"><a href="{% url plac_account_delete account.pk %}" class="deletelink">Delete</a></p>
         {% endif %}
     </div>
 </form>
