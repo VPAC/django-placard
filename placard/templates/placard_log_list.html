@@ -1,7 +1,7 @@
 {% extends "main.html" %}
 
 
-{% block title %}Logs{% endblock %}
+{% block title %}{% if object %}{{ object }} | {% endif %}Logs{% endblock %}
 
 
 {% block breadcrumbs %}
@@ -15,6 +15,7 @@
 {% block content %}
 <div id="content-main">
     <div class="module" id="changelist">
+        <h2>{% if object %}{{ type }} {{ object }}{% else %}All{% endif %} logs</h2>
 
         <table cellspacing="0">
             <thead>

@@ -25,17 +25,34 @@ class LogView(placard.views.ListView):
     template_name = "placard_log_list.html"
     context_object_name = "log_list"
 
+    def get_context_data(self, **kwargs):
+        context = super(LogView, self).get_context_data(**kwargs)
+
+        context['Type'] = None
+        context['object'] = None
+        if self.kwargs.has_key('username'):
+            context['type'] = u"Account"
+            context['object'] = self.object
+        elif self.kwargs.has_key('group'):
+            context['type'] = u"Account"
+            context['object'] = self.object
+        elif self.kwargs.has_key('user'):
+            context['type'] = u"User"
+            context['object'] = self.object
+
+        return context
+
     def get_queryset(self):
         qs = self.model.objects.all()
 
         if self.kwargs.has_key('username'):
-            user = get_object_or_404(placard.models.account, uid=self.kwargs['username'])
-            qs = qs.filter(object_dn = user.dn)
+            self.object = get_object_or_404(placard.models.account, uid=self.kwargs['username'])
+            qs = qs.filter(object_dn = self.object.dn)
         elif self.kwargs.has_key('group'):
-            group = get_object_or_404(placard.models.group, cn=self.kwargs['group'])
-            qs = qs.filter(object_dn = group.dn)
+            self.object = get_object_or_404(placard.models.group, cn=self.kwargs['group'])
+            qs = qs.filter(object_dn = self.object.dn)
         elif self.kwargs.has_key('user'):
-            user = self.kwargs['user']
-            qs = qs.filter(user__username=user)
+            self.object = self.kwargs['user']
+            qs = qs.filter(user__username__exact=self.object)
 
         return qs
