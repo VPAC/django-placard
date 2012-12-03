@@ -122,6 +122,8 @@ class personMixin(object):
     @classmethod
     def prepare_for_save(cls, self):
         self.displayName = '%s %s' % (self.givenName, self.sn)
+        if self.cn is None:
+            self.cn = uid
 
 
 class accountMixin(object):

@@ -25,18 +25,11 @@ import tldap.manager
 # rfc #
 #######
 
-class localRfcAccountMixin(object):
-    @classmethod
-    def prepare_for_save(cls, self):
-        if self.cn is None:
-            self.cn = '%s %s' % (self.givenName, self.sn)
-
-
 class rfc_account(
         rfc.person, rfc.organizationalPerson, rfc.inetOrgPerson, rfc.pwdPolicy,
         rfc.posixAccount, rfc.shadowAccount,
         common.baseMixin):
-    mixin_list = [ common.personMixin, pwdPolicyMixin, common.accountMixin, localRfcAccountMixin ]
+    mixin_list = [ common.personMixin, pwdPolicyMixin, common.accountMixin ]
 
     class Meta:
         base_dn_setting = "LDAP_ACCOUNT_BASE"
@@ -66,18 +59,11 @@ class rfc_group(rfc.posixGroup, common.baseMixin):
 # ad #
 ######
 
-class localAdAccountMixin(object):
-    @classmethod
-    def prepare_for_save(cls, self):
-        if self.cn is None:
-            self.cn = self.uid
-
-
 class ad_account(
         ad.person, rfc.organizationalPerson, rfc.inetOrgPerson, ad.user,
         ad.posixAccount,
         common.baseMixin):
-    mixin_list = [ common.personMixin, adUserMixin, common.accountMixin, localAdAccountMixin ]
+    mixin_list = [ common.personMixin, adUserMixin, common.accountMixin ]
 
     class Meta:
         base_dn_setting = "LDAP_ACCOUNT_BASE"
