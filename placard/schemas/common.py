@@ -129,12 +129,6 @@ class accountMixin(object):
         self.manager_of.clear()
 
     @classmethod
-    def is_locked(cls, self):
-        if self.loginShell is None:
-            return False
-        return self.loginShell.startswith("/locked")
-
-    @classmethod
     def lock(cls, self):
         if self.loginShell is None:
             return
