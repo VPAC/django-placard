@@ -31,21 +31,21 @@ class baseMixin(tldap.base.LDAPobject):
             if hasattr(mixin, 'set_defaults'):
                 mixin.set_defaults(self)
 
-    def save(self, using=None, *args, **kwargs):
+    def save(self, using=None, **kwargs):
         using = using or self._alias
         assert using
         for mixin in self.mixin_list:
             if hasattr(mixin, 'pre_save'):
                 mixin.pre_save(self, using)
-        super(baseMixin, self).save(*args, **kwargs)
+        super(baseMixin, self).save(using=using, **kwargs)
 
-    def delete(self, *args, **kwargs):
+    def delete(self, using=None, **kwargs):
         using = using or self._alias
         assert using
         for mixin in self.mixin_list:
             if hasattr(mixin, 'pre_delete'):
                 mixin.pre_delete(self, using)
-        super(baseMixin, self).delete(using, *args, **kwargs)
+        super(baseMixin, self).delete(using=using, **kwargs)
 
     def lock(self):
         for mixin in self.mixin_list:
