@@ -31,7 +31,7 @@ class shibbolethMixin(object):
         return base64.urlsafe_b64encode(sha(uid + mail + entityID + salt).digest())[:-1]
 
     @classmethod
-    def prepare_for_save(cls, self, using):
+    def pre_save(cls, self, using):
         if self.auEduPersonSharedToken is None:
             self.auEduPersonSharedToken = cls._generate_shared_token(self)
 

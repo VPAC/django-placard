@@ -29,7 +29,7 @@ class sambaAccountMixin(object):
         self.sambaPwdLastSet = str(int(time.mktime(datetime.datetime.now().timetuple())))
 
     @classmethod
-    def prepare_for_save(cls, self, using):
+    def pre_save(cls, self, using):
         if self.sambaSID is None:
             self.sambaSID = "S-1-5-" + django.conf.settings.SAMBA_DOMAIN_SID + "-" + str(int(self.uidNumber)*2)
 
@@ -58,7 +58,7 @@ class sambaGroupMixin(object):
         self.sambaGroupType = 2
 
     @classmethod
-    def prepare_for_save(cls, self, using):
+    def pre_save(cls, self, using):
         if self.sambaSID is None:
             self.sambaSID = "S-1-5-" + django.conf.settings.SAMBA_DOMAIN_SID + "-" + str(int(self.uidNumber)*2 + 1001)
 

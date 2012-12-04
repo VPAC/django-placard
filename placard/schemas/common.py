@@ -35,16 +35,16 @@ class baseMixin(tldap.base.LDAPobject):
         using = using or self._alias
         assert using
         for mixin in self.mixin_list:
-            if hasattr(mixin, 'prepare_for_save'):
-                mixin.prepare_for_save(self, using)
+            if hasattr(mixin, 'pre_save'):
+                mixin.pre_save(self, using)
         super(baseMixin, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         using = using or self._alias
         assert using
         for mixin in self.mixin_list:
-            if hasattr(mixin, 'prepare_for_delete'):
-                mixin.prepare_for_delete(self, using)
+            if hasattr(mixin, 'pre_delete'):
+                mixin.pre_delete(self, using)
         super(baseMixin, self).delete(using, *args, **kwargs)
 
     def lock(self):
@@ -102,7 +102,7 @@ class personMixin(object):
         return tldap.connections[using].check_password(self.dn, password)
 
     @classmethod
-    def prepare_for_save(cls, self, using):
+    def pre_save(cls, self, using):
         self.displayName = '%s %s' % (self.givenName, self.sn)
         if self.cn is None:
             self.cn = uid
@@ -123,13 +123,13 @@ class accountMixin(object):
         self.shadowWarning = 10
 
     @classmethod
-    def prepare_for_save(cls, self, using):
+    def pre_save(cls, self, using):
         self.gecos = '%s %s' % (self.givenName, self.sn)
         if self.uid is not None:
             self.unixHomeDirectory =  '/home/%s' % self.uid
 
     @classmethod
-    def prepare_for_delete(cls, self, using):
+    def pre_delete(cls, self, using):
         self.manager_of.clear()
 
     @classmethod
@@ -153,7 +153,7 @@ class groupMixin(object):
         return u"G:%s"%self.cn
 
     @classmethod
-    def prepare_for_save(cls, self, using):
+    def pre_save(cls, self, using):
         if self.description is None:
             self.description = self.cn
 
