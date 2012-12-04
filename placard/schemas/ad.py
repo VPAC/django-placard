@@ -24,7 +24,7 @@ class adUserMixin(object):
         self.userAccountControl = 512
 
     @classmethod
-    def prepare_for_save(cls, self):
+    def prepare_for_save(cls, self, using):
         if self.objectSid is None:
             self.objectSid = "S-1-5-" + django.conf.settings.AD_DOMAIN_SID + "-" + str(int(self.uidNumber)*2)
 
@@ -51,6 +51,6 @@ class adUserMixin(object):
 class adGroupMixin(object):
 
     @classmethod
-    def prepare_for_save(cls, self):
+    def prepare_for_save(cls, self, using):
         if self.objectSid is None:
             self.objectSid = "S-1-5-" + django.conf.settings.AD_DOMAIN_SID + "-" + str(int(self.uidNumber)*2)
