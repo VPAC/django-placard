@@ -37,8 +37,8 @@ class rfc_account(
         search_classes = set([ 'posixAccount' ])
         pk = 'uid'
 
-    managed_by = tldap.manager.ManyToOneDescriptor('manager', 'demo.schemas.rfc_account', 'dn')
-    manager_of = tldap.manager.OneToManyDescriptor('dn', 'demo.schemas.rfc_account', 'manager')
+    managed_by = tldap.manager.ManyToOneDescriptor(this_key='manager', linked_cls='demo.schemas.rfc_account', linked_key='dn')
+    manager_of = tldap.manager.OneToManyDescriptor(this_key='dn', linked_cls='demo.schemas.rfc_account', linked_key='manager')
     unixHomeDirectory = tldap.manager.AliasDescriptor("homeDirectory")
 
 
@@ -52,8 +52,8 @@ class rfc_group(rfc.posixGroup, common.baseMixin):
         pk = 'cn'
 
     # accounts
-    primary_accounts = tldap.manager.OneToManyDescriptor('gidNumber', rfc_account, 'gidNumber', "primary_group")
-    secondary_accounts = tldap.manager.ManyToManyDescriptor('memberUid', rfc_account, 'uid', False, "secondary_groups")
+    primary_accounts = tldap.manager.OneToManyDescriptor(this_key='gidNumber', linked_cls=rfc_account, linked_key='gidNumber', related_name="primary_group")
+    secondary_accounts = tldap.manager.ManyToManyDescriptor(this_key='memberUid', linked_cls=rfc_account, linked_key='uid', linked_has_foreign_key=False, related_name="secondary_groups")
 
 ######
 # ad #
@@ -71,8 +71,8 @@ class ad_account(
         search_classes = set([ 'user' ])
         pk = 'cn'
 
-    managed_by = tldap.manager.ManyToOneDescriptor('manager', 'demo.schemas.ad_account', 'dn')
-    manager_of = tldap.manager.OneToManyDescriptor('dn', 'demo.schemas.ad_account', 'manager')
+    managed_by = tldap.manager.ManyToOneDescriptor(this_key='manager', linked_cls='demo.schemas.ad_account', linked_key='dn')
+    manager_of = tldap.manager.OneToManyDescriptor(this_key='dn', linked_cls='demo.schemas.ad_account', linked_key='manager')
 
 
 class ad_group(rfc.posixGroup, ad.group, common.baseMixin):
@@ -85,5 +85,5 @@ class ad_group(rfc.posixGroup, ad.group, common.baseMixin):
         pk = 'cn'
 
     # accounts
-    primary_accounts = tldap.manager.OneToManyDescriptor('gidNumber', ad_account, 'gidNumber', "primary_group")
-    secondary_accounts = tldap.manager.AdAccountLinkDescriptor(ad_account, "secondary_groups")
+    primary_accounts = tldap.manager.AdPrimaryAccountLinkDescriptor(linked_cls=ad_account, related_name="primary_group", domain_sid=django.conf.settings.AD_DOMAIN_SID)
+    secondary_accounts = tldap.manager.AdAccountLinkDescriptor(linked_cls=ad_account, related_name="secondary_groups")
