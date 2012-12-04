@@ -22,7 +22,7 @@ from django.shortcuts import get_object_or_404
 
 class LogView(placard.views.ListView):
     model = placard.logging.models.LogEntry
-    template_name = "placard_log_list.html"
+    template_name = "placard/log_list.html"
     context_object_name = "log_list"
 
     def get_context_data(self, **kwargs):

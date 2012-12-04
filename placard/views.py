@@ -30,7 +30,7 @@ from django.core.urlresolvers import reverse
 
 def index(request):
 
-    return render_to_response('index.html', locals(), context_instance=RequestContext(request))
+    return render_to_response('placard/index.html', locals(), context_instance=RequestContext(request))
 
 
 def search(request):
@@ -46,7 +46,7 @@ def search(request):
                 account_list = account_list.filter(tldap.Q(pk__contains=term) | tldap.Q(cn__contains=term) | tldap.Q(description__contains=term))
                 group_list = group_list.filter(tldap.Q(pk__contains=term) | tldap.Q(description__contains=term))
 
-        return render_to_response('search.html', locals(), context_instance=RequestContext(request))
+        return render_to_response('placard/search.html', locals(), context_instance=RequestContext(request))
 
     return HttpResponseRedirect(reverse('plac_index'))
 
