@@ -162,7 +162,7 @@
             <tr>
                 <th>Secondary Groups:</th>
             </tr>
-            {% for g in account.secondary_groups.all %}
+            {% for g in account.secondary_groups.all|dictsort:"cn" %}
                 <tr class="{% cycle row1,row2 %}">
                     <td><a href="{% slave_url 'plac_group_detail' g.pk slave_id %}">{{ g }}</a></td>
                     {% if perms.placard.change_account and not slave_id %}

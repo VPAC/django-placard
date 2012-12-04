@@ -80,7 +80,7 @@
             <tr>
                 <th>Primary Accounts</th>
             </tr>
-            {% for m in group.primary_accounts.all %}
+            {% for m in group.primary_accounts.all|dictsort:"cn" %}
                 <tr class="{% cycle row1,row2 %} {% if m.is_locked %}locked{% endif %}">
                     <td><a href="{% slave_url 'plac_account_detail' m.pk slave_id %}" >{{ m }}</a></td>
                 </tr>
@@ -88,7 +88,7 @@
             <tr>
                 <th>Secondary Accounts</th>
             </tr>
-            {% for m in group.secondary_accounts.all %}
+            {% for m in group.secondary_accounts.all|dictsort:"cn" %}
                 <tr class="{% cycle row1,row2 %}">
                     <td class="{% if m.is_locked %}locked{% endif %}"><a href="{% slave_url 'plac_account_detail' m.pk slave_id %}" >{{ m }}</a></td>
                     {% if perms.placard.change_group and not slave_id %}
