@@ -31,21 +31,19 @@ class baseMixin(tldap.base.LDAPobject):
             if hasattr(mixin, 'set_defaults'):
                 mixin.set_defaults(self)
 
-    def save(self, using=None, **kwargs):
+    def pre_save(self, created, using=None):
         using = using or self._alias
         assert using
         for mixin in self.mixin_list:
             if hasattr(mixin, 'pre_save'):
-                mixin.pre_save(self, using)
-        super(baseMixin, self).save(using=using, **kwargs)
+                mixin.pre_save(self, created, using)
 
-    def delete(self, using=None, **kwargs):
+    def pre_delete(self, using=None, **kwargs):
         using = using or self._alias
         assert using
         for mixin in self.mixin_list:
             if hasattr(mixin, 'pre_delete'):
                 mixin.pre_delete(self, using)
-        super(baseMixin, self).delete(using=using, **kwargs)
 
     def lock(self):
         for mixin in self.mixin_list:
@@ -102,7 +100,7 @@ class personMixin(object):
         return tldap.connections[using].check_password(self.dn, password)
 
     @classmethod
-    def pre_save(cls, self, using):
+    def pre_save(cls, self, created, using):
         self.displayName = '%s %s' % (self.givenName, self.sn)
         if self.cn is None:
             self.cn = uid
@@ -123,7 +121,7 @@ class accountMixin(object):
         self.shadowWarning = 10
 
     @classmethod
-    def pre_save(cls, self, using):
+    def pre_save(cls, self, created, using):
         self.gecos = '%s %s' % (self.givenName, self.sn)
         if self.uid is not None:
             self.unixHomeDirectory =  '/home/%s' % self.uid
@@ -153,7 +151,7 @@ class groupMixin(object):
         return u"G:%s"%self.cn
 
     @classmethod
-    def pre_save(cls, self, using):
+    def pre_save(cls, self, created, using):
         if self.description is None:
             self.description = self.cn
 

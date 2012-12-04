@@ -85,8 +85,10 @@ class LDAPForm(forms.Form):
         if not commit:
             return
 
+        self.object.pre_save(created=self.created)
         self.object.save()
         for obj in [self.object] + self.slave_objs.values():
+            obj.pre_save(created=self.created)
             obj.save()
 
     def save(self, commit=True):
@@ -487,6 +489,7 @@ class DeleteAccountForm(AccountForm):
     def save(self, commit=True):
         placard.signals.account_delete.send(self.object, user=self.user)
         for obj in [self.object] + self.slave_objs.values():
+            obj.pre_delete()
             obj.delete()
         return None
 
@@ -611,6 +614,7 @@ class DeleteGroupForm(GroupForm):
     def save(self, commit=True):
         placard.signals.group_delete.send(self.object, user=self.user)
         for obj in [self.object] + self.slave_objs.values():
+            obj.pre_delete()
             obj.delete()
         return None
 
