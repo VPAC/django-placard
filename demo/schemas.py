@@ -21,6 +21,8 @@ from placard.schemas.pwdpolicy import pwdPolicyMixin
 from placard.schemas.ad import adUserMixin, adGroupMixin
 import tldap.manager
 
+import django.conf
+
 #######
 # rfc #
 #######
