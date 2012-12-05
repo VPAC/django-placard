@@ -17,7 +17,6 @@
 
 import django.conf
 import smbpasswd
-import time
 import datetime
 
 class sambaAccountMixin(object):
@@ -26,7 +25,7 @@ class sambaAccountMixin(object):
     def set_defaults(cls, self):
         self.sambaDomainName = django.conf.settings.SAMBA_DOMAIN_NAME
         self.sambaAcctFlags = '[ U         ]'
-        self.sambaPwdLastSet = str(int(time.mktime(datetime.datetime.now().timetuple())))
+        self.sambaPwdLastSet = datetime.datetime.now()
 
     @classmethod
     def pre_save(cls, self, created, using):
@@ -48,7 +47,7 @@ class sambaAccountMixin(object):
         self.sambaNTPassword=smbpasswd.nthash(password)
         self.sambaLMPassword=smbpasswd.lmhash(password)
         self.sambaPwdMustChange=None
-        self.sambaPwdLastSet=str(int(time.mktime(datetime.datetime.now().timetuple())))
+        self.sambaPwdLastSet=datetime.datetime.now()
 
 
 class sambaGroupMixin(object):

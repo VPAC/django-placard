@@ -140,6 +140,13 @@ class accountMixin(object):
             self.loginShell = self.loginShell[7:]
 
 
+class shadowMixin(object):
+
+    @classmethod
+    def change_password(cls, self, password):
+        self.shadowLastChange=datetime.datetime.now()
+
+
 class groupMixin(object):
     @classmethod
     def __unicode__(cls, self):

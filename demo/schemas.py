@@ -31,7 +31,7 @@ class rfc_account(
         rfc.person, rfc.organizationalPerson, rfc.inetOrgPerson, rfc.pwdPolicy,
         rfc.posixAccount, rfc.shadowAccount,
         common.baseMixin):
-    mixin_list = [ common.personMixin, pwdPolicyMixin, common.accountMixin ]
+    mixin_list = [ common.personMixin, pwdPolicyMixin, common.accountMixin, common.shadowMixin ]
 
     class Meta:
         base_dn_setting = "LDAP_ACCOUNT_BASE"
