@@ -325,6 +325,12 @@ class LDAPAddAccountForm(LDAPAccountForm):
 
         return data
 
+    def save(self, commit=True):
+        data = super(LDAPAddAccountForm, self).save(commit=False)
+        for obj in [self.object] + self.slave_objs.values():
+            obj.change_password(data['raw_password'])
+        self.commit(commit)
+        return self.object
 
 class LDAPAdminPasswordForm(AccountForm):
     """ Password change form for admin. No old password needed. """
