@@ -35,8 +35,14 @@ def index(request):
 
 def search(request):
 
-    if request.method == 'POST':
-        term_list = request.REQUEST['sitesearch'].lower().split(' ')
+    if request.method == 'GET' and 'q' in request.REQUEST:
+        term_list = request.REQUEST['q'].lower().split(' ')
+        q = " ".join(term_list)
+    else:
+        q = ""
+
+
+    if q != "":
 
         account_list = placard.models.account.objects.all()
         group_list = placard.models.group.objects.all()
@@ -46,9 +52,20 @@ def search(request):
                 account_list = account_list.filter(tldap.Q(pk__contains=term) | tldap.Q(cn__contains=term) | tldap.Q(description__contains=term))
                 group_list = group_list.filter(tldap.Q(pk__contains=term) | tldap.Q(description__contains=term))
 
-        return render_to_response('placard/search.html', locals(), context_instance=RequestContext(request))
+    else:
 
-    return HttpResponseRedirect(reverse('plac_index'))
+        account_list = []
+        group_list = []
+
+
+    kwargs = {
+        'q': q,
+        'account_list': account_list,
+        'group_list': group_list,
+        'request': request,
+    }
+
+    return render_to_response('placard/search.html', kwargs, context_instance=RequestContext(request))
 
 
 def account_photo(request, account):
