@@ -118,7 +118,7 @@ class accountMixin(object):
     @classmethod
     def pre_save(cls, self, created, using):
         self.gecos = '%s %s' % (self.givenName, self.sn)
-        if self.uid is not None:
+        if created and self.unixHomeDirectory is None and self.uid is not None:
             self.unixHomeDirectory =  '/home/%s' % self.uid
 
     @classmethod
