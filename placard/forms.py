@@ -87,7 +87,7 @@ class LDAPForm(forms.Form):
 
         self.object.pre_save(created=self.created)
         self.object.save()
-        for obj in [self.object] + self.slave_objs.values():
+        for obj in self.slave_objs.values():
             obj.pre_save(created=self.created)
             obj.save()
 
