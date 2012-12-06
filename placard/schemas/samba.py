@@ -65,6 +65,6 @@ class sambaGroupMixin(object):
     @classmethod
     def pre_save(cls, self, created, using):
         if self.sambaSID is None:
-            self.sambaSID = "S-1-5-" + django.conf.settings.SAMBA_DOMAIN_SID + "-" + str(int(self.uidNumber)*2 + 1001)
+            self.sambaSID = "S-1-5-" + django.conf.settings.SAMBA_DOMAIN_SID + "-" + str(int(self.gidNumber)*2 + 1001)
         if self.displayName is None:
             self.displayName = self.cn
