@@ -20,6 +20,9 @@ import smbpasswd
 import datetime
 
 class sambaAccountMixin(object):
+    @classmethod
+    def __unicode__(cls, self):
+        return u"SA:%s"%(self.displayName or self.cn)
 
     @classmethod
     def set_defaults(cls, self):
@@ -51,6 +54,9 @@ class sambaAccountMixin(object):
 
 
 class sambaGroupMixin(object):
+    @classmethod
+    def __unicode__(cls, self):
+        return u"SG:%s"%(self.displayName or self.cn)
 
     @classmethod
     def set_defaults(cls, self):
@@ -60,4 +66,5 @@ class sambaGroupMixin(object):
     def pre_save(cls, self, created, using):
         if self.sambaSID is None:
             self.sambaSID = "S-1-5-" + django.conf.settings.SAMBA_DOMAIN_SID + "-" + str(int(self.uidNumber)*2 + 1001)
-
+        if self.displayName is None:
+            self.displayName = self.cn

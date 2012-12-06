@@ -18,6 +18,9 @@
 import django.conf
 
 class adUserMixin(object):
+    @classmethod
+    def __unicode__(cls, self):
+        return u"ADU:%s"%(self.displayName or self.cn)
 
     @classmethod
     def set_defaults(cls, self):
@@ -49,8 +52,13 @@ class adUserMixin(object):
 
 
 class adGroupMixin(object):
+    @classmethod
+    def __unicode__(cls, self):
+        return u"ADG:%s"%(self.displayName or self.cn)
 
     @classmethod
     def pre_save(cls, self, created, using):
         if self.objectSid is None:
             self.objectSid = "S-1-5-" + django.conf.settings.AD_DOMAIN_SID + "-" + str(int(self.gidNumber)*2)
+        if self.displayName is None:
+            self.displayName = self.cn
