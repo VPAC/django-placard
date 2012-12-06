@@ -31,7 +31,7 @@ import placard.util
 import ajax_select.fields
 
 def get_free_uidNumber():
-    model = account.__class__
+    model = placard.models.account
     uid = None
     for u in model.objects.all():
         if uid is None or u.uidNumber > uid:
@@ -40,7 +40,7 @@ def get_free_uidNumber():
 
 
 def get_free_gidNumber():
-    model = group.__class__
+    model = placard.models.group
     gid = None
     for g in model.objects.all():
         if gid is None or g.gidNumber > gid:
