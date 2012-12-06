@@ -148,6 +148,8 @@ class shadowMixin(object):
 
 
 class groupMixin(object):
+    # Note standard posixGroup objectClass has no displayName attribute
+
     @classmethod
     def __unicode__(cls, self):
         return u"G:%s"%self.cn
