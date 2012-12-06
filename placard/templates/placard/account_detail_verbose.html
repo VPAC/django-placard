@@ -5,10 +5,18 @@
 
 
 {% block breadcrumbs %}
+{% load placard_tags %}
 <div class="breadcrumbs">
 <a href='{{ base_url|default:"/" }}'>Home</a>
  &rsaquo; <a href="{% url plac_account_list %}">Accounts</a>
- &rsaquo; {{ account }} verbose
+{% if slave_id %}
+ &rsaquo; <a href="{% url plac_account_detail account.pk %}">{{ account }} detail</a>
+ &rsaquo; <a href="{% url plac_account_detail account.pk slave_id %}">{% slave_name slave_id %}</a>
+ &rsaquo; Verbose
+{% else %}
+ &rsaquo; <a href="{% url plac_account_detail account.pk %}">{{ account }} detail</a>
+ &rsaquo; Verbose
+{% endif %}
 </div>
 {% endblock %}
 
