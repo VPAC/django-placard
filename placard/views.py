@@ -445,12 +445,12 @@ class GroupGeneric(FormView, GroupMixin):
             kwargs['group'] = self.get_object()
             self.object = kwargs['group']
             kwargs['slave_objs'] = self.get_slave_objs()
-            kwargs['created'] = True
+            kwargs['created'] = False
         else:
             kwargs['group'] = self.create_object()
             self.object = kwargs['group']
             kwargs['slave_objs'] = self.create_slave_objs()
-            kwargs['created'] = False
+            kwargs['created'] = True
         self.created = kwargs['created']
         return kwargs
 
