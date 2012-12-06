@@ -91,6 +91,11 @@ class LDAPForm(forms.Form):
             obj.pre_save(created=self.created)
             obj.save()
 
+        # signal must be activated after saving, as saving completes the DN
+        assert self.object.dn is not None
+        if self.created:
+            self.signal_add.send(self.object, user=self.user)
+
     def save(self, commit=True):
         if not self.created:
             self.signal_edit.send(self.object, user=self.user, data=self.cleaned_data)
@@ -102,10 +107,6 @@ class LDAPForm(forms.Form):
                     continue
                 value = self.cleaned_data[name]
                 setattr(obj, name, value)
-
-        # signal must be activated after saving, as saving completes the DN
-        if self.created:
-            self.signal_add.send(self.object, user=self.user)
 
         self.commit(commit)
         return self.object
