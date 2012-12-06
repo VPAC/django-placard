@@ -32,14 +32,14 @@ class baseMixin(tldap.base.LDAPobject):
                 mixin.set_defaults(self)
 
     def pre_save(self, created, using=None):
-        using = using or self._alias
+        using = using or self._alias or tldap.DEFAULT_LDAP_ALIAS
         assert using
         for mixin in self.mixin_list:
             if hasattr(mixin, 'pre_save'):
                 mixin.pre_save(self, created, using)
 
     def pre_delete(self, using=None, **kwargs):
-        using = using or self._alias
+        using = using or self._alias or tldap.DEFAULT_LDAP_ALIAS
         assert using
         for mixin in self.mixin_list:
             if hasattr(mixin, 'pre_delete'):
