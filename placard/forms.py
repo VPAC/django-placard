@@ -389,12 +389,12 @@ class LDAPGroupForm(GroupForm):
         self.object = group
         self.slave_objs = slave_objs
         super(LDAPGroupForm, self).__init__(*args, **kwargs)
-        if self.object is not None:
+        if not self.created:
             self.fields['cn'].widget.attrs['readonly'] = True
 
     def clean_cn(self):
         cn = self.cleaned_data['cn']
-        if self.object is None:
+        if self.created:
             groups = placard.models.group.objects.filter(cn=cn)
             if len(groups) > 0:
                 raise forms.ValidationError("This group already exists!")
