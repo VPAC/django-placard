@@ -84,7 +84,7 @@ class baseMixin(tldap.base.LDAPobject):
         return locked
 
     def __unicode__(self):
-        for mixin in self.mixin_list:
+        for mixin in reversed(self.mixin_list):
             if hasattr(mixin, '__unicode__'):
                 return mixin.__unicode__(self)
 
