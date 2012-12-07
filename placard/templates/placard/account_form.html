@@ -25,7 +25,7 @@
     <fieldset class="aligned">
         {% block form-fields %}
         {{ form.non_field_errors }}
-        {% if not account %}
+        {% if created %}
         {% formfield form.uid %}
         {% formfield form.raw_password %}
         {% formfield form.raw_password2 %}
