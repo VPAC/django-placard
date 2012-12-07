@@ -337,7 +337,8 @@ class LDAPAddAccountForm(LDAPAccountForm):
         return data
 
     def save(self, commit=True):
-        data = super(LDAPAddAccountForm, self).save(commit=False)
+        self.object = super(LDAPAddAccountForm, self).save(commit=False)
+        data = self.cleaned_data
         for obj in [self.object] + self.slave_objs.values():
             obj.change_password(data['raw_password'])
         self.commit(commit)
