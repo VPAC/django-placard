@@ -16,6 +16,7 @@
 # along with django-tldap  If not, see <http://www.gnu.org/licenses/>.
 
 import tldap
+import datetime
 
 
 class baseMixin(tldap.base.LDAPobject):
