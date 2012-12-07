@@ -45,7 +45,6 @@ class adUserMixin(object):
 
     @classmethod
     def change_password(cls, self, password):
-        self.account_change_password(password)
         self.userPassword = None
         self.unicodePwd = '"' + password + '"'
         self.force_replace.add('unicodePwd')
