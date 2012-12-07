@@ -218,8 +218,15 @@ class LDAPAccountForm(AccountForm):
         self.object.primary_group = self.cleaned_data['primary_group']
 
         for slave_id, obj in self.slave_objs.iteritems():
-            obj.managed_by = _get_slave_account(slave_id, self.cleaned_data['managed_by'].pk)
-            obj.primary_group = _get_slave_group(slave_id, self.cleaned_data['primary_group'].pk)
+            if self.cleaned_data['managed_by'] is not None:
+                obj.managed_by = _get_slave_account(slave_id, self.cleaned_data['managed_by'].pk)
+            else:
+                obj.managed_by = None
+
+            if self.cleaned_data['primary_group'] is not None:
+                obj.primary_group = _get_slave_group(slave_id, self.cleaned_data['primary_group'].pk)
+            else:
+                obj.primary_group = None
 
         self.commit(commit)
         return self.object
@@ -276,7 +283,10 @@ class LDAPHrAccountForm(AccountForm):
         self.object.managed_by = self.cleaned_data['managed_by']
 
         for slave_id, obj in self.slave_objs.iteritems():
-            obj.managed_by = _get_slave_account(slave_id, self.cleaned_data['managed_by'].pk)
+            if self.cleaned_data['managed_by'] is not None:
+                obj.managed_by = _get_slave_account(slave_id, self.cleaned_data['managed_by'].pk)
+            else:
+                obj.managed_by = None
 
         self.commit(commit)
         return self.object
