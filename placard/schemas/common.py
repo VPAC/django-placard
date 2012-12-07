@@ -145,7 +145,7 @@ class shadowMixin(object):
 
     @classmethod
     def change_password(cls, self, password):
-        self.shadowLastChange=datetime.datetime.today()
+        self.shadowLastChange=datetime.datetime.now().date()
 
 
 class groupMixin(object):
