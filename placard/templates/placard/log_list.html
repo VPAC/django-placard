@@ -34,10 +34,10 @@
                     <td><a href="{% url admin:auth_user_change l.user.pk %}">{{ l.user.get_full_name }}</a></td>
                     {% if not short %}
                     <td>
-                        {% ifequal l.object_type "account" %}
-                            <a href="{% url plac_user_detail l.object_pk %}">{{ l.object_repr }}</a>
+                        {% ifequal l.object_type "rfc_account" %}
+                            <a href="{% url plac_account_detail l.object_pk %}">{{ l.object_repr }}</a>
                         {% endifequal %}
-                        {% ifequal l.object_type "group" %}
+                        {% ifequal l.object_type "rfc_group" %}
                             <a href="{% url plac_group_detail l.object_pk %}">{{ l.object_repr }}</a>
                         {% endifequal %}
                     </td>
