@@ -28,10 +28,9 @@ class shibbolethMixin(object):
     @classmethod
     def _generate_shared_token(cls, self):
         uid = self.uid
-        mail = self.mail
         entityID = django.conf.settings.SHIBBOLETH_URL
         salt = django.conf.settings.SHIBBOLETH_SALT
-        return base64.urlsafe_b64encode(sha(uid + mail + entityID + salt).digest())[:-1]
+        return base64.urlsafe_b64encode(sha(uid + entityID + salt).digest())[:-1]
 
     @classmethod
     def pre_save(cls, self, created, using):
