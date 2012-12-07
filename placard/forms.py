@@ -536,13 +536,9 @@ class RemoveGroupForm(AccountForm):
         placard.signals.group_remove_member.send(self.group, user=self.user, account=self.object)
 
         self.object.secondary_groups.remove(self.group, commit=False)
-        if commit:
-            self.object.save()
 
         for slave_id, obj in self.slave_objs.iteritems():
             obj.secondary_groups.remove(_get_slave_group(slave_id, self.group.pk), commit=False)
-            if commit:
-                obj.save()
 
         self.commit(commit)
         return self.object
