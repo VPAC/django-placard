@@ -15,15 +15,18 @@
 # You should have received a copy of the GNU General Public License
 # along with django-tldap  If not, see <http://www.gnu.org/licenses/>.
 
+import django.conf
+import base64
+
+try:
+    from hashlib import sha
+except:
+    from sha import sha
+
 class shibbolethMixin(object):
 
     @classmethod
     def _generate_shared_token(cls, self):
-        try:
-            from hashlib import sha
-        except:
-            from sha import sha
-        import base64
         uid = self.uid
         mail = self.mail
         entityID = django.conf.settings.SHIBBOLETH_URL
