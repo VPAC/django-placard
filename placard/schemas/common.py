@@ -104,7 +104,7 @@ class personMixin(object):
     def pre_save(cls, self, created, using):
         self.displayName = '%s %s' % (self.givenName, self.sn)
         if self.cn is None:
-            self.cn = uid
+            self.cn = self.uid
 
 
 class accountMixin(object):
