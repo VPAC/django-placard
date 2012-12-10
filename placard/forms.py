@@ -30,24 +30,6 @@ import placard.util
 
 import ajax_select.fields
 
-def get_free_uidNumber():
-    model = placard.models.account
-    uid = None
-    for u in model.objects.all():
-        if uid is None or u.uidNumber > uid:
-            uid = u.uidNumber
-    return uid + 1
-
-
-def get_free_gidNumber():
-    model = placard.models.group
-    gid = None
-    for g in model.objects.all():
-        if gid is None or g.gidNumber > gid:
-            gid = g.gidNumber
-    return gid + 1
-
-
 class AutoCompleteSelectField(ajax_select.fields.AutoCompleteSelectField):
     pass
 
@@ -82,19 +64,36 @@ class LDAPForm(forms.Form):
             self.initial[name] = value
 
     def commit(self, commit):
+        # if commit is False, nothing for us to do
         if not commit:
             return
 
-        self.object.pre_save(created=self.created)
+        # newly created object? send trigger
+        if self.created:
+            self.object.pre_create(master=None)
+            for obj in self.slave_objs.values():
+                obj.pre_create(master=self.object)
+
+        # prepare to save
+        self.object.pre_save()
+        for obj in self.slave_objs.values():
+            obj.save()
+
+        # do the save
         self.object.save()
         for obj in self.slave_objs.values():
-            obj.pre_save(created=self.created)
             obj.save()
 
         # signal must be activated after saving, as saving completes the DN
-        assert self.object.dn is not None
         if self.created:
+            assert self.object.dn is not None
             self.signal_add.send(self.object, user=self.user)
+
+        # newly created object? send trigger
+        if self.created:
+            self.object.post_create(master=None)
+            for obj in self.slave_objs.values():
+                obj.post_create(master=self.object)
 
     def save(self, commit=True):
         if not self.created:
@@ -115,35 +114,9 @@ class LDAPForm(forms.Form):
 class AccountForm(LDAPForm):
     model = placard.models.account
 
-    def save(self, commit=True):
-        self.object = super(AccountForm, self).save(commit=False)
-
-        if self.created:
-            if self.object.uidNumber is None:
-                self.object.uidNumber = get_free_uidNumber()
-
-        for slave_id, obj in self.slave_objs.iteritems():
-            obj.uidNumber = self.object.uidNumber
-
-        self.commit(commit)
-        return self.object
-
 
 class GroupForm(LDAPForm):
     model = placard.models.group
-
-    def save(self, commit=True):
-        self.object = super(GroupForm, self).save(commit=False)
-
-        if self.created:
-            if self.object.gidNumber is None:
-                self.object.gidNumber = get_free_gidNumber()
-
-        for slave_id, obj in self.slave_objs.iteritems():
-            obj.gidNumber = self.object.gidNumber
-
-        self.commit(commit)
-        return self.object
 
 
 class LDAPAccountForm(AccountForm):

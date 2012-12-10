@@ -23,7 +23,7 @@ class pwdPolicyMixin(object):
         self.pwdAttribute = 'userPassword'
 
     @classmethod
-    def pre_save(cls, self, created, using):
+    def pre_save(cls, self):
         if self.pwdAttribute is None:
             self.pwdAttribute = 'userPassword'
 

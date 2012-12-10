@@ -32,19 +32,25 @@ class baseMixin(tldap.base.LDAPobject):
             if hasattr(mixin, 'set_defaults'):
                 mixin.set_defaults(self)
 
-    def pre_save(self, created, using=None):
-        using = using or self._alias or tldap.DEFAULT_LDAP_ALIAS
-        assert using
+    def pre_create(self, master):
+        for mixin in self.mixin_list:
+            if hasattr(mixin, 'pre_create'):
+                mixin.pre_create(self, master)
+
+    def post_create(self, master):
+        for mixin in self.mixin_list:
+            if hasattr(mixin, 'post_create'):
+                mixin.post_create(self, master)
+
+    def pre_save(self):
         for mixin in self.mixin_list:
             if hasattr(mixin, 'pre_save'):
-                mixin.pre_save(self, created, using)
+                mixin.pre_save(self)
 
-    def pre_delete(self, using=None, **kwargs):
-        using = using or self._alias or tldap.DEFAULT_LDAP_ALIAS
-        assert using
+    def pre_delete(self):
         for mixin in self.mixin_list:
             if hasattr(mixin, 'pre_delete'):
-                mixin.pre_delete(self, using)
+                mixin.pre_delete(self)
 
     def lock(self):
         for mixin in self.mixin_list:
@@ -101,13 +107,25 @@ class personMixin(object):
         return tldap.connections[using].check_password(self.dn, password)
 
     @classmethod
-    def pre_save(cls, self, created, using):
-        self.displayName = '%s %s' % (self.givenName, self.sn)
+    def pre_create(cls, self, master):
         if self.cn is None:
             self.cn = self.uid
 
+    @classmethod
+    def pre_save(cls, self):
+        self.displayName = '%s %s' % (self.givenName, self.sn)
+
 
 class accountMixin(object):
+    @classmethod
+    def set_free_uidNumber(cls, self):
+        model = self.__class__
+        uid = None
+        for obj in model.objects.all():
+            if uid is None or obj.uidNumber > uid:
+                uid = obj.uidNumber
+        self.uidNumber = uid + 1
+
     @classmethod
     def __unicode__(cls, self):
         return u"A:%s"%(self.displayName or self.cn)
@@ -117,13 +135,21 @@ class accountMixin(object):
         self.loginShell = '/bin/bash'
 
     @classmethod
-    def pre_save(cls, self, created, using):
-        self.gecos = '%s %s' % (self.givenName, self.sn)
-        if created and self.unixHomeDirectory is None and self.uid is not None:
+    def pre_create(cls, self, master):
+        assert self.uidNumber is None
+        if master is not None:
+            self.uidNumber = master.uidNumber
+        else:
+            cls.set_free_uidNumber(self)
+        if self.unixHomeDirectory is None and self.uid is not None:
             self.unixHomeDirectory =  '/home/%s' % self.uid
 
     @classmethod
-    def pre_delete(cls, self, using):
+    def pre_save(cls, self):
+        self.gecos = '%s %s' % (self.givenName, self.sn)
+
+    @classmethod
+    def pre_delete(cls, self):
         self.manager_of.clear()
 
     @classmethod
@@ -152,11 +178,28 @@ class groupMixin(object):
     # Note standard posixGroup objectClass has no displayName attribute
 
     @classmethod
+    def set_free_gidNumber(cls, self):
+        model = self.__class__
+        gid = None
+        for obj in model.objects.all():
+            if gid is None or obj.gidNumber > gid:
+                gid = obj.gidNumber
+        self.gidNumber = gid + 1
+
+    @classmethod
     def __unicode__(cls, self):
         return u"G:%s"%self.cn
 
     @classmethod
-    def pre_save(cls, self, created, using):
+    def pre_create(cls, self, master):
+        assert self.uidNumber is None
+        if master is not None:
+            self.gidNumber = master.gidNumber
+        else:
+            cls.set_free_gidNumber(self)
+
+    @classmethod
+    def pre_create(cls, self, created, using):
         if self.description is None:
             self.description = self.cn
 

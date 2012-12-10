@@ -46,3 +46,6 @@ LDAP = {
 
 PLACARD_SCHEMA_ACCOUNT = 'demo.schemas.rfc_account'
 PLACARD_SCHEMA_GROUP = 'demo.schemas.rfc_group'
+
+SAMBA_ACCOUNT_RID_BASE = 0
+SAMBA_GROUP_RID_BASE = 0

@@ -31,9 +31,14 @@ class sambaAccountMixin(object):
         self.sambaPwdLastSet = datetime.datetime.now()
 
     @classmethod
-    def pre_save(cls, self, created, using):
+    def pre_create(cls, self, master):
+        assert self.sambaSID is None
+        if master is not None:
+            self.sambaSID = getattr(master, "objectSid", None) or getattr(master, "sambaSID", None)
         if self.sambaSID is None:
-            self.sambaSID = "S-1-5-" + django.conf.settings.SAMBA_DOMAIN_SID + "-" + str(int(self.uidNumber)*2)
+            rid_base = django.conf.settings.SAMBA_ACCOUNT_RID_BASE
+            assert rid_base % 2 == 0
+            self.sambaSID = "S-1-5-" + django.conf.settings.SAMBA_DOMAIN_SID + "-" + str(int(self.uidNumber)*2 + rid_base)
 
     @classmethod
     def lock(cls, self):
@@ -63,8 +68,16 @@ class sambaGroupMixin(object):
         self.sambaGroupType = 2
 
     @classmethod
-    def pre_save(cls, self, created, using):
+    def pre_create(cls, self, master):
+        assert self.sambaSID is None
+        if master is not None:
+            self.sambaSID = getattr(master, "objectSid", None) or getattr(master, "sambaSID", None)
         if self.sambaSID is None:
-            self.sambaSID = "S-1-5-" + django.conf.settings.SAMBA_DOMAIN_SID + "-" + str(int(self.gidNumber)*2 + 1001)
+            rid_base = django.conf.settings.SAMBA_GROUP_RID_BASE
+            assert rid_base % 2 == 0
+            self.sambaSID = "S-1-5-" + django.conf.settings.SAMBA_DOMAIN_SID + "-" + str(int(self.gidNumber)*2 + 1 + rid_base)
+
+    @classmethod
+    def pre_save(cls, self):
         if self.displayName is None:
             self.displayName = self.cn
