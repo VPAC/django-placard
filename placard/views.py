@@ -16,7 +16,7 @@
 # along with django-placard  If not, see <http://www.gnu.org/licenses/>.
 
 import django.views.generic
-import placard.models
+import placard.ldap_models
 import placard.forms
 import placard.filterspecs
 import tldap
@@ -44,8 +44,8 @@ def search(request):
 
     if q != "":
 
-        account_list = placard.models.account.objects.all()
-        group_list = placard.models.group.objects.all()
+        account_list = placard.ldap_models.account.objects.all()
+        group_list = placard.ldap_models.group.objects.all()
 
         for term in term_list:
             if term != "":
@@ -69,7 +69,7 @@ def search(request):
 
 
 def account_photo(request, account):
-    account = get_object_or_404(placard.models.account, pk=account)
+    account = get_object_or_404(placard.ldap_models.account, pk=account)
     if account.jpegPhoto is not None:
         return HttpResponse(account.jpegPhoto, content_type="image/jpeg")
     else:
@@ -150,7 +150,7 @@ class FormView(PermissionMixin, django.views.generic.FormView):
 class AccountMixin(object):
     def get_slave_objs(self):
         objs = {}
-        for slave_id, account in placard.models.get_slave_accounts().iteritems():
+        for slave_id, account in placard.ldap_models.get_slave_accounts().iteritems():
             try:
                 obj = account.objects.using(slave_id).get(pk=self.object.pk)
                 objs[slave_id] = obj
@@ -160,14 +160,14 @@ class AccountMixin(object):
 
     def create_slave_objs(self):
         objs = {}
-        for slave_id, account in placard.models.get_slave_accounts().iteritems():
+        for slave_id, account in placard.ldap_models.get_slave_accounts().iteritems():
             obj = account(using=slave_id)
             obj.set_defaults()
             objs[slave_id] = obj
         return objs
 
 class AccountList(ListView, AccountMixin):
-    model = placard.models.account
+    model = placard.ldap_models.account
     template_name = "placard/account_list.html"
     context_object_name = "account_list"
 
@@ -178,27 +178,27 @@ class AccountList(ListView, AccountMixin):
 
         if request.GET.has_key('group'):
             try:
-                group = placard.models.group.objects.get(cn=request.GET['group'])
+                group = placard.ldap_models.group.objects.get(cn=request.GET['group'])
                 account_list = account_list.filter(tldap.Q(primary_group=group) | tldap.Q(secondary_groups=group))
-            except  placard.models.group.DoesNotExist:
+            except  placard.ldap_models.group.DoesNotExist:
                 pass
 
         if request.GET.has_key('exclude'):
             try:
-                group = placard.models.group.objects.get(cn=request.GET['exclude'])
+                group = placard.ldap_models.group.objects.get(cn=request.GET['exclude'])
                 account_list = account_list.filter(~(tldap.Q(primary_group=group) | tldap.Q(secondary_groups=group)))
-            except  placard.models.group.DoesNotExist:
+            except  placard.ldap_models.group.DoesNotExist:
                 pass
 
         return account_list
 
     def get_default_queryset(self):
-        return placard.models.account.objects.all()
+        return placard.ldap_models.account.objects.all()
 
     def get_context_data(self, **kwargs):
         context = super(AccountList, self).get_context_data(**kwargs)
         group_list = {}
-        for group in placard.models.group.objects.all():
+        for group in placard.ldap_models.group.objects.all():
             group_list[group.cn] = group.cn
 
         filter_list = []
@@ -210,7 +210,7 @@ class AccountList(ListView, AccountMixin):
 
 
 class AccountDetail(DetailView, AccountMixin):
-    model = placard.models.account
+    model = placard.ldap_models.account
     template_name = "placard/account_detail.html"
     context_object_name = "account"
 
@@ -228,10 +228,10 @@ class AccountDetail(DetailView, AccountMixin):
     def get_object(self):
         if 'slave' in self.kwargs:
             slave_id = self.kwargs['slave']
-            model = placard.models.get_slave_account_by_id(slave_id)
+            model = placard.ldap_models.get_slave_account_by_id(slave_id)
         else:
             slave_id = None
-            model = placard.models.account
+            model = placard.ldap_models.account
 
         try:
             return model.objects.using(slave_id).get(pk=self.kwargs['account'])
@@ -266,10 +266,10 @@ class AccountGeneric(FormView, AccountMixin):
         return kwargs
 
     def get_object(self):
-        return get_object_or_404(placard.models.account, pk=self.kwargs['account'])
+        return get_object_or_404(placard.ldap_models.account, pk=self.kwargs['account'])
 
     def create_object(self):
-        obj = placard.models.account()
+        obj = placard.ldap_models.account()
         obj.set_defaults()
         return obj
 
@@ -358,7 +358,7 @@ class AccountRemoveGroup(AccountGeneric):
 
     def get_form_kwargs(self):
         kwargs = super(AccountRemoveGroup, self).get_form_kwargs()
-        kwargs['group'] = get_object_or_404(placard.models.group, cn=self.kwargs['group'])
+        kwargs['group'] = get_object_or_404(placard.ldap_models.group, cn=self.kwargs['group'])
         self.group = kwargs['group']
         return kwargs
 
@@ -375,7 +375,7 @@ class AccountDelete(AccountGeneric):
 class GroupMixin(object):
     def get_slave_objs(self):
         objs = {}
-        for slave_id, group in placard.models.get_slave_groups().iteritems():
+        for slave_id, group in placard.ldap_models.get_slave_groups().iteritems():
             try:
                 obj = group.objects.using(slave_id).get(pk=self.object.pk)
                 objs[slave_id] = obj
@@ -385,7 +385,7 @@ class GroupMixin(object):
 
     def create_slave_objs(self):
         objs = {}
-        for slave_id, group in placard.models.get_slave_groups().iteritems():
+        for slave_id, group in placard.ldap_models.get_slave_groups().iteritems():
             obj = group(using=slave_id)
             obj.set_defaults()
             objs[slave_id] = obj
@@ -393,13 +393,13 @@ class GroupMixin(object):
 
 
 class GroupList(ListView, GroupMixin):
-    model = placard.models.group
+    model = placard.ldap_models.group
     template_name = "placard/group_list.html"
     context_object_name = "group_list"
 
 
 class GroupDetail(DetailView, GroupMixin):
-    model = placard.models.account
+    model = placard.ldap_models.account
     template_name = "placard/group_detail.html"
     context_object_name = "group"
 
@@ -417,10 +417,10 @@ class GroupDetail(DetailView, GroupMixin):
     def get_object(self):
         if 'slave' in self.kwargs:
             slave_id = self.kwargs['slave']
-            model = placard.models.get_slave_group_by_id(slave_id)
+            model = placard.ldap_models.get_slave_group_by_id(slave_id)
         else:
             slave_id = None
-            model = placard.models.group
+            model = placard.ldap_models.group
 
         try:
             return model.objects.using(slave_id).get(pk=self.kwargs['group'])
@@ -455,10 +455,10 @@ class GroupGeneric(FormView, GroupMixin):
         return kwargs
 
     def get_object(self):
-        return get_object_or_404(placard.models.group, cn=self.kwargs['group'])
+        return get_object_or_404(placard.ldap_models.group, cn=self.kwargs['group'])
 
     def create_object(self):
-        obj = placard.models.group()
+        obj = placard.ldap_models.group()
         obj.set_defaults()
         return obj
 
@@ -500,7 +500,7 @@ class GroupRemoveMember(GroupGeneric):
 
     def get_form_kwargs(self):
         kwargs = super(GroupRemoveMember, self).get_form_kwargs()
-        kwargs['account'] = get_object_or_404(placard.models.account, pk=self.kwargs['account'])
+        kwargs['account'] = get_object_or_404(placard.ldap_models.account, pk=self.kwargs['account'])
         self.account = kwargs['account']
         return kwargs
 

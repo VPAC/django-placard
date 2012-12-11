@@ -18,7 +18,7 @@
 from django.utils.html import escape
 from django.core.urlresolvers import reverse
 
-import placard.models
+import placard.ldap_models
 
 import ajax_select
 import tldap
@@ -42,7 +42,7 @@ class LookupChannel(ajax_select.LookupChannel):
 
 class AccountLookup(LookupChannel):
 
-    model = placard.models.account
+    model = placard.ldap_models.account
 
     def get_query(self, q, request):
         return self.model.objects.filter(tldap.Q(cn__contains=q) | tldap.Q(pk__contains=q))
@@ -65,7 +65,7 @@ class AccountLookup(LookupChannel):
 
 class GroupLookup(LookupChannel):
 
-    model = placard.models.group
+    model = placard.ldap_models.group
 
     def get_query(self, q, request):
         return self.model.objects.filter(tldap.Q(pk__contains=q) | tldap.Q(description__contains=q))

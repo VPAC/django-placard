@@ -29,7 +29,7 @@ import unittest
 from tldap.test import slapd
 from tldap.test.data import test_ldif
 
-import placard.models
+import placard.ldap_models
 
 import ldap
 
@@ -45,8 +45,8 @@ class UserViewsTests(TestCase):
 
         self.server = server
 
-        self.group = placard.models.group
-        self.account = placard.models.account
+        self.group = placard.ldap_models.group
+        self.account = placard.ldap_models.account
 
         super_user = User.objects.create_user('super', 'sam@vpac.org', 'aq12ws')
         super_user.is_superuser = True
@@ -108,8 +108,8 @@ class PasswordTests(TestCase):
 
         self.server = server
 
-        self.group = placard.models.group
-        self.account = placard.models.account
+        self.group = placard.ldap_models.group
+        self.account = placard.ldap_models.account
 
         super_user = User.objects.create_user('super', 'sam@vpac.org', 'aq12ws')
         super_user.is_superuser = True

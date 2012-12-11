@@ -21,7 +21,7 @@ from django import template
 from django.core.urlresolvers import reverse
 import re
 
-import placard.models
+import placard.ldap_models
 
 register = template.Library()
 
@@ -42,7 +42,7 @@ def group_detail_url(group, slave_id):
 
 @register.simple_tag
 def slave_name(slave_id):
-    return placard.models.get_slave_name_by_id(slave_id)
+    return placard.ldap_models.get_slave_name_by_id(slave_id)
 
 @register.simple_tag
 def active(request, pattern):

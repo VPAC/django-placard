@@ -46,10 +46,10 @@ class LogView(placard.views.ListView):
         qs = self.model.objects.all()
 
         if self.kwargs.has_key('account'):
-            self.object = get_object_or_404(placard.models.account, uid=self.kwargs['account'])
+            self.object = get_object_or_404(placard.ldap_models.account, uid=self.kwargs['account'])
             qs = qs.filter(object_dn = self.object.dn)
         elif self.kwargs.has_key('group'):
-            self.object = get_object_or_404(placard.models.group, cn=self.kwargs['group'])
+            self.object = get_object_or_404(placard.ldap_models.group, cn=self.kwargs['group'])
             qs = qs.filter(object_dn = self.object.dn)
         elif self.kwargs.has_key('user'):
             self.object = self.kwargs['user']

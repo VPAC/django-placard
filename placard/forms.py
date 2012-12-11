@@ -23,7 +23,7 @@ from cStringIO import StringIO
 import os
 
 import tldap
-import placard.models
+import placard.ldap_models
 import placard.fields as fields
 import placard.signals
 import placard.util
@@ -35,12 +35,12 @@ class AutoCompleteSelectField(ajax_select.fields.AutoCompleteSelectField):
 
 
 def _get_slave_account(slave_id, pk):
-    slave_account = placard.models.get_slave_account_by_id(slave_id)
+    slave_account = placard.ldap_models.get_slave_account_by_id(slave_id)
     return slave_account.objects.using(slave_id).get(pk=pk)
 
 
 def _get_slave_group(slave_id, pk):
-    slave_group = placard.models.get_slave_group_by_id(slave_id)
+    slave_group = placard.ldap_models.get_slave_group_by_id(slave_id)
     return slave_group.objects.using(slave_id).get(pk=pk)
 
 
@@ -112,11 +112,11 @@ class LDAPForm(forms.Form):
 
 
 class AccountForm(LDAPForm):
-    model = placard.models.account
+    model = placard.ldap_models.account
 
 
 class GroupForm(LDAPForm):
-    model = placard.models.group
+    model = placard.ldap_models.group
 
 
 class LDAPAccountForm(AccountForm):
@@ -141,9 +141,9 @@ class LDAPAccountForm(AccountForm):
         super(LDAPAccountForm, self).__init__(*args, **kwargs)
 
         if getattr(self, 'primary_groups', None) is not None:
-            all_groups = placard.models.group.objects.none()
+            all_groups = placard.ldap_models.group.objects.none()
             for cn in self.primary_groups:
-                all_groups = all_groups | placard.models.group.objects.filter(cn=cn)
+                all_groups = all_groups | placard.ldap_models.group.objects.filter(cn=cn)
             self.fields['primary_group'] = forms.ChoiceField(choices=[('','None')]+[(x.cn, x.cn) for x in all_groups], label="Primary Group")
         else:
             self.fields['primary_group'] = AutoCompleteSelectField('group', required=True)
@@ -179,8 +179,8 @@ class LDAPAccountForm(AccountForm):
         pg = self.cleaned_data['primary_group']
         if getattr(self, 'primary_groups', None) is not None:
             try:
-                pg = placard.models.group.objects.get(cn=pg)
-            except placard.models.group.DoesNotExist:
+                pg = placard.ldap_models.group.objects.get(cn=pg)
+            except placard.ldap_models.group.DoesNotExist:
                 raise forms.ValidationError("The group does not exist")
         return pg
 
@@ -225,7 +225,7 @@ class LDAPHrAccountForm(AccountForm):
         self.slave_objs = slave_objs
         super(LDAPHrAccountForm, self).__init__(*args, **kwargs)
 
-        all_users =  placard.models.account.objects.all()
+        all_users =  placard.ldap_models.account.objects.all()
         if self.object is not None:
             managed_by = self.object.managed_by.get_obj()
             if managed_by is not None:
@@ -293,8 +293,8 @@ class LDAPAddAccountForm(LDAPAccountForm):
         username = self.cleaned_data['uid']
         username = username.lower()
         try:
-            placard.models.account.objects.get(uid=username)
-        except placard.models.account.DoesNotExist:
+            placard.ldap_models.account.objects.get(uid=username)
+        except placard.ldap_models.account.DoesNotExist:
             return username
         raise forms.ValidationError(u'Username exists')
 
@@ -380,7 +380,7 @@ class LDAPGroupForm(GroupForm):
     def clean_cn(self):
         cn = self.cleaned_data['cn']
         if self.created:
-            groups = placard.models.group.objects.filter(cn=cn)
+            groups = placard.ldap_models.group.objects.filter(cn=cn)
             if len(groups) > 0:
                 raise forms.ValidationError("This group already exists!")
         else:
