@@ -192,14 +192,14 @@ class groupMixin(object):
 
     @classmethod
     def pre_create(cls, self, master):
-        assert self.uidNumber is None
+        assert self.gidNumber is None
         if master is not None:
             self.gidNumber = master.gidNumber
         else:
             cls.set_free_gidNumber(self)
 
     @classmethod
-    def pre_create(cls, self, created, using):
+    def pre_save(cls, self):
         if self.description is None:
             self.description = self.cn
 
