@@ -9,12 +9,12 @@
 <div class="breadcrumbs">
 <a href='{{ base_url|default:"/" }}'>Home</a>
  &rsaquo; <a href="{% url plac_account_list %}">Accounts</a>
-{% if slave_id %}
- &rsaquo; <a href="{% url plac_account_detail account.pk %}">{{ account }} detail</a>
- &rsaquo; <a href="{% url plac_account_detail account.pk slave_id %}">{% slave_name slave_id %}</a>
+{% if is_slave %}
+ &rsaquo; <a href="{% bond_url 'plac_account_detail' account.pk account_bond %}">{{ account }} detail</a>
+ &rsaquo; <a href="{% bond_url 'plac_account_detail' account.pk account_bond %}">{{ account_bond }}</a>
  &rsaquo; Verbose
 {% else %}
- &rsaquo; <a href="{% url plac_account_detail account.pk %}">{{ account }} detail</a>
+ &rsaquo; <a href="{% bond_url 'plac_account_detail' account.pk account_bond %}">{{ account }} detail</a>
  &rsaquo; Verbose
 {% endif %}
 </div>
