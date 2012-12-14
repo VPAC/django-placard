@@ -29,7 +29,7 @@ import unittest
 from tldap.test import slapd
 from tldap.test.data import test_ldif
 
-import placard.ldap_models
+import placard.bonds as bonds
 
 import ldap
 
@@ -44,9 +44,6 @@ class UserViewsTests(TestCase):
         server.ldapadd("\n".join(test_ldif)+"\n")
 
         self.server = server
-
-        self.group = placard.ldap_models.group
-        self.account = placard.ldap_models.account
 
         super_user = User.objects.create_user('super', 'sam@vpac.org', 'aq12ws')
         super_user.is_superuser = True
@@ -83,16 +80,16 @@ class UserViewsTests(TestCase):
         response = self.client.get(reverse('plac_user_detail_verbose', args=['testuser2']))
 
     def test_lock_unlock_user_view(self):
-        self.failUnlessEqual(self.account.objects.get(uid='testuser2').is_locked(), False)
+        self.failUnlessEqual(bonds.master.accounts().get(uid='testuser2').is_locked(), False)
 
         self.client.login(username='super', password='aq12ws')
         response = self.client.post(reverse('plac_lock_user', args=['testuser2']))
 
-        self.failUnlessEqual(self.account.objects.get(uid='testuser2').is_locked(), True)
+        self.failUnlessEqual(bonds.master.accounts().get(uid='testuser2').is_locked(), True)
 
         response = self.client.post(reverse('plac_unlock_user', args=['testuser2']))
 
-        self.failUnlessEqual(self.account.objects.get(uid='testuser2').is_locked(), False)
+        self.failUnlessEqual(bonds.master.accounts().get(uid='testuser2').is_locked(), False)
 
 
 class PasswordTests(TestCase):
@@ -108,9 +105,6 @@ class PasswordTests(TestCase):
 
         self.server = server
 
-        self.group = placard.ldap_models.group
-        self.account = placard.ldap_models.account
-
         super_user = User.objects.create_user('super', 'sam@vpac.org', 'aq12ws')
         super_user.is_superuser = True
         super_user.save()
@@ -119,13 +113,13 @@ class PasswordTests(TestCase):
         self.server.stop()
 
     def test_api(self):
-        u = self.account.objects.get(uid='testuser2')
+        u = bonds.master.accounts().get(uid='testuser2')
         u.change_password('aq12ws')
         u.save()
 
         self.failUnlessEqual(u.check_password('aq12ws'), True)
 
-        u = self.account.objects.get(uid='testuser3')
+        u = bonds.master.accounts().get(uid='testuser3')
         u.change_password('qwerty')
         u.save()
 
@@ -141,15 +135,15 @@ class PasswordTests(TestCase):
         response = self.client.post(reverse('plac_change_password', args=['testuser1']), {'new1': 'aq12ws222', 'new2': 'aq12ws222'})
         self.failUnlessEqual(response.status_code, 302)
 
-        u = self.account.objects.get(uid='testuser1')
+        u = bonds.master.accounts().get(uid='testuser1')
         self.failUnlessEqual(u.check_password('aq12ws222'), True)
 
     def test_user_view(self):
-        u = self.account.objects.get(uid='testuser2')
+        u = bonds.master.accounts().get(uid='testuser2')
         u.change_password('aq12ws')
         u.save()
 
-        luser = self.account.objects.get(uid='testuser2')
+        luser = bonds.master.accounts().get(uid='testuser2')
         user = User.objects.create_user(luser.uid, luser.mail, 'aq12ws')
 
         response = self.client.get(reverse('plac_user_password'))

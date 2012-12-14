@@ -17,7 +17,7 @@
 
 from django.core.management.base import BaseCommand
 
-import placard.ldap_models
+import placard.ldap_bonds as bonds
 
 class Command(BaseCommand):
     help = "Generates a shadow file from all LDAP users"
@@ -25,7 +25,7 @@ class Command(BaseCommand):
     def handle(self, **options):        
         verbose = int(options.get('verbosity'))
         
-        user_list = placard.ldap_models.account.objects.all()
+        user_list = bonds.master.accounts()
         for u in user_list:
             if hasattr(u, 'userPassword'):
                 p = u.userPassword

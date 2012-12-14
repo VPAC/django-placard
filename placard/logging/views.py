@@ -17,6 +17,7 @@
 
 import placard.views
 import placard.logging.models
+import placard.ldap_bonds as bonds
 
 from django.shortcuts import get_object_or_404
 
@@ -46,10 +47,10 @@ class LogView(placard.views.ListView):
         qs = self.model.objects.all()
 
         if self.kwargs.has_key('account'):
-            self.object = get_object_or_404(placard.ldap_models.account, uid=self.kwargs['account'])
+            self.object = bonds.master.get_account_or_404(pk=self.kwargs['account'])
             qs = qs.filter(object_dn = self.object.dn)
         elif self.kwargs.has_key('group'):
-            self.object = get_object_or_404(placard.ldap_models.group, cn=self.kwargs['group'])
+            self.object = bonds.master.get_group_or_404(cn=self.kwargs['group'])
             qs = qs.filter(object_dn = self.object.dn)
         elif self.kwargs.has_key('user'):
             self.object = self.kwargs['user']

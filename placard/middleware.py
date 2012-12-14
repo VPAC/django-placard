@@ -21,7 +21,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ImproperlyConfigured
 from django.contrib import auth
 
-import placard.ldap_models
+import placard.ldap_bonds as bonds
 import tldap.transaction
 
 class LDAPRemoteUserMiddleware(RemoteUserMiddleware):
@@ -65,7 +65,7 @@ class LDAPRemoteUserMiddleware(RemoteUserMiddleware):
             user = User.objects.get(username__exact=username)
         except User.DoesNotExist:
             # Create user
-            ldap_user = placard.ldap_models.account.objects.get(pk=username)
+            ldap_user = bonds.master.account().get(pk=username)
             user = User.objects.create_user(ldap_user.pk, ldap_user.mail)
             user.first_name = ldap_user.givenName
             user.last_name = ldap_user.sn
@@ -87,19 +87,19 @@ class TransactionMiddleware(object):
     """
     def process_request(self, request):
         """Enters transaction management"""
-        for slave in placard.ldap_models.get_slave_ids():
+        for slave in bonds.slaves.keys():
             if not tldap.transaction.is_managed(using=slave):
                 tldap.transaction.enter_transaction_management(using=slave)
 
     def process_exception(self, request, exception):
         """Rolls back the database and leaves transaction management"""
-        for slave in placard.ldap_models.get_slave_ids():
+        for slave in bonds.slaves.keys():
             if tldap.transaction.is_dirty(using=slave):
                 tldap.transaction.rollback(using=slave)
 
     def process_response(self, request, response):
         """Commits and leaves transaction management."""
-        for slave in placard.ldap_models.get_slave_ids():
+        for slave in bonds.slaves.keys():
             if tldap.transaction.is_managed(using=slave):
                 if tldap.transaction.is_dirty(using=slave):
                     tldap.transaction.commit(using=slave)

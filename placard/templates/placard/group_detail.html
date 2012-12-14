@@ -15,9 +15,9 @@
 <div class="breadcrumbs">
 <a href='{{ base_url|default:"/" }}'>Home</a>
  &rsaquo; <a href="{% url plac_group_list %}">Groups</a>
-{% if slave_id %}
- &rsaquo; <a href="{% url plac_group_detail group.pk %}">{{ group }} detail</a>
- &rsaquo; {% slave_name slave_id %}
+{% if is_slave %}
+ &rsaquo; <a href="{% bond_url 'plac_group_detail' group.pk group_bond %}">{{ group }} detail</a>
+ &rsaquo; {{ group_bond }}
 {% else %}
  &rsaquo; {{ group }} detail
 {% endif %}
@@ -29,9 +29,9 @@
 <div class="module object-tools">
     <h2>Group links</h2>
     <ul>
-        <li><a href="{% slave_url 'plac_group_detail_verbose' group.pk slave_id %}">Verbose output</a></li>
+        <li><a href="{% bond_url 'plac_group_detail_verbose' group.pk group_bond %}">Verbose output</a></li>
         {% block object-tools-view %}{% endblock %}
-        {% if not slave_id %}
+        {% if not is_slave %}
             {% if perms.placard.change_group %}
             <li><a href="{% url plac_group_edit group.pk %}">Edit details</a></li>
             {% endif %}
@@ -44,7 +44,7 @@
         {% endif %}
         {% if slave_objs %}
         <li>source:
-        <a href="{% url plac_group_detail group.pk %}">master</a>, {% for slave_id, obj in slave_objs.items %}<a href="{% url plac_group_detail group.pk slave_id %}">{% slave_name slave_id %}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
+        <a href="{% bond_url 'plac_group_detail' group.pk master_bond %}">{{ master_bond }}</a>, {% for bond, slave_obj in slave_objs %}<a href="{% bond_url 'plac_group_detail' group.pk bond %}">{{ bond }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
         </li>
         {% endif %}
     </ul>
@@ -82,7 +82,7 @@
             </tr>
             {% for m in group.primary_accounts.all|dictsort:"cn" %}
                 <tr class="{% cycle row1,row2 %} {% if m.is_locked %}locked{% endif %}">
-                    <td><a href="{% slave_url 'plac_account_detail' m.pk slave_id %}" >{{ m }}</a></td>
+                    <td><a href="{% bond_url 'plac_account_detail' m.pk group_bond %}" >{{ m }}</a></td>
                 </tr>
             {% endfor %}
             <tr>
@@ -90,14 +90,14 @@
             </tr>
             {% for m in group.secondary_accounts.all|dictsort:"cn" %}
                 <tr class="{% cycle row1,row2 %}">
-                    <td class="{% if m.is_locked %}locked{% endif %}"><a href="{% slave_url 'plac_account_detail' m.pk slave_id %}" >{{ m }}</a></td>
-                    {% if perms.placard.change_group and not slave_id %}
+                    <td class="{% if m.is_locked %}locked{% endif %}"><a href="{% bond_url 'plac_account_detail' m.pk group_bond %}" >{{ m }}</a></td>
+                    {% if perms.placard.change_group and not is_slave %}
                     <td><a href="{% url plac_group_rm_member group.pk m.pk %}" class="deletelink">Remove</a></td>
                     {% endif %}
                 </tr>
             {% endfor %}
         </table>
-        {% if perms.placard.change_group and not slave_id %}
+        {% if perms.placard.change_group and not is_slave %}
             <form method="post" action="{% url plac_group_add_member group.pk %}" class="simple">{% csrf_token %}
                 <fieldset>
                     {{ form }}<input type="submit" value="Add" class="default" />

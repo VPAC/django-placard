@@ -23,7 +23,6 @@ from cStringIO import StringIO
 import os
 
 import tldap
-import placard.ldap_models
 import placard.fields as fields
 import placard.signals
 import placard.util
@@ -34,25 +33,16 @@ class AutoCompleteSelectField(ajax_select.fields.AutoCompleteSelectField):
     pass
 
 
-def _get_slave_account(slave_id, pk):
-    slave_account = placard.ldap_models.get_slave_account_by_id(slave_id)
-    return slave_account.objects.using(slave_id).get(pk=pk)
-
-
-def _get_slave_group(slave_id, pk):
-    slave_group = placard.ldap_models.get_slave_group_by_id(slave_id)
-    return slave_group.objects.using(slave_id).get(pk=pk)
-
-
 class LDAPForm(forms.Form):
     signal_add = None
     signal_edit = None
 
-    def __init__(self, user, created=False, *args, **kwargs):
+    def __init__(self, user, master_obj, slave_objs, created=False, *args, **kwargs):
         self.user = user
+        self.bond, self.object = master_obj
+        self.master_obj = master_obj
+        self.slave_objs = slave_objs
         self.created = created
-        assert self.object is not None
-        assert self.slave_objs is not None
 
         super(LDAPForm, self).__init__(*args, **kwargs)
 
@@ -71,17 +61,17 @@ class LDAPForm(forms.Form):
         # newly created object? send trigger
         if self.created:
             self.object.pre_create(master=None)
-            for obj in self.slave_objs.values():
+            for _, obj in self.slave_objs:
                 obj.pre_create(master=self.object)
 
         # prepare to save
         self.object.pre_save()
-        for obj in self.slave_objs.values():
+        for _, obj in self.slave_objs:
             obj.save()
 
         # do the save
         self.object.save()
-        for obj in self.slave_objs.values():
+        for _, obj in self.slave_objs:
             obj.save()
 
         # signal must be activated after saving, as saving completes the DN
@@ -92,14 +82,14 @@ class LDAPForm(forms.Form):
         # newly created object? send trigger
         if self.created:
             self.object.post_create(master=None)
-            for obj in self.slave_objs.values():
+            for _, obj in self.slave_objs:
                 obj.post_create(master=self.object)
 
     def save(self, commit=True):
         if not self.created:
             self.signal_edit.send(self.object, user=self.user, data=self.cleaned_data)
 
-        for obj in [self.object] + self.slave_objs.values():
+        for _, obj in [ self.master_obj ] + self.slave_objs:
             field_names = obj._meta.get_all_field_names()
             for name in list(self.fields):
                 if name not in field_names:
@@ -112,11 +102,11 @@ class LDAPForm(forms.Form):
 
 
 class AccountForm(LDAPForm):
-    model = placard.ldap_models.account
+    pass
 
 
 class GroupForm(LDAPForm):
-    model = placard.ldap_models.group
+    pass
 
 
 class LDAPAccountForm(AccountForm):
@@ -135,15 +125,13 @@ class LDAPAccountForm(AccountForm):
     signal_add = placard.signals.account_add
     signal_edit = placard.signals.account_edit
 
-    def __init__(self, account, slave_objs, *args, **kwargs):
-        self.object = account
-        self.slave_objs = slave_objs
+    def __init__(self, *args, **kwargs):
         super(LDAPAccountForm, self).__init__(*args, **kwargs)
 
         if getattr(self, 'primary_groups', None) is not None:
-            all_groups = placard.ldap_models.group.objects.none()
+            all_groups = self.bond.groups().none()
             for cn in self.primary_groups:
-                all_groups = all_groups | placard.ldap_models.group.objects.filter(cn=cn)
+                all_groups = all_groups | self.bond.groups().filter(cn=cn)
             self.fields['primary_group'] = forms.ChoiceField(choices=[('','None')]+[(x.cn, x.cn) for x in all_groups], label="Primary Group")
         else:
             self.fields['primary_group'] = AutoCompleteSelectField('group', required=True)
@@ -179,8 +167,8 @@ class LDAPAccountForm(AccountForm):
         pg = self.cleaned_data['primary_group']
         if getattr(self, 'primary_groups', None) is not None:
             try:
-                pg = placard.ldap_models.group.objects.get(cn=pg)
-            except placard.ldap_models.group.DoesNotExist:
+                pg = self.bond.groups().get(cn=pg)
+            except self.bond.GroupDoesNotExist:
                 raise forms.ValidationError("The group does not exist")
         return pg
 
@@ -190,14 +178,14 @@ class LDAPAccountForm(AccountForm):
         self.object.managed_by = self.cleaned_data['managed_by']
         self.object.primary_group = self.cleaned_data['primary_group']
 
-        for slave_id, obj in self.slave_objs.iteritems():
+        for bond, obj in self.slave_objs:
             if self.cleaned_data['managed_by'] is not None:
-                obj.managed_by = _get_slave_account(slave_id, self.cleaned_data['managed_by'].pk)
+                obj.managed_by = bond.accounts().get(pk=self.cleaned_data['managed_by'].pk)
             else:
                 obj.managed_by = None
 
             if self.cleaned_data['primary_group'] is not None:
-                obj.primary_group = _get_slave_group(slave_id, self.cleaned_data['primary_group'].pk)
+                obj.primary_group = bond.groups().get(pk=self.cleaned_data['primary_group'].pk)
             else:
                 obj.primary_group = None
 
@@ -220,12 +208,9 @@ class LDAPHrAccountForm(AccountForm):
     signal_add = placard.signals.account_add
     signal_edit = placard.signals.account_edit
 
-    def __init__(self, account, slave_objs, *args, **kwargs):
-        self.object = account
-        self.slave_objs = slave_objs
+    def __init__(self, *args, **kwargs):
         super(LDAPHrAccountForm, self).__init__(*args, **kwargs)
 
-        all_users =  placard.ldap_models.account.objects.all()
         if self.object is not None:
             managed_by = self.object.managed_by.get_obj()
             if managed_by is not None:
@@ -255,9 +240,9 @@ class LDAPHrAccountForm(AccountForm):
 
         self.object.managed_by = self.cleaned_data['managed_by']
 
-        for slave_id, obj in self.slave_objs.iteritems():
+        for bond, obj in self.slave_objs:
             if self.cleaned_data['managed_by'] is not None:
-                obj.managed_by = _get_slave_account(slave_id, self.cleaned_data['managed_by'].pk)
+                obj.managed_by = bond.accounts().get(pk=self.cleaned_data['managed_by'].pk)
             else:
                 obj.managed_by = None
 
@@ -293,8 +278,8 @@ class LDAPAddAccountForm(LDAPAccountForm):
         username = self.cleaned_data['uid']
         username = username.lower()
         try:
-            placard.ldap_models.account.objects.get(uid=username)
-        except placard.ldap_models.account.DoesNotExist:
+            self.bond.accounts().get(uid=username)
+        except self.bond.AccountDoesNotExist:
             return username
         raise forms.ValidationError(u'Username exists')
 
@@ -312,8 +297,11 @@ class LDAPAddAccountForm(LDAPAccountForm):
     def save(self, commit=True):
         self.object = super(LDAPAddAccountForm, self).save(commit=False)
         data = self.cleaned_data
-        for obj in [self.object] + self.slave_objs.values():
+
+        self.object.change_password(data['raw_password'])
+        for _, obj in self.slave_objs:
             obj.change_password(data['raw_password'])
+
         self.commit(commit)
         return self.object
 
@@ -322,11 +310,6 @@ class LDAPAdminPasswordForm(AccountForm):
 
     new1 = fields.CharField(widget=forms.PasswordInput(), label=u'New Password')
     new2 = fields.CharField(widget=forms.PasswordInput(), label=u'New Password (again)')
-
-    def __init__(self, account, slave_objs, *args, **kwargs):
-        self.object = account
-        self.slave_objs = slave_objs
-        super(LDAPAdminPasswordForm, self).__init__(*args, **kwargs)
 
     def clean(self):
         data = self.cleaned_data
@@ -344,8 +327,11 @@ class LDAPAdminPasswordForm(AccountForm):
     def save(self, commit=True):
         placard.signals.account_password_change.send(self.object, user=self.user)
         data = self.cleaned_data
-        for obj in [self.object] + self.slave_objs.values():
+
+        self.object.change_password(data['new1'])
+        for _, obj in self.slave_objs:
             obj.change_password(data['new1'])
+
         self.commit(commit)
         return self.object
 
@@ -370,9 +356,7 @@ class LDAPGroupForm(GroupForm):
     signal_add = placard.signals.group_add
     signal_edit = placard.signals.group_edit
 
-    def __init__(self, group, slave_objs, *args, **kwargs):
-        self.object = group
-        self.slave_objs = slave_objs
+    def __init__(self, *args, **kwargs):
         super(LDAPGroupForm, self).__init__(*args, **kwargs)
         if not self.created:
             self.fields['cn'].widget.attrs['readonly'] = True
@@ -380,7 +364,7 @@ class LDAPGroupForm(GroupForm):
     def clean_cn(self):
         cn = self.cleaned_data['cn']
         if self.created:
-            groups = placard.ldap_models.group.objects.filter(cn=cn)
+            groups = self.bond.groups().filter(cn=cn)
             if len(groups) > 0:
                 raise forms.ValidationError("This group already exists!")
         else:
@@ -393,11 +377,6 @@ class AddMemberForm(GroupForm):
     """ Add a user to a group form """
     account = AutoCompleteSelectField('account', required=True, label="Add user")
 
-    def __init__(self, group, slave_objs, *args, **kwargs):
-        self.object = group
-        self.slave_objs = slave_objs
-        super(AddMemberForm, self).__init__(*args, **kwargs)
-
     def save(self, commit=True):
         user = self.cleaned_data['account']
         placard.signals.group_add_member.send(self.object, user=self.user, account=user)
@@ -406,8 +385,8 @@ class AddMemberForm(GroupForm):
         if commit:
             self.object.save()
 
-        for slave_id, obj in self.slave_objs.iteritems():
-            obj.secondary_accounts.add(_get_slave_account(slave_id, self.cleaned_data['account'].pk), commit=False)
+        for bond, obj in self.slave_objs:
+            obj.secondary_accounts.add(bond.accounts().get(pk=self.cleaned_data['account'].pk), commit=False)
 
         self.commit(commit)
         return self.object
@@ -416,9 +395,7 @@ class AddMemberForm(GroupForm):
 class RemoveMemberForm(GroupForm):
     """ Add a user to a group form """
 
-    def __init__(self, group, slave_objs, account, *args, **kwargs):
-        self.object = group
-        self.slave_objs = slave_objs
+    def __init__(self, account, *args, **kwargs):
         self.account = account
         super(RemoveMemberForm, self).__init__(*args, **kwargs)
 
@@ -428,8 +405,8 @@ class RemoveMemberForm(GroupForm):
         if commit:
             self.object.save()
 
-        for slave_id, obj in self.slave_objs.iteritems():
-            obj.secondary_accounts.remove(_get_slave_account(slave_id, self.account.pk), commit=False)
+        for bond, obj in self.slave_objs:
+            obj.secondary_accounts.remove(bond.accounts().get(pk=self.account.pk), commit=False)
 
         self.commit(commit)
         return self.object
@@ -438,14 +415,11 @@ class RemoveMemberForm(GroupForm):
 class LockAccountForm(AccountForm):
     """ Lock account """
 
-    def __init__(self, account, slave_objs, *args, **kwargs):
-        self.object = account
-        self.slave_objs = slave_objs
-        super(LockAccountForm, self).__init__(*args, **kwargs)
-
     def save(self, commit=True):
         placard.signals.account_lock.send(self.object, user=self.user)
-        for obj in [self.object] + self.slave_objs.values():
+
+        self.object.lock()
+        for _, obj in self.slave_objs:
             obj.lock()
 
         self.commit(commit)
@@ -455,14 +429,11 @@ class LockAccountForm(AccountForm):
 class UnlockAccountForm(AccountForm):
     """ Unlock account """
 
-    def __init__(self, account, slave_objs, *args, **kwargs):
-        self.object = account
-        self.slave_objs = slave_objs
-        super(UnlockAccountForm, self).__init__(*args, **kwargs)
-
     def save(self, commit=True):
         placard.signals.account_unlock.send(self.object, user=self.user)
-        for obj in [self.object] + self.slave_objs.values():
+
+        self.object.unlock()
+        for _, obj in self.slave_objs:
             obj.unlock()
 
         self.commit(commit)
@@ -472,14 +443,13 @@ class UnlockAccountForm(AccountForm):
 class DeleteAccountForm(AccountForm):
     """ Delete account """
 
-    def __init__(self, account, slave_objs, *args, **kwargs):
-        self.object = account
-        self.slave_objs = slave_objs
-        super(DeleteAccountForm, self).__init__(*args, **kwargs)
-
     def save(self, commit=True):
         placard.signals.account_delete.send(self.object, user=self.user)
-        for obj in [self.object] + self.slave_objs.values():
+
+        self.object.pre_delete()
+        self.object.delete()
+
+        for obj in self.slave_objs:
             obj.pre_delete()
             obj.delete()
         return None
@@ -489,19 +459,14 @@ class AddGroupForm(AccountForm):
     """ Add a group to a account form """
     group = AutoCompleteSelectField('group', required=True, label="Add group")
 
-    def __init__(self, account, slave_objs, *args, **kwargs):
-        self.object = account
-        self.slave_objs = slave_objs
-        super(AddGroupForm, self).__init__(*args, **kwargs)
-
     def save(self, commit=True):
         group = self.cleaned_data['group']
         placard.signals.group_add_member.send(group, user=self.user, account=self.object)
 
         self.object.secondary_groups.add(self.cleaned_data['group'], commit=False)
 
-        for slave_id, obj in self.slave_objs.iteritems():
-            obj.secondary_groups.add(_get_slave_group(slave_id, self.cleaned_data['group'].pk), commit=False)
+        for bond, obj in self.slave_objs:
+            obj.secondary_groups.add(bond.groups().get(pk=self.cleaned_data['group'].pk), commit=False)
 
         self.commit(commit)
         return self.object
@@ -510,9 +475,7 @@ class AddGroupForm(AccountForm):
 class RemoveGroupForm(AccountForm):
     """ Add a user to a group form """
 
-    def __init__(self, account, slave_objs, group, *args, **kwargs):
-        self.object = account
-        self.slave_objs = slave_objs
+    def __init__(self, group, *args, **kwargs):
         self.group = group
         super(RemoveGroupForm, self).__init__(*args, **kwargs)
 
@@ -521,8 +484,8 @@ class RemoveGroupForm(AccountForm):
 
         self.object.secondary_groups.remove(self.group, commit=False)
 
-        for slave_id, obj in self.slave_objs.iteritems():
-            obj.secondary_groups.remove(_get_slave_group(slave_id, self.group.pk), commit=False)
+        for bond, obj in self.slave_objs:
+            obj.secondary_groups.remove(bond.groups().get(pk=self.group.pk), commit=False)
 
         self.commit(commit)
         return self.object
@@ -532,18 +495,15 @@ class RenameGroupForm(GroupForm):
     """ Rename a group """
     cn = fields.CharField(label="Name")
 
-    def __init__(self, group, slave_objs, *args, **kwargs):
-        self.object = group
-        self.slave_objs = slave_objs
-        super(RenameGroupForm, self).__init__(*args, **kwargs)
-
-
     def save(self, commit=True):
         cn = self.cleaned_data['cn']
         old_dn = self.object.dn
         old_pk = self.object.cn
-        for obj in [self.object] + self.slave_objs.values():
+
+        self.object.rename(cn=cn)
+        for _, obj in self.slave_objs:
             obj.rename(cn=cn)
+
         placard.signals.group_rename.send(self.object, user=self.user, old_dn=old_dn, old_pk=old_pk)
         return self.object
 
@@ -551,11 +511,6 @@ class RenameGroupForm(GroupForm):
 class EmailForm(LDAPForm):
     subject = fields.CharField(widget=forms.TextInput(attrs={ 'size':60 }))
     body = fields.CharField(widget=forms.Textarea(attrs={'class':'vLargeTextField', 'rows':10, 'cols':40 }))
-
-    def __init__(self, group, slave_objs, *args, **kwargs):
-        self.object = group
-        self.slave_objs = slave_objs
-        super(EmailForm, self).__init__(*args, **kwargs)
 
     def get_data(self):
         return self.cleaned_data['subject'], self.cleaned_data['body']
@@ -593,15 +548,15 @@ class EmailForm(LDAPForm):
 class DeleteGroupForm(GroupForm):
     """ Delete a group """
 
-    def __init__(self, group, slave_objs, *args, **kwargs):
-        self.object = group
-        self.slave_objs = slave_objs
-        super(DeleteGroupForm, self).__init__(*args, **kwargs)
-
     def save(self, commit=True):
         placard.signals.group_delete.send(self.object, user=self.user)
-        for obj in [self.object] + self.slave_objs.values():
+
+        self.object.pre_delete()
+        self.object.delete()
+
+        for _, obj in self.slave_objs:
             obj.pre_delete()
             obj.delete()
+
         return None
 

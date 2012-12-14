@@ -16,12 +16,12 @@
 # along with django-placard  If not, see <http://www.gnu.org/licenses/>.
 
 import django.views.generic
-import placard.ldap_models
+import placard.ldap_bonds as bonds
 import placard.forms
 import placard.filterspecs
 import tldap
 
-from django.shortcuts import get_object_or_404, render_to_response
+from django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseForbidden, HttpResponseRedirect
 from django.http import Http404
 from django.core.mail import send_mass_mail
@@ -44,8 +44,8 @@ def search(request):
 
     if q != "":
 
-        account_list = placard.ldap_models.account.objects.all()
-        group_list = placard.ldap_models.group.objects.all()
+        account_list = bonds.master.accounts()
+        group_list = bonds.master.groups()
 
         for term in term_list:
             if term != "":
@@ -69,7 +69,7 @@ def search(request):
 
 
 def account_photo(request, account):
-    account = get_object_or_404(placard.ldap_models.account, pk=account)
+    account = bonds.master.get_account_or_404(pk=account)
     if account.jpegPhoto is not None:
         return HttpResponse(account.jpegPhoto, content_type="image/jpeg")
     else:
@@ -149,25 +149,24 @@ class FormView(PermissionMixin, django.views.generic.FormView):
 
 class AccountMixin(object):
     def get_slave_objs(self):
-        objs = {}
-        for slave_id, account in placard.ldap_models.get_slave_accounts().iteritems():
+        objs = []
+        for slave_id, bond in bonds.slaves.iteritems():
             try:
-                obj = account.objects.using(slave_id).get(pk=self.object.pk)
-                objs[slave_id] = obj
-            except account.DoesNotExist:
+                obj = bond.accounts().get(pk=self.object.pk)
+                objs.append( (bond, obj) )
+            except bond.AccountDoesNotExist:
                 pass
         return objs
 
     def create_slave_objs(self):
-        objs = {}
-        for slave_id, account in placard.ldap_models.get_slave_accounts().iteritems():
-            obj = account(using=slave_id)
+        objs = []
+        for slave_id, bond in bonds.slaves.iteritems():
+            obj = bond.create_account()
             obj.set_defaults()
-            objs[slave_id] = obj
+            objs.append( (bond, obj) )
         return objs
 
 class AccountList(ListView, AccountMixin):
-    model = placard.ldap_models.account
     template_name = "placard/account_list.html"
     context_object_name = "account_list"
 
@@ -178,27 +177,27 @@ class AccountList(ListView, AccountMixin):
 
         if request.GET.has_key('group'):
             try:
-                group = placard.ldap_models.group.objects.get(cn=request.GET['group'])
+                group = bonds.master.groups().get(cn=request.GET['group'])
                 account_list = account_list.filter(tldap.Q(primary_group=group) | tldap.Q(secondary_groups=group))
-            except  placard.ldap_models.group.DoesNotExist:
+            except  bonds.master.GroupDoesNotExist:
                 pass
 
         if request.GET.has_key('exclude'):
             try:
-                group = placard.ldap_models.group.objects.get(cn=request.GET['exclude'])
+                group = bonds.master.groups().get(cn=request.GET['exclude'])
                 account_list = account_list.filter(~(tldap.Q(primary_group=group) | tldap.Q(secondary_groups=group)))
-            except  placard.ldap_models.group.DoesNotExist:
+            except  bonds.master.GroupDoesNotExist:
                 pass
 
         return account_list
 
     def get_default_queryset(self):
-        return placard.ldap_models.account.objects.all()
+        return bonds.master.accounts()
 
     def get_context_data(self, **kwargs):
         context = super(AccountList, self).get_context_data(**kwargs)
         group_list = {}
-        for group in placard.ldap_models.group.objects.all():
+        for group in bonds.master.groups():
             group_list[group.cn] = group.cn
 
         filter_list = []
@@ -210,33 +209,32 @@ class AccountList(ListView, AccountMixin):
 
 
 class AccountDetail(DetailView, AccountMixin):
-    model = placard.ldap_models.account
     template_name = "placard/account_detail.html"
     context_object_name = "account"
 
     def get_context_data(self, **kwargs):
         context = super(AccountDetail, self).get_context_data(**kwargs)
+        master_obj = bonds.master, self.object
         slave_objs = self.get_slave_objs()
-        context['form'] = placard.forms.AddGroupForm(user=self.request.user, slave_objs=slave_objs, account=self.object)
+        context['form'] = placard.forms.AddGroupForm(user=self.request.user, master_obj=master_obj, slave_objs=slave_objs)
         context['slave_objs'] = slave_objs
-        if 'slave' in self.kwargs:
-            context['slave_id'] = self.kwargs['slave']
-        else:
-            context['slave_id'] = None
+        context['master_bond'] = bonds.master
+        context['account_bond'] = self.account_bond
+        context['is_slave'] = self.account_bond.slave_id is not None
         return context
 
     def get_object(self):
         if 'slave' in self.kwargs:
             slave_id = self.kwargs['slave']
-            model = placard.ldap_models.get_slave_account_by_id(slave_id)
+            try:
+                bond = bonds.slaves[slave_id]
+            except KeyError:
+                raise Http404("Invalid slave given")
         else:
-            slave_id = None
-            model = placard.ldap_models.account
+            bond = bonds.master
 
-        try:
-            return model.objects.using(slave_id).get(pk=self.kwargs['account'])
-        except model.DoesNotExist:
-            raise Http404
+        self.account_bond = bond
+        return bond.get_account_or_404(pk=self.kwargs['account'])
 
 
 class AccountVerbose(AccountDetail, AccountMixin):
@@ -253,23 +251,23 @@ class AccountGeneric(FormView, AccountMixin):
     def get_form_kwargs(self):
         kwargs = super(AccountGeneric, self).get_form_kwargs()
         if 'account' in self.kwargs:
-            kwargs['account'] = self.get_object()
-            self.object = kwargs['account']
+            self.object = self.get_object()
+            kwargs['master_obj'] = bonds.master, self.object
             kwargs['slave_objs'] = self.get_slave_objs()
             kwargs['created'] = False
         else:
-            kwargs['account'] = self.create_object()
-            self.object = kwargs['account']
+            self.object = self.create_object()
+            kwargs['master_obj'] = bonds.master, self.object
             kwargs['slave_objs'] = self.create_slave_objs()
             kwargs['created'] = True
         self.created = kwargs['created']
         return kwargs
 
     def get_object(self):
-        return get_object_or_404(placard.ldap_models.account, pk=self.kwargs['account'])
+        return bonds.master.get_account_or_404(pk=self.kwargs['account'])
 
     def create_object(self):
-        obj = placard.ldap_models.account()
+        obj = bonds.master.create_account()
         obj.set_defaults()
         return obj
 
@@ -358,7 +356,7 @@ class AccountRemoveGroup(AccountGeneric):
 
     def get_form_kwargs(self):
         kwargs = super(AccountRemoveGroup, self).get_form_kwargs()
-        kwargs['group'] = get_object_or_404(placard.ldap_models.group, cn=self.kwargs['group'])
+        kwargs['group'] = bonds.master.get_account_or_404(cn=self.kwargs['group'])
         self.group = kwargs['group']
         return kwargs
 
@@ -374,58 +372,58 @@ class AccountDelete(AccountGeneric):
 
 class GroupMixin(object):
     def get_slave_objs(self):
-        objs = {}
-        for slave_id, group in placard.ldap_models.get_slave_groups().iteritems():
+        objs = []
+        for slave_id, bond in bonds.slaves.iteritems():
             try:
-                obj = group.objects.using(slave_id).get(pk=self.object.pk)
-                objs[slave_id] = obj
-            except group.DoesNotExist:
+                obj = bond.groups().get(pk=self.object.pk)
+                objs.append( (bond, obj) )
+            except bond.GroupDoesNotExist:
                 pass
         return objs
 
     def create_slave_objs(self):
-        objs = {}
-        for slave_id, group in placard.ldap_models.get_slave_groups().iteritems():
-            obj = group(using=slave_id)
+        objs = []
+        for slave_id, bond in bonds.slaves.iteritems():
+            obj = bond.create_group()
             obj.set_defaults()
-            objs[slave_id] = obj
+            objs.append( (bond, obj) )
         return objs
 
 
 class GroupList(ListView, GroupMixin):
-    model = placard.ldap_models.group
     template_name = "placard/group_list.html"
     context_object_name = "group_list"
 
+    def get_queryset(self):
+        return bonds.master.groups()
 
 class GroupDetail(DetailView, GroupMixin):
-    model = placard.ldap_models.account
     template_name = "placard/group_detail.html"
     context_object_name = "group"
 
     def get_context_data(self, **kwargs):
         context = super(GroupDetail, self).get_context_data(**kwargs)
+        master_obj = bonds.master, self.object
         slave_objs = self.get_slave_objs()
-        context['form'] = placard.forms.AddMemberForm(user=self.request.user, slave_objs=slave_objs, group=self.object)
+        context['form'] = placard.forms.AddMemberForm(user=self.request.user, master_obj=master_obj, slave_objs=slave_objs)
         context['slave_objs'] = slave_objs
-        if 'slave' in self.kwargs:
-            context['slave_id'] = self.kwargs['slave']
-        else:
-            context['slave_id'] = None
+        context['master_bond'] = bonds.master
+        context['group_bond'] = self.group_bond
+        context['is_slave'] = self.group_bond.slave_id is not None
         return context
 
     def get_object(self):
         if 'slave' in self.kwargs:
             slave_id = self.kwargs['slave']
-            model = placard.ldap_models.get_slave_group_by_id(slave_id)
+            try:
+                bond = bonds.slaves[slave_id]
+            except KeyError:
+                raise Http404("Invalid slave given")
         else:
-            slave_id = None
-            model = placard.ldap_models.group
+            bond = bonds.master
 
-        try:
-            return model.objects.using(slave_id).get(pk=self.kwargs['group'])
-        except model.DoesNotExist:
-            raise Http404
+        self.group_bond = bond
+        return bond.get_group_or_404(pk=self.kwargs['group'])
 
 
 class GroupVerbose(GroupDetail, GroupMixin):
@@ -442,23 +440,23 @@ class GroupGeneric(FormView, GroupMixin):
     def get_form_kwargs(self):
         kwargs = super(GroupGeneric, self).get_form_kwargs()
         if 'group' in self.kwargs:
-            kwargs['group'] = self.get_object()
-            self.object = kwargs['group']
+            self.object = self.get_object()
+            kwargs['master_obj'] = bonds.master, self.object
             kwargs['slave_objs'] = self.get_slave_objs()
             kwargs['created'] = False
         else:
-            kwargs['group'] = self.create_object()
-            self.object = kwargs['group']
+            self.object = self.create_object()
+            kwargs['master_obj'] = bonds.master, self.object
             kwargs['slave_objs'] = self.create_slave_objs()
             kwargs['created'] = True
         self.created = kwargs['created']
         return kwargs
 
     def get_object(self):
-        return get_object_or_404(placard.ldap_models.group, cn=self.kwargs['group'])
+        return bonds.master.get_group_or_404(cn=self.kwargs['group'])
 
     def create_object(self):
-        obj = placard.ldap_models.group()
+        obj = bonds.master.create_group()
         obj.set_defaults()
         return obj
 
@@ -500,7 +498,7 @@ class GroupRemoveMember(GroupGeneric):
 
     def get_form_kwargs(self):
         kwargs = super(GroupRemoveMember, self).get_form_kwargs()
-        kwargs['account'] = get_object_or_404(placard.ldap_models.account, pk=self.kwargs['account'])
+        kwargs['account'] = bonds.master.get_account_or_404(pk=self.kwargs['account'])
         self.account = kwargs['account']
         return kwargs
 

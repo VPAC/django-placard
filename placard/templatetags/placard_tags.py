@@ -21,14 +21,15 @@ from django import template
 from django.core.urlresolvers import reverse
 import re
 
-import placard.ldap_models
+import placard.ldap_bonds
 
 register = template.Library()
 
 @register.simple_tag
-def slave_url(name, *args):
+def bond_url(name, *args):
     args = list(args)
-    slave_id = args.pop(-1)
+    bond = args.pop(-1)
+    slave_id = bond.slave_id
     if slave_id is not None:
         args.append(slave_id)
     return reverse(name, args=args)
@@ -39,10 +40,6 @@ def group_detail_url(group, slave_id):
         return reverse("plac_group_detail", kwargs={ 'group': group })
     else:
         return reverse("plac_group_detail", kwargs={ 'group': group, 'slave': slave_id })
-
-@register.simple_tag
-def slave_name(slave_id):
-    return placard.ldap_models.get_slave_name_by_id(slave_id)
 
 @register.simple_tag
 def active(request, pattern):

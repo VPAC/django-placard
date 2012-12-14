@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with django-placard  If not, see <http://www.gnu.org/licenses/>.
 
-import placard.ldap_models
+import placard.ldap_bonds
 
 from django.db.models.signals import post_syncdb
 from django.contrib.auth.models import Permission
@@ -50,4 +50,4 @@ def create_app_permissions(sender, **kwargs):
     Permission.objects.get_or_create(codename = 'delete_group', content_type__pk = ct.id,
             defaults = {'name': 'Can delete groups', 'content_type': ct})
 
-post_syncdb.connect(create_app_permissions, sender=placard.ldap_models)
+post_syncdb.connect(create_app_permissions, sender=placard.ldap_bonds)

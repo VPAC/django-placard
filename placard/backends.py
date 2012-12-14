@@ -22,13 +22,13 @@ from django.core.exceptions import ImproperlyConfigured
 
 import django.conf
 
-import placard.ldap_models
+import placard.ldap_bonds as bonds
 
 class LDAPBackend(ModelBackend):
     def authenticate(self, username=None, password=None):
         try:
-            ldap_user = placard.ldap_models.account.objects.get(pk=username)
-        except placard.ldap_models.account.DoesNotExist:
+            ldap_user = bonds.master.accounts().get(pk=username)
+        except bonds.master.AccountDoesNotExist:
             return None
 
         if ldap_user.check_password(password):

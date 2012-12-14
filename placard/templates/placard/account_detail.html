@@ -15,9 +15,9 @@
 <div class="breadcrumbs">
 <a href='{{ base_url|default:"/" }}'>Home</a>
  &rsaquo; <a href="{% url plac_account_list %}">Accounts</a>
-{% if slave_id %}
- &rsaquo; <a href="{% url plac_account_detail account.pk %}">{{ account }} detail</a>
- &rsaquo; {% slave_name slave_id %}
+{% if is_slave %}
+ &rsaquo; <a href="{% bond_url 'plac_account_detail' account.pk account_bond %}">{{ account }} detail</a>
+ &rsaquo; {{ account_bond }}
 {% else %}
  &rsaquo; {{ account }} detail
 {% endif %}
@@ -29,9 +29,9 @@
 <div class="module object-tools">
     <h2>Account links</h2>
     <ul>
-        <li><a href="{% slave_url 'plac_account_detail_verbose' account.pk slave_id %}">Verbose output</a></li>
+        <li><a href="{% bond_url 'plac_account_detail_verbose' account.pk account_bond %}">Verbose output</a></li>
         {% block object-tools-view %}{% endblock %}
-        {% if not slave_id %}
+        {% if not is_slave %}
             {% if perms.placard.change_account or perms.placard.hr_change_account %}
             <li><a href="{% url plac_account_edit account.pk %}">Edit details</a></li>
             {% endif %}
@@ -48,7 +48,7 @@
         {% endif %}
         {% if slave_objs %}
         <li>source:
-        <a href="{% url plac_account_detail account.pk %}">master</a>, {% for slave_id, slave_obj in slave_objs.items %}<a href="{% url plac_account_detail account.pk slave_id %}">{% slave_name slave_id %}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
+        <a href="{% bond_url 'plac_account_detail' account.pk master_bond %}">{{ master_bond }}</a>, {% for bond, slave_obj in slave_objs %}<a href="{% bond_url 'plac_account_detail' account.pk bond %}">{{ bond }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
         </li>
         {% endif %}
     </ul>
@@ -120,7 +120,7 @@
             {% with account.managed_by.get_obj as manager %}
             {% if manager %}
             <tr>
-            <td>Manager</td><td class="{% if manager.is_locked %}locked{% endif %}"><a href="{% slave_url 'plac_account_detail' manager.pk slave_id %}">{{ manager }}</a></td>
+            <td>Manager</td><td class="{% if manager.is_locked %}locked{% endif %}"><a href="{% bond_url 'plac_account_detail' manager.pk account_bond %}">{{ manager }}</a></td>
             </tr>
             {% endif %}
             {% endwith %}
@@ -129,7 +129,7 @@
             <tr>
             <td>Manager of</td><td>
             {% for p in manager_of %}
-            <span class="{% if p.is_locked %}locked{% endif %}"><a href="{% slave_url 'plac_account_detail' p.pk slave_id %}">{{ p }}</a></span>{% if not forloop.last %}, {% endif %}
+            <span class="{% if p.is_locked %}locked{% endif %}"><a href="{% bond_url 'plac_account_detail' p.pk account_bond %}">{{ p }}</a></span>{% if not forloop.last %}, {% endif %}
             {% endfor %}
             </td></tr>
             {% endif %}
@@ -155,7 +155,7 @@
                 <th>Primary Group:</th>
             </tr>
             <tr>
-                <td><a href="{% slave_url 'plac_group_detail' primary_group.pk slave_id %}">{{ primary_group }}</a></td>
+                <td><a href="{% bond_url 'plac_group_detail' primary_group.pk account_bond %}">{{ primary_group }}</a></td>
             </tr>
             {% endif %}
             {% endwith %}
@@ -164,14 +164,14 @@
             </tr>
             {% for g in account.secondary_groups.all|dictsort:"cn" %}
                 <tr class="{% cycle row1,row2 %}">
-                    <td><a href="{% slave_url 'plac_group_detail' g.pk slave_id %}">{{ g }}</a></td>
-                    {% if perms.placard.change_account and not slave_id %}
+                    <td><a href="{% bond_url 'plac_group_detail' g.pk account_bond %}">{{ g }}</a></td>
+                    {% if perms.placard.change_account and not is_slave %}
                     <td><a href="{% url plac_account_rm_group account.pk,g.pk %}" class="deletelink">remove</a></td>
                     {% endif %}
                 </tr>
             {% endfor %}
         </table>
-        {% if perms.placard.change_account and not slave_id %}
+        {% if perms.placard.change_account and not is_slave %}
             <form method="post" action="{% url plac_account_add_group account.pk %}" class="simple">{% csrf_token %}
                 <fieldset>
                     {{ form }}<input type="submit" value="Add" class="default" />
