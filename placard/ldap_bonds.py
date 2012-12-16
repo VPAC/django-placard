@@ -93,5 +93,5 @@ class bond(object):
 
 master = bond(django.conf.settings.PLACARD_MASTER, slave_id=None)
 slaves = {}
-for slave_id, s in django.conf.settings.PLACARD_SLAVES.iteritems():
+for slave_id, s in getattr(django.conf.settings, 'PLACARD_SLAVES', {}).iteritems():
         slaves[slave_id] = bond(s, slave_id=slave_id)
