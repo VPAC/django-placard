@@ -78,8 +78,9 @@ def pagination(request, page_obj):
     return context
 
 class url_with_param_node(template.Node):
-    def __init__(self, copy, changes):
+    def __init__(self, copy, nopage, changes):
         self.copy = copy
+        self.nopage = nopage
         self.changes = []
         for key, newvalue in changes:
             newvalue = template.Variable(newvalue)
@@ -97,6 +98,9 @@ class url_with_param_node(template.Node):
             result = request.GET.copy()
         else:
             result = QueryDict("",mutable=True)
+
+        if self.nopage:
+            result.pop("page", None)
 
         for key, newvalue in self.changes:
             newvalue = newvalue.resolve(context)
@@ -116,11 +120,16 @@ def url_with_param(parser, token):
         copy = True
         bits.pop(0)
 
+    nopage = False
+    if bits[0] == "nopage":
+        nopage = True
+        bits.pop(0)
+
     for i in bits:
         try:
             key, newvalue = i.split('=', 1);
             qschanges.append( (key,newvalue,) )
         except ValueError:
             raise template.TemplateSyntaxError, "Argument syntax wrong: should be key=value"
-    return url_with_param_node(copy, qschanges)
+    return url_with_param_node(copy, nopage, qschanges)
 

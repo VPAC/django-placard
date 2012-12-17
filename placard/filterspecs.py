@@ -80,6 +80,7 @@ class FilterBar(object):
         self.request = request
         self.filter_list = filter_list
         qs = request.GET.copy()
+        qs.pop('page', None)
 
         self.qs = qs
 
