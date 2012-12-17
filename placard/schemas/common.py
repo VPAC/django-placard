@@ -17,6 +17,7 @@
 
 import tldap
 import datetime
+import placard.models
 
 
 class baseMixin(tldap.base.LDAPobject):
@@ -120,11 +121,8 @@ class accountMixin(object):
     @classmethod
     def set_free_uidNumber(cls, self):
         model = self.__class__
-        uid = None
-        for obj in model.objects.all():
-            if uid is None or obj.uidNumber > uid:
-                uid = obj.uidNumber
-        self.uidNumber = uid + 1
+        self.uidNumber =  placard.models.counters.get_and_increment("uidNumber", 10000,
+                lambda n: len(model.objects.filter(uidNumber = n)) == 0)
 
     @classmethod
     def __unicode__(cls, self):
@@ -180,11 +178,8 @@ class groupMixin(object):
     @classmethod
     def set_free_gidNumber(cls, self):
         model = self.__class__
-        gid = None
-        for obj in model.objects.all():
-            if gid is None or obj.gidNumber > gid:
-                gid = obj.gidNumber
-        self.gidNumber = gid + 1
+        self.gidNumber =  placard.models.counters.get_and_increment("gidNumber", 10000,
+                lambda n: len(model.objects.filter(gidNumber = n)) == 0)
 
     @classmethod
     def __unicode__(cls, self):
