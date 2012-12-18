@@ -22,9 +22,8 @@ import placard.filterspecs
 import tldap
 
 from django.shortcuts import render_to_response
-from django.http import HttpResponse, HttpResponseNotFound, HttpResponseForbidden, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseForbidden
 from django.http import Http404
-from django.core.mail import send_mass_mail
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
 

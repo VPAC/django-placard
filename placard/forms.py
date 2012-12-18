@@ -22,7 +22,6 @@ from PIL import Image
 from cStringIO import StringIO
 import os
 
-import tldap
 import placard.fields as fields
 import placard.signals
 import placard.util

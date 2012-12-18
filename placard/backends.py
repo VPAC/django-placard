@@ -18,9 +18,6 @@
 
 from django.contrib.auth.models import User
 from django.contrib.auth.backends import ModelBackend
-from django.core.exceptions import ImproperlyConfigured
-
-import django.conf
 
 import placard.ldap_bonds as bonds
 

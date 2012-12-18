@@ -15,10 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with django-placard  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls.defaults import *
+from django.conf.urls.defaults import patterns, url
 
 import placard.views as views
-import placard.reports as reports
 
 urlpatterns = patterns('',
     url(r'^$', views.GroupList.as_view(), name='plac_group_list'),

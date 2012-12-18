@@ -15,11 +15,10 @@
 # You should have received a copy of the GNU General Public License
 # along with django-placard  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls.defaults import *
+from django.conf.urls.defaults import patterns, url, include
 from django.contrib import admin
 
 import placard.views as views
-import placard.reports as reports
 
 import placard.account_urls
 import placard.group_urls

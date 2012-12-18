@@ -17,7 +17,6 @@
 
 from django.utils.safestring import mark_safe
 from django.http import QueryDict
-import datetime
 from operator import itemgetter
 
 
