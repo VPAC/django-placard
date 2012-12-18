@@ -17,6 +17,7 @@
 
 import django.conf
 import django.utils.importlib
+from django.http import Http404
 
 def _lookup(cls):
     if isinstance(cls, str):
