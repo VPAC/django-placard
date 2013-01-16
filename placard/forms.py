@@ -66,7 +66,7 @@ class LDAPForm(forms.Form):
         # prepare to save
         self.object.pre_save()
         for _, obj in self.slave_objs:
-            obj.save()
+            obj.pre_save()
 
         # do the save
         self.object.save()
