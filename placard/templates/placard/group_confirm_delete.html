@@ -1,4 +1,5 @@
 {% extends "forms.html" %}
+{% load url from future %}
 
 
 {% block title %}{{ group }} delete | Groups{% endblock %}
@@ -7,7 +8,7 @@
 {% block breadcrumbs %}
 <div class="breadcrumbs">
 <a href='{{ base_url|default:"/" }}'>Home</a>
- &rsaquo; <a href="{% url plac_group_list %}">Groups</a>
+ &rsaquo; <a href="{% url "plac_group_list" %}">Groups</a>
  &rsaquo; Delete Group
 </div>
 {% endblock %}

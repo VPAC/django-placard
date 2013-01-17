@@ -1,4 +1,5 @@
 {% extends "main.html" %}
+{% load url from future %}
 
 {% block title %}Home{% endblock %}
 
@@ -7,7 +8,7 @@
 
 	<div class="module">
     	<h3>Welcome {{ user.first_name }}</h3>
-<p><a href="{% url plac_account_password %}">Change Password</a></p>
+<p><a href="{% url "plac_account_password" %}">Change Password</a></p>
 
  </div>
 </div>

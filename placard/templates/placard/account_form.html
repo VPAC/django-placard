@@ -1,4 +1,5 @@
 {% extends "forms.html" %}
+{% load url from future %}
 
 
 {% block title %}{% if not created %}Edit {{ account }}{% else %}Create user{% endif %} | Groups{% endblock %}
@@ -7,7 +8,7 @@
 {% block breadcrumbs %}
 <div class="breadcrumbs">
 <a href='{{ base_url|default:"/" }}'>Home</a>
- &rsaquo; <a href="{% url plac_account_list %}">Accounts</a>
+ &rsaquo; <a href="{% url "plac_account_list" %}">Accounts</a>
  &rsaquo; {% if not created %}Edit {{ account }}{% else %}Create Account{% endif %} User
 </div>
 {% endblock %}
@@ -47,7 +48,7 @@
     <div class="submit-row">
         <input type="submit" value="Save" class="default" />
         {% if not created and perms.placard.delete_account %}
-        <p class="deletelink-box"><a href="{% url plac_account_delete account.pk %}" class="deletelink">Delete</a></p>
+        <p class="deletelink-box"><a href="{% url "plac_account_delete" account.pk %}" class="deletelink">Delete</a></p>
         {% endif %}
     </div>
 </form>

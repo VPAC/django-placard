@@ -1,4 +1,5 @@
 {% extends "main.html" %}
+{% load url from future %}
 
 
 {% block title %}List | Accounts{% endblock %}
@@ -24,9 +25,9 @@
     <h2>Account links</h2>
     <ul>
         {% if perms.placard.add_account %}
-            <li><a href="{% url plac_account_add %}" class="addlink">Add Account</a></li>
+            <li><a href="{% url "plac_account_add" %}" class="addlink">Add Account</a></li>
         {% endif %}
-        <li><a href="{% url plac_account_list_pdf %}{% url_with_param copy nopage %}">Printable</a></li>
+        <li><a href="{% url "plac_account_list_pdf" %}{% url_with_param copy nopage %}">Printable</a></li>
     </ul>
 </div>
 {% endblock %}
@@ -58,7 +59,7 @@
             <tbody>
                 {% for u in account_list %}
                     <tr class="{% cycle row1,row2  as rowcolours %} {% if u.is_locked %}locked{% endif %}">
-                        <td><a href="{% url plac_account_detail u.pk %}">{{ u }}</a></td>
+                        <td><a href="{% url "plac_account_detail" u.pk %}">{{ u }}</a></td>
                         <td>{{ u.telephoneNumber }}</td>
                         <td>{{ u.mobile }}</td>
                         <td>{{ u.mail|urlize }}</td>

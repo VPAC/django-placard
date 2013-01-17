@@ -1,4 +1,5 @@
 {% extends "main.html" %}
+{% load url from future %}
 
 
 {% block title %}{{ account }} verbose | Accounts{% endblock %}
@@ -8,7 +9,7 @@
 {% load placard_tags %}
 <div class="breadcrumbs">
 <a href='{{ base_url|default:"/" }}'>Home</a>
- &rsaquo; <a href="{% url plac_account_list %}">Accounts</a>
+ &rsaquo; <a href="{% url "plac_account_list" %}">Accounts</a>
 {% if is_slave %}
  &rsaquo; <a href="{% bond_url 'plac_account_detail' account.pk account_bond %}">{{ account }} detail</a>
  &rsaquo; <a href="{% bond_url 'plac_account_detail' account.pk account_bond %}">{{ account_bond }}</a>

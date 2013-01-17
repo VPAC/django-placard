@@ -1,4 +1,5 @@
 {% extends "main.html" %}
+{% load url from future %}
 
 
 {% block title %}{{ group }} verbose | Groups{% endblock %}
@@ -8,7 +9,7 @@
 {% load placard_tags %}
 <div class="breadcrumbs">
 <a href='{{ base_url|default:"/" }}'>Home</a>
- &rsaquo; <a href="{% url plac_group_list %}">Groups</a>
+ &rsaquo; <a href="{% url "plac_group_list" %}">Groups</a>
 {% if is_slave %}
  &rsaquo; <a href="{% bond_url 'plac_group_detail' group.pk group_bond %}">{{ group }} detail</a>
  &rsaquo; <a href="{% bond_url 'plac_group_detail' group.pk group_bond %}">{{ group_bond }}</a>

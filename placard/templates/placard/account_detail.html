@@ -1,4 +1,5 @@
 {% extends "main.html" %}
+{% load url from future %}
 
 
 {% block title %}{{ account }} detail | Accounts{% endblock %}
@@ -14,7 +15,7 @@
 {% load placard_tags %}
 <div class="breadcrumbs">
 <a href='{{ base_url|default:"/" }}'>Home</a>
- &rsaquo; <a href="{% url plac_account_list %}">Accounts</a>
+ &rsaquo; <a href="{% url "plac_account_list" %}">Accounts</a>
 {% if is_slave %}
  &rsaquo; <a href="{% bond_url 'plac_account_detail' account.pk account_bond %}">{{ account }} detail</a>
  &rsaquo; {{ account_bond }}
@@ -33,16 +34,16 @@
         {% block object-tools-view %}{% endblock %}
         {% if not is_slave %}
             {% if perms.placard.change_account or perms.placard.hr_change_account %}
-            <li><a href="{% url plac_account_edit account.pk %}">Edit details</a></li>
+            <li><a href="{% url "plac_account_edit" account.pk %}">Edit details</a></li>
             {% endif %}
             {% if perms.placard.change_account_password %}
-            <li><a href="{% url plac_change_password account.pk %}">Change password</a></li>
+            <li><a href="{% url "plac_change_password" account.pk %}">Change password</a></li>
             {% endif %}
             {% if perms.placard.lock_account %}
                 {% if account.is_locked %}
-                <li><a href="{% url plac_unlock_user account.pk %}">Unlock</a></li>
+                <li><a href="{% url "plac_unlock_user" account.pk %}">Unlock</a></li>
                 {% else %}
-                <li><a href="{% url plac_lock_user account.pk %}">Lock</a></li>
+                <li><a href="{% url "plac_lock_user" account.pk %}">Lock</a></li>
                 {% endif %}
             {% endif %}
         {% endif %}
@@ -93,7 +94,7 @@
             </tr>
             {% if account.jpegPhoto %}
             <tr>
-            <td>Photo</td><td><img src="{% url plac_account_photo account.pk %}" /></td>
+            <td>Photo</td><td><img src="{% url "plac_account_photo" account.pk %}" /></td>
             </tr>
             {% endif %}
             <tr>
@@ -166,13 +167,13 @@
                 <tr class="{% cycle row1,row2 %}">
                     <td><a href="{% bond_url 'plac_group_detail' g.pk account_bond %}">{{ g }}</a></td>
                     {% if perms.placard.change_account and not is_slave %}
-                    <td><a href="{% url plac_account_rm_group account.pk,g.pk %}" class="deletelink">remove</a></td>
+                    <td><a href="{% url "plac_account_rm_group" account.pk g.pk %}" class="deletelink">remove</a></td>
                     {% endif %}
                 </tr>
             {% endfor %}
         </table>
         {% if perms.placard.change_account and not is_slave %}
-            <form method="post" action="{% url plac_account_add_group account.pk %}" class="simple">{% csrf_token %}
+            <form method="post" action="{% url "plac_account_add_group" account.pk %}" class="simple">{% csrf_token %}
                 <fieldset>
                     {{ form }}<input type="submit" value="Add" class="default" />
                 </fieldset>
