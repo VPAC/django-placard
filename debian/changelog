@@ -1,3 +1,11 @@
+django-placard (2.0-1) stable; urgency=low
+
+  * Major rewrite. Uses django-tldap.
+  * Breaks compatibility with all current clients.
+  * Does not create world peace yet.
+
+ -- Brian May <bam@debian.org>  Mon, 11 Feb 2013 11:47:43 +1100
+
 django-placard (1.4-1) stable; urgency=low
 
   * New view to show all users groups
