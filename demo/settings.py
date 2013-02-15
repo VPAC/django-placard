@@ -39,7 +39,7 @@ LDAP = {
         'PASSWORD': 'password',
         'USE_TLS': False,
         'TLS_CA' : None,
-        'LDAP_USER_BASE': 'ou=People, dc=python-ldap,dc=org'
+        'LDAP_ACCOUNT_BASE': 'ou=People, dc=python-ldap,dc=org',
         'LDAP_GROUP_BASE': 'ou=Group, dc=python-ldap,dc=org'
     }
 }
