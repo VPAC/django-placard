@@ -47,8 +47,8 @@ LDAP = {
 PLACARD_MASTER = {
     'NAME': 'OpenLDAP',
     'LDAP': 'default',
-    'ACCOUNT': 'demo.schemas.rfc_account',
-    'GROUP': 'demo.schemas.rfc_group',
+    'ACCOUNT': 'placard.test.schemas.rfc_account',
+    'GROUP': 'placard.test.schemas.rfc_group',
 }
 
 SAMBA_ACCOUNT_RID_BASE = 0

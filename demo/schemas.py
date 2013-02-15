@@ -39,8 +39,8 @@ class rfc_account(
         search_classes = set([ 'posixAccount' ])
         pk = 'uid'
 
-    managed_by = tldap.manager.ManyToOneDescriptor(this_key='manager', linked_cls='demo.schemas.rfc_account', linked_key='dn')
-    manager_of = tldap.manager.OneToManyDescriptor(this_key='dn', linked_cls='demo.schemas.rfc_account', linked_key='manager')
+    managed_by = tldap.manager.ManyToOneDescriptor(this_key='manager', linked_cls='placard.test.schemas.rfc_account', linked_key='dn')
+    manager_of = tldap.manager.OneToManyDescriptor(this_key='dn', linked_cls='placard.test.schemas.rfc_account', linked_key='manager')
     unixHomeDirectory = tldap.manager.AliasDescriptor("homeDirectory")
 
 
