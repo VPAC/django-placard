@@ -314,7 +314,7 @@ class AccountChangePassword(AccountGeneric):
     permissions = [ "placard.change_account_password" ]
 
 
-class UserChangePassword(AccountChangePassword):
+class ChangePassword(AccountChangePassword):
     form_class = placard.forms.LDAPPasswordForm
     permissions = []
 
@@ -323,7 +323,7 @@ class UserChangePassword(AccountChangePassword):
         if request.user.is_authenticated():
             kwargs['account'] = request.user.username
         self.kwargs = kwargs
-        return super(UserChangePassword, self).dispatch(*args, **kwargs)
+        return super(ChangePassword, self).dispatch(*args, **kwargs)
 
 
 class AccountLock(AccountGeneric):

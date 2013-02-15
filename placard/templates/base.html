@@ -37,7 +37,7 @@
                 {% if docsroot %}
                     <a href="{{ docsroot }}">{% trans 'Documentation' %}</a> /
                 {% endif %}
-                <a href="{% url 'plac_user_password' %}">{% trans 'Change password' %}</a> /
+                <a href="{% url 'plac_password' %}">{% trans 'Change password' %}</a> /
                 <a href="{% url 'logout' %}">{% trans 'Log out' %}</a>
                 {% else %}
                 {% load placard_tags %}

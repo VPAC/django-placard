@@ -53,31 +53,31 @@ class UserViewsTests(TestCase):
         self.server.stop()
 
     def test_user_list(self):
-        response = self.client.get(reverse('plac_user_list'))
+        response = self.client.get(reverse('plac_account_list'))
         self.failUnlessEqual(response.status_code, 200)
 
     def test_user_detail(self):
-        response = self.client.get(reverse('plac_user_detail', args=['testuser1']))
+        response = self.client.get(reverse('plac_account_detail', args=['testuser1']))
         self.failUnlessEqual(response.status_code, 200)
-        response = self.client.get(reverse('plac_user_detail', args=['nousers']))
+        response = self.client.get(reverse('plac_account_detail', args=['nousers']))
         self.failUnlessEqual(response.status_code, 404)
 
     def test_delete_view(self):
-        response = self.client.get(reverse('plac_user_delete', args=['testuser1']))
+        response = self.client.get(reverse('plac_account_delete', args=['testuser1']))
         self.failUnlessEqual(response.status_code, 302)
         self.client.login(username='super', password='aq12ws')
-        response = self.client.get(reverse('plac_user_delete', args=['testuser1']))
+        response = self.client.get(reverse('plac_account_delete', args=['testuser1']))
         self.failUnlessEqual(response.status_code, 200)
 
     def test_user_verbose(self):
-        response = self.client.get(reverse('plac_user_detail_verbose', args=['testuser2']))
+        response = self.client.get(reverse('plac_account_detail_verbose', args=['testuser2']))
         self.failUnlessEqual(response.status_code, 302)
         self.client.login(username='super', password='aq12ws')
-        response = self.client.get(reverse('plac_user_detail_verbose', args=['testuser2']))
+        response = self.client.get(reverse('plac_account_detail_verbose', args=['testuser2']))
         self.failUnlessEqual(response.status_code, 200)
 
     def test_lock_user_view(self):
-        response = self.client.get(reverse('plac_user_detail_verbose', args=['testuser2']))
+        response = self.client.get(reverse('plac_account_detail_verbose', args=['testuser2']))
 
     def test_lock_unlock_user_view(self):
         self.failUnlessEqual(bonds.master.accounts().get(uid='testuser2').is_locked(), False)
@@ -126,13 +126,13 @@ class PasswordTests(TestCase):
         self.failUnlessEqual(u.check_password('qwerty'), True)
 
     def test_admin_view(self):
-        response = self.client.get(reverse('plac_change_password', args=['testuser1']))
+        response = self.client.get(reverse('plac_account_password', args=['testuser1']))
         self.failUnlessEqual(response.status_code, 302)
         self.client.login(username='super', password='aq12ws')
-        response = self.client.get(reverse('plac_change_password', args=['testuser1']))
+        response = self.client.get(reverse('plac_account_password', args=['testuser1']))
         self.failUnlessEqual(response.status_code, 200)
 
-        response = self.client.post(reverse('plac_change_password', args=['testuser1']), {'new1': 'aq12ws222', 'new2': 'aq12ws222'})
+        response = self.client.post(reverse('plac_account_password', args=['testuser1']), {'new1': 'aq12ws222', 'new2': 'aq12ws222'})
         self.failUnlessEqual(response.status_code, 302)
 
         u = bonds.master.accounts().get(uid='testuser1')
@@ -146,18 +146,18 @@ class PasswordTests(TestCase):
         luser = bonds.master.accounts().get(uid='testuser2')
         user = User.objects.create_user(luser.uid, luser.mail, 'aq12ws')
 
-        response = self.client.get(reverse('plac_user_password'))
+        response = self.client.get(reverse('plac_password'))
         self.failUnlessEqual(response.status_code, 302)
 
         self.client.login(username='testuser2', password='aq12ws')
 
-        response = self.client.get(reverse('plac_change_password', args=['testuser1']))
+        response = self.client.get(reverse('plac_account_password', args=['testuser1']))
         self.failUnlessEqual(response.status_code, 403)
 
-        response = self.client.get(reverse('plac_user_password'))
+        response = self.client.get(reverse('plac_password'))
         self.failUnlessEqual(response.status_code, 200)
 
-        response = self.client.post(reverse('plac_user_password'), {'old': 'aq12ws', 'new1': 'aq12ws222', 'new2': 'aq12ws222'})
+        response = self.client.post(reverse('plac_password'), {'old': 'aq12ws', 'new1': 'aq12ws222', 'new2': 'aq12ws222'})
         self.failUnlessEqual(response.status_code, 302)
 
         self.failUnlessEqual(u.check_password('aq12ws222'), True)

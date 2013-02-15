@@ -36,7 +36,7 @@ urlpatterns = patterns('',
     url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout'),
 
     url(r'^search/$', views.search, name='plac_search'),
-    url(r'^password/$', views.UserChangePassword.as_view(), name='plac_account_password'),
+    url(r'^password/$', views.ChangePassword.as_view(), name='plac_password'),
 
     url(r'^accounts/', include(placard.account_urls)),
     url(r'^groups/', include(placard.group_urls)),
