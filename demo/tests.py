@@ -52,11 +52,11 @@ class UserViewsTests(TestCase):
     def tearDown(self):
         self.server.stop()
 
-    def test_user_list(self):
+    def test_account_list(self):
         response = self.client.get(reverse('plac_account_list'))
         self.failUnlessEqual(response.status_code, 200)
 
-    def test_user_detail(self):
+    def test_account_detail(self):
         response = self.client.get(reverse('plac_account_detail', args=['testuser1']))
         self.failUnlessEqual(response.status_code, 200)
         response = self.client.get(reverse('plac_account_detail', args=['nousers']))
@@ -69,17 +69,17 @@ class UserViewsTests(TestCase):
         response = self.client.get(reverse('plac_account_delete', args=['testuser1']))
         self.failUnlessEqual(response.status_code, 200)
 
-    def test_user_verbose(self):
+    def test_account_verbose(self):
         response = self.client.get(reverse('plac_account_detail_verbose', args=['testuser2']))
         self.failUnlessEqual(response.status_code, 302)
         self.client.login(username='super', password='aq12ws')
         response = self.client.get(reverse('plac_account_detail_verbose', args=['testuser2']))
         self.failUnlessEqual(response.status_code, 200)
 
-    def test_lock_user_view(self):
+    def test_lock_account_view(self):
         response = self.client.get(reverse('plac_account_detail_verbose', args=['testuser2']))
 
-    def test_lock_unlock_user_view(self):
+    def test_lock_unlock_account_view(self):
         self.failUnlessEqual(bonds.master.accounts().get(uid='testuser2').is_locked(), False)
 
         self.client.login(username='super', password='aq12ws')
@@ -138,7 +138,7 @@ class PasswordTests(TestCase):
         u = bonds.master.accounts().get(uid='testuser1')
         self.failUnlessEqual(u.check_password('aq12ws222'), True)
 
-    def test_user_view(self):
+    def test_account_view(self):
         u = bonds.master.accounts().get(uid='testuser2')
         u.change_password('aq12ws')
         u.save()
