@@ -27,7 +27,7 @@ import unittest
 from tldap.test import slapd
 from tldap.test.data import test_ldif
 
-import placard.bonds as bonds
+import placard.ldap_bonds as bonds
 
 class UserViewsTests(TestCase):
 
@@ -66,7 +66,7 @@ class UserViewsTests(TestCase):
 
     def test_account_verbose(self):
         response = self.client.get(reverse('plac_account_detail_verbose', args=['testuser2']))
-        self.failUnlessEqual(response.status_code, 302)
+        self.failUnlessEqual(response.status_code, 200)
         self.client.login(username='super', password='aq12ws')
         response = self.client.get(reverse('plac_account_detail_verbose', args=['testuser2']))
         self.failUnlessEqual(response.status_code, 200)
