@@ -53,3 +53,5 @@ PLACARD_MASTER = {
 
 SAMBA_ACCOUNT_RID_BASE = 0
 SAMBA_GROUP_RID_BASE = 0
+
+SECRET_KEY = '5hvhpe6gv2t5x4$3dtq(w2v#vg@)sx4p3r_@wv%l41g!stslc*'
