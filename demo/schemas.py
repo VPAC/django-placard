@@ -57,35 +57,3 @@ class rfc_group(rfc.posixGroup, common.baseMixin):
     primary_accounts = tldap.manager.OneToManyDescriptor(this_key='gidNumber', linked_cls=rfc_account, linked_key='gidNumber', related_name="primary_group")
     secondary_accounts = tldap.manager.ManyToManyDescriptor(this_key='memberUid', linked_cls=rfc_account, linked_key='uid', linked_is_p=False, related_name="secondary_groups")
 
-######
-# ad #
-######
-
-class ad_account(
-        ad.person, rfc.organizationalPerson, rfc.inetOrgPerson, ad.user,
-        ad.posixAccount,
-        common.baseMixin):
-    mixin_list = [ common.personMixin, common.accountMixin, adUserMixin ]
-
-    class Meta:
-        base_dn_setting = "LDAP_ACCOUNT_BASE"
-        object_classes = set([ 'top' ])
-        search_classes = set([ 'user' ])
-        pk = 'cn'
-
-    managed_by = tldap.manager.ManyToOneDescriptor(this_key='manager', linked_cls='demo.schemas.ad_account', linked_key='dn')
-    manager_of = tldap.manager.OneToManyDescriptor(this_key='dn', linked_cls='demo.schemas.ad_account', linked_key='manager')
-
-
-class ad_group(rfc.posixGroup, ad.group, common.baseMixin):
-    mixin_list = [ common.groupMixin, adGroupMixin ]
-
-    class Meta:
-        base_dn_setting = "LDAP_GROUP_BASE"
-        object_classes = set([ 'top' ])
-        search_classes = set([ 'group' ])
-        pk = 'cn'
-
-    # accounts
-    primary_accounts = tldap.manager.AdPrimaryAccountLinkDescriptor(linked_cls=ad_account, related_name="primary_group", domain_sid=django.conf.settings.AD_DOMAIN_SID)
-    secondary_accounts = tldap.manager.AdAccountLinkDescriptor(linked_cls=ad_account, related_name="secondary_groups")
