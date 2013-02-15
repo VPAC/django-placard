@@ -322,6 +322,7 @@ class UserChangePassword(AccountChangePassword):
         request = args[0]
         if request.user.is_authenticated():
             kwargs['account'] = request.user.username
+        self.kwargs = kwargs
         return super(UserChangePassword, self).dispatch(*args, **kwargs)
 
 
