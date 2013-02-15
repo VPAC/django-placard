@@ -18,9 +18,7 @@
 # along with django-placard  If not, see <http://www.gnu.org/licenses/>.
 
 
-from django.test.client import Client
 from django.core.urlresolvers import reverse
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.test import TestCase
 
@@ -31,15 +29,12 @@ from tldap.test.data import test_ldif
 
 import placard.bonds as bonds
 
-import ldap
-
 class UserViewsTests(TestCase):
 
     def setUp(self):
         server = slapd.Slapd()
         server.set_port(38911)
         server.start()
-        base = server.get_dn_suffix()
 
         server.ldapadd("\n".join(test_ldif)+"\n")
 
@@ -77,17 +72,17 @@ class UserViewsTests(TestCase):
         self.failUnlessEqual(response.status_code, 200)
 
     def test_lock_account_view(self):
-        response = self.client.get(reverse('plac_account_detail_verbose', args=['testuser2']))
+        self.client.get(reverse('plac_account_detail_verbose', args=['testuser2']))
 
     def test_lock_unlock_account_view(self):
         self.failUnlessEqual(bonds.master.accounts().get(uid='testuser2').is_locked(), False)
 
         self.client.login(username='super', password='aq12ws')
-        response = self.client.post(reverse('plac_lock_user', args=['testuser2']))
+        self.client.post(reverse('plac_lock_user', args=['testuser2']))
 
         self.failUnlessEqual(bonds.master.accounts().get(uid='testuser2').is_locked(), True)
 
-        response = self.client.post(reverse('plac_unlock_user', args=['testuser2']))
+        self.client.post(reverse('plac_unlock_user', args=['testuser2']))
 
         self.failUnlessEqual(bonds.master.accounts().get(uid='testuser2').is_locked(), False)
 
@@ -99,7 +94,6 @@ class PasswordTests(TestCase):
         server = slapd.Slapd()
         server.set_port(38911)
         server.start()
-        base = server.get_dn_suffix()
 
         server.ldapadd("\n".join(test_ldif)+"\n")
 
@@ -144,7 +138,7 @@ class PasswordTests(TestCase):
         u.save()
 
         luser = bonds.master.accounts().get(uid='testuser2')
-        user = User.objects.create_user(luser.uid, luser.mail, 'aq12ws')
+        User.objects.create_user(luser.uid, luser.mail, 'aq12ws')
 
         response = self.client.get(reverse('plac_password'))
         self.failUnlessEqual(response.status_code, 302)
