@@ -1,0 +1,15 @@
+{% extends "main.html" %}
+{% load url from future %}
+{% load i18n %}
+
+{% block title %}{% trans 'Page not found' %}{% endblock %}
+
+{% block content %}
+<div id="content-main">
+
+<h2>{% trans 'Page not found' %}</h2>
+
+<p>{% trans "We're sorry, but the requested page could not be found." %}</p>
+
+</div>
+{% endblock %}
