@@ -21,8 +21,6 @@ from django import template
 from django.core.urlresolvers import reverse
 import re
 
-import placard.ldap_bonds
-
 register = template.Library()
 
 @register.simple_tag
