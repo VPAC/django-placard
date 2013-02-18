@@ -1,3 +1,10 @@
+django-placard (2.0.1-2) stable; urgency=low
+
+  * Fix tests.
+  * Fix change password operation.
+
+ -- Brian May <bam@debian.org>  Mon, 18 Feb 2013 11:56:11 +1100
+
 django-placard (2.0-1) stable; urgency=low
 
   * Major rewrite. Uses django-tldap.
