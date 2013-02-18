@@ -1,4 +1,4 @@
-django-placard (2.0.1-2) stable; urgency=low
+django-placard (2.0.1-1) stable; urgency=low
 
   * Fix tests.
   * Fix change password operation.
