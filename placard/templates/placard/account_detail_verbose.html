@@ -31,7 +31,7 @@
         <table>
             {% for i,j in account.get_fields %}
                 <tr>
-                    {% if j %}
+                    {% if i != 'userPassword' and j %}
                     <td>{{ i }}</td><td>{{ j }}</td>
                     {% endif %}
                </tr>
