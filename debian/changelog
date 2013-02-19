@@ -1,3 +1,9 @@
+django-placard (2.0.2-1) stable; urgency=low
+
+  * Hide user's password in verbose mode.
+
+ -- Brian May <bam@debian.org>  Tue, 19 Feb 2013 12:15:07 +1100
+
 django-placard (2.0.1-1) stable; urgency=low
 
   * Fix tests.

@@ -16,7 +16,7 @@
 # along with django-placard  If not, see <http://www.gnu.org/licenses/>.
 
 
-VERSION = (2, 0, 1, 'final', 0)
+VERSION = (2, 0, 2, 'final', 0)
 
 
 def get_version():
