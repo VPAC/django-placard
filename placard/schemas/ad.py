@@ -74,6 +74,6 @@ class adGroupMixin(object):
         return u"ADG:%s"%(self.displayName or self.cn)
 
     @classmethod
-    def pre_save(cls, self, using):
+    def pre_save(cls, self):
         if self.displayName is None:
             self.displayName = self.cn
