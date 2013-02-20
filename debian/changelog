@@ -1,3 +1,10 @@
+django-placard (2.0.3-1) stable; urgency=low
+
+  * Fix CSRF.
+  * Fix too many arguments in ad pre_save.
+
+ -- Brian May <bam@debian.org>  Wed, 20 Feb 2013 11:38:21 +1100
+
 django-placard (2.0.2-1) stable; urgency=low
 
   * Hide user's password in verbose mode.
