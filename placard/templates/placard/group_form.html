@@ -20,7 +20,7 @@
     <p class="errornote">Please correct the error{{ form.errors|pluralize }} below.</p>
 {% endif %}
 
-<form method="post" action="." class="module" enctype="multipart/form-data">
+<form method="post" action="." class="module" enctype="multipart/form-data">{% csrf_token %}
     <h2> {% if not created %}Edit {{ group }}{% else %}Create group{% endif %} </h2>
 
     <fieldset class="aligned">
