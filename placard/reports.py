@@ -27,7 +27,8 @@ from reportlab.lib import colors
 
 import placard.views
 
-PAGE_WIDTH = portrait(A4)[0]    
+PAGE_WIDTH = portrait(A4)[0]
+
 
 class PdfResponseMixin(placard.views.AccountList):
     response_class = HttpResponse
@@ -42,6 +43,7 @@ class PdfResponseMixin(placard.views.AccountList):
             self.convert_context_to_pdf(context),
             **response_kwargs
         )
+
 
 class PdfAccountList(PdfResponseMixin, placard.views.AccountList):
 #    fname = "phone_list.pdf"
@@ -71,7 +73,7 @@ class PdfAccountList(PdfResponseMixin, placard.views.AccountList):
             canvas.drawString(50, 30, defaultfilters.date(today, "j, F Y"))
             canvas.restoreState()
 
-        data_dic = [[str(x.cn), str(getattr(x, 'telephoneNumber', '')), str(getattr(x, 'mobile', '')), str(getattr(x, 'mail', '')), str(getattr(x, 'l', ''))] for x in account_list ]
+        data_dic = [[str(x.cn), str(getattr(x, 'telephoneNumber', '')), str(getattr(x, 'mobile', '')), str(getattr(x, 'mail', '')), str(getattr(x, 'l', ''))] for x in account_list]
 
         data_list = list(data_dic)
 
@@ -84,17 +86,17 @@ class PdfAccountList(PdfResponseMixin, placard.views.AccountList):
         table_style = TableStyle(
             [('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
              ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
-             ('LINEABOVE',(0,0),(-1,0),1,colors.black),
-             ('LINEBELOW',(0,0),(-1,0),1,colors.black),
-             ('LINEBELOW',(0,-1),(-1,-1),1,colors.black),
-             ('LINEBEFORE',(0,0),(0,-1),1,colors.black),
-             ('LINEAFTER',(-1,0),(-1,-1),1,colors.black),
+             ('LINEABOVE', (0, 0), (-1, 0), 1, colors.black),
+             ('LINEBELOW', (0, 0), (-1, 0), 1, colors.black),
+             ('LINEBELOW', (0, -1), (-1, -1), 1, colors.black),
+             ('LINEBEFORE', (0, 0), (0, -1), 1, colors.black),
+             ('LINEAFTER', (-1, 0), (-1, -1), 1, colors.black),
              ]
         )
 
         # build the tables per unit
         # table
-        item_list = [[ 'Name', 'Telephone', 'Mobile', 'Email', 'Location']]
+        item_list = [['Name', 'Telephone', 'Mobile', 'Email', 'Location']]
         item_list.extend(data_list)
         t = Table(item_list)
         t.hAlign = 'LEFT'

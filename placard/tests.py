@@ -29,6 +29,7 @@ from tldap.test.data import test_ldif
 
 import placard.ldap_bonds as bonds
 
+
 class UserViewsTests(TestCase):
 
     def setUp(self):

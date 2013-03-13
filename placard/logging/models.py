@@ -1,16 +1,19 @@
 from django.contrib.auth.models import User
 from django.db import models
 
+
 class LogEntryManager(models.Manager):
     def log_action(self, user, obj, action, change_message):
-        assert action == 'A' or action == 'C' or action =='D' or action == 'T'
+        assert action == 'A' or action == 'C' or action == 'D' or action == 'T'
 
         e = self.model(
             user=user,
-            object_dn=obj.dn, object_pk=obj.pk, object_type=type(obj).__name__, object_repr=unicode(obj),
+            object_dn=obj.dn, object_pk=obj.pk,
+            object_type=type(obj).__name__, object_repr=unicode(obj),
             action=action, change_message=change_message)
 
         e.save()
+
 
 class LogEntry(models.Model):
     action_time = models.DateTimeField(auto_now=True)
@@ -40,5 +43,3 @@ class LogEntry(models.Model):
 
     def is_task(self):
         return self.action == 'T'
-
-

@@ -28,6 +28,7 @@ import placard.util
 
 import ajax_select.fields
 
+
 class AutoCompleteSelectField(ajax_select.fields.AutoCompleteSelectField):
     pass
 
@@ -88,7 +89,7 @@ class LDAPForm(forms.Form):
         if not self.created:
             self.signal_edit.send(self.object, user=self.user, data=self.cleaned_data)
 
-        for _, obj in [ self.master_obj ] + self.slave_objs:
+        for _, obj in [self.master_obj] + self.slave_objs:
             field_names = obj._meta.get_all_field_names()
             for name in list(self.fields):
                 if name not in field_names:
@@ -112,11 +113,11 @@ class LDAPAccountForm(AccountForm):
     givenName = fields.CharField(label='First Name')
     sn = fields.CharField(label='Last Name')
     telephoneNumber = fields.CharField(label="Phone", required=False)
-    description = fields.CharField(widget=forms.Textarea(attrs={'class':'vLargeTextField', 'rows':10, 'cols':40 }), required=False)
+    description = fields.CharField(widget=forms.Textarea(attrs={'class': 'vLargeTextField', 'rows': 10, 'cols': 40}), required=False)
     facsimileTelephoneNumber = fields.CharField(label="Fax", required=False)
     mobile = fields.CharField(label="Mobile", required=False)
     jpegPhoto = forms.ImageField(label='Photo', required=False)
-    title = fields.CharField(widget=forms.TextInput(attrs={ 'size':60 }))
+    title = fields.CharField(widget=forms.TextInput(attrs={'size': 60}))
     managed_by = AutoCompleteSelectField('account', required=False)
     l = fields.CharField(label='Location', required=False)
     loginShell = fields.CharField(label='Login Shell', required=False)
@@ -131,7 +132,7 @@ class LDAPAccountForm(AccountForm):
             all_groups = self.bond.groups().none()
             for cn in self.primary_groups:
                 all_groups = all_groups | self.bond.groups().filter(cn=cn)
-            self.fields['primary_group'] = forms.ChoiceField(choices=[('','None')]+[(x.cn, x.cn) for x in all_groups], label="Primary Group")
+            self.fields['primary_group'] = forms.ChoiceField(choices=[('', 'None')]+[(x.cn, x.cn) for x in all_groups], label="Primary Group")
         else:
             self.fields['primary_group'] = AutoCompleteSelectField('group', required=True)
 
@@ -196,11 +197,11 @@ class LDAPHrAccountForm(AccountForm):
     givenName = fields.CharField(label='First Name')
     sn = fields.CharField(label='Last Name')
     telephoneNumber = fields.CharField(label="Phone", required=False)
-    description = fields.CharField(widget=forms.Textarea(attrs={'class':'vLargeTextField', 'rows':10, 'cols':40 }), required=False)
+    description = fields.CharField(widget=forms.Textarea(attrs={'class': 'vLargeTextField', 'rows': 10, 'cols': 40}), required=False)
     facsimileTelephoneNumber = fields.CharField(label="Fax", required=False)
     mobile = fields.CharField(label="Mobile", required=False)
     jpegPhoto = forms.ImageField(label='Photo', required=False)
-    title = fields.CharField(widget=forms.TextInput(attrs={ 'size':60 }))
+    title = fields.CharField(widget=forms.TextInput(attrs={'size': 60}))
     managed_by = AutoCompleteSelectField('account', required=False)
     l = fields.CharField(label='Location', required=False)
 
@@ -348,8 +349,8 @@ class LDAPPasswordForm(LDAPAdminPasswordForm):
 
 class LDAPGroupForm(GroupForm):
     """ Add/modify a group form"""
-    displayName = fields.CharField('Display name', required=False, widget=forms.TextInput(attrs={ 'size':60 }))
-    description = fields.CharField('Description', required=False, widget=forms.TextInput(attrs={ 'size':60 }))
+    displayName = fields.CharField('Display name', required=False, widget=forms.TextInput(attrs={'size': 60}))
+    description = fields.CharField('Description', required=False, widget=forms.TextInput(attrs={'size': 60}))
     cn = fields.CharField(label='CN')
 
     signal_add = placard.signals.group_add
@@ -508,8 +509,8 @@ class RenameGroupForm(GroupForm):
 
 
 class EmailForm(LDAPForm):
-    subject = fields.CharField(widget=forms.TextInput(attrs={ 'size':60 }))
-    body = fields.CharField(widget=forms.Textarea(attrs={'class':'vLargeTextField', 'rows':10, 'cols':40 }))
+    subject = fields.CharField(widget=forms.TextInput(attrs={'size': 60}))
+    body = fields.CharField(widget=forms.Textarea(attrs={'class': 'vLargeTextField', 'rows': 10, 'cols': 40}))
 
     def get_data(self):
         return self.cleaned_data['subject'], self.cleaned_data['body']
@@ -531,9 +532,9 @@ class EmailForm(LDAPForm):
         for member in members:
             if member.mail is not None:
                 ctx = django.template.Context({
-                        'first_name': member.givenName,
-                        'last_name': member.sn,
-                        })
+                    'first_name': member.givenName,
+                    'last_name': member.sn,
+                })
                 print ctx
                 subject = django.template.Template(subject_t).render(ctx)
                 body = django.template.Template(body_t).render(ctx)
@@ -558,4 +559,3 @@ class DeleteGroupForm(GroupForm):
             obj.delete()
 
         return None
-

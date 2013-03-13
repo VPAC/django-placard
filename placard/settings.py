@@ -26,8 +26,8 @@ MIDDLEWARE_CLASSES = (
 STATIC_URL = '/media/'
 
 AJAX_LOOKUP_CHANNELS = {
-    'account'  : ( 'placard.lookups', 'AccountLookup' ),
-    'group'  : ( 'placard.lookups', 'GroupLookup' )
+    'account': ('placard.lookups', 'AccountLookup'),
+    'group': ('placard.lookups', 'GroupLookup')
 }
 
 AJAX_SELECT_BOOTSTRAP = True

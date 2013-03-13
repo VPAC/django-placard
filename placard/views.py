@@ -27,6 +27,7 @@ from django.http import Http404
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
 
+
 def index(request):
 
     return render_to_response('placard/index.html', locals(), context_instance=RequestContext(request))
@@ -39,7 +40,6 @@ def search(request):
         q = " ".join(term_list)
     else:
         q = ""
-
 
     if q != "":
 
@@ -55,7 +55,6 @@ def search(request):
 
         account_list = []
         group_list = []
-
 
     kwargs = {
         'q': q,
@@ -145,14 +144,13 @@ class FormView(PermissionMixin, django.views.generic.FormView):
         return kwargs
 
 
-
 class AccountMixin(object):
     def get_slave_objs(self):
         objs = []
         for slave_id, bond in bonds.slaves.iteritems():
             try:
                 obj = bond.accounts().get(pk=self.object.pk)
-                objs.append( (bond, obj) )
+                objs.append((bond, obj))
             except bond.AccountDoesNotExist:
                 pass
         return objs
@@ -162,8 +160,9 @@ class AccountMixin(object):
         for slave_id, bond in bonds.slaves.iteritems():
             obj = bond.create_account()
             obj.set_defaults()
-            objs.append( (bond, obj) )
+            objs.append((bond, obj))
         return objs
+
 
 class AccountList(ListView, AccountMixin):
     template_name = "placard/account_list.html"
@@ -178,14 +177,14 @@ class AccountList(ListView, AccountMixin):
             try:
                 group = bonds.master.groups().get(cn=request.GET['group'])
                 account_list = account_list.filter(tldap.Q(primary_group=group) | tldap.Q(secondary_groups=group))
-            except  bonds.master.GroupDoesNotExist:
+            except bonds.master.GroupDoesNotExist:
                 pass
 
         if request.GET.has_key('exclude'):
             try:
                 group = bonds.master.groups().get(cn=request.GET['exclude'])
                 account_list = account_list.filter(~(tldap.Q(primary_group=group) | tldap.Q(secondary_groups=group)))
-            except  bonds.master.GroupDoesNotExist:
+            except bonds.master.GroupDoesNotExist:
                 pass
 
         return account_list
@@ -275,19 +274,19 @@ class AccountGeneric(FormView, AccountMixin):
         return super(AccountGeneric, self).form_valid(form)
 
     def get_success_url(self):
-        return reverse("plac_account_detail",kwargs={ 'account': self.object.pk })
+        return reverse("plac_account_detail", kwargs={'account': self.object.pk})
 
 
 class AccountAdd(AccountGeneric):
     template_name = "placard/account_form.html"
     form_class = placard.forms.LDAPAddAccountForm
-    permissions = [ 'placard.add_account' ]
+    permissions = ['placard.add_account']
 
 
 class AccountEdit(AccountGeneric):
     template_name = "placard/account_form.html"
     context_object_name = "account"
-    permissions = [ 'placard.change_account', 'placard.hr_change_account' ]
+    permissions = ['placard.change_account', 'placard.hr_change_account']
 
     def get_form_class(self):
         request = self.request
@@ -311,7 +310,7 @@ class AccountChangePassword(AccountGeneric):
     template_name = "placard/password_form.html"
     form_class = placard.forms.LDAPAdminPasswordForm
     login_required = True
-    permissions = [ "placard.change_account_password" ]
+    permissions = ["placard.change_account_password"]
 
 
 class ChangePassword(AccountChangePassword):
@@ -329,25 +328,25 @@ class ChangePassword(AccountChangePassword):
 class AccountLock(AccountGeneric):
     template_name = "placard/account_confirm_lock.html"
     form_class = placard.forms.LockAccountForm
-    permissions = [ 'placard.lock_account' ]
+    permissions = ['placard.lock_account']
 
 
 class AccountUnlock(AccountGeneric):
     template_name = "placard/account_confirm_unlock.html"
     form_class = placard.forms.UnlockAccountForm
-    permissions = [ 'placard.lock_account' ]
+    permissions = ['placard.lock_account']
 
 
 class AccountAddGroup(AccountGeneric):
     template_name = "placard/group_add_member_form.html"
     form_class = placard.forms.AddGroupForm
-    permissions = [ 'placard.change_account' ]
+    permissions = ['placard.change_account']
 
 
 class AccountRemoveGroup(AccountGeneric):
     template_name = "placard/remove_member.html"
     form_class = placard.forms.RemoveGroupForm
-    permissions = [ 'placard.change_account' ]
+    permissions = ['placard.change_account']
 
     def get_context_data(self, **kwargs):
         context = super(AccountRemoveGroup, self).get_context_data(**kwargs)
@@ -364,7 +363,7 @@ class AccountRemoveGroup(AccountGeneric):
 class AccountDelete(AccountGeneric):
     template_name = "placard/account_confirm_delete.html"
     form_class = placard.forms.DeleteAccountForm
-    permissions = [ 'placard.delete_account' ]
+    permissions = ['placard.delete_account']
 
     def get_success_url(self):
         return reverse("plac_account_list")
@@ -376,7 +375,7 @@ class GroupMixin(object):
         for slave_id, bond in bonds.slaves.iteritems():
             try:
                 obj = bond.groups().get(pk=self.object.pk)
-                objs.append( (bond, obj) )
+                objs.append((bond, obj))
             except bond.GroupDoesNotExist:
                 pass
         return objs
@@ -386,7 +385,7 @@ class GroupMixin(object):
         for slave_id, bond in bonds.slaves.iteritems():
             obj = bond.create_group()
             obj.set_defaults()
-            objs.append( (bond, obj) )
+            objs.append((bond, obj))
         return objs
 
 
@@ -396,6 +395,7 @@ class GroupList(ListView, GroupMixin):
 
     def get_queryset(self):
         return bonds.master.groups()
+
 
 class GroupDetail(DetailView, GroupMixin):
     template_name = "placard/group_detail.html"
@@ -465,7 +465,7 @@ class GroupGeneric(FormView, GroupMixin):
         return super(GroupGeneric, self).form_valid(form)
 
     def get_success_url(self):
-        return reverse("plac_group_detail",kwargs={ 'group': self.object.cn })
+        return reverse("plac_group_detail", kwargs={'group': self.object.cn})
 
 
 class GroupEdit(GroupGeneric):
@@ -474,22 +474,22 @@ class GroupEdit(GroupGeneric):
 
     def check_permissions(self, request, kwargs):
         if 'group' not in kwargs:
-            self.permissions = [ 'placard.add_group' ]
+            self.permissions = ['placard.add_group']
         else:
-            self.permissions = [ 'placard.change_group' ]
+            self.permissions = ['placard.change_group']
         return super(GroupEdit, self).check_permissions(request, kwargs)
 
 
 class GroupAddMember(GroupGeneric):
     template_name = "placard/group_add_member_form.html"
     form_class = placard.forms.AddMemberForm
-    permissions = [ 'placard.change_group' ]
+    permissions = ['placard.change_group']
 
 
 class GroupRemoveMember(GroupGeneric):
     template_name = "placard/remove_member.html"
     form_class = placard.forms.RemoveMemberForm
-    permissions = [ 'placard.change_group' ]
+    permissions = ['placard.change_group']
 
     def get_context_data(self, **kwargs):
         context = super(GroupRemoveMember, self).get_context_data(**kwargs)
@@ -506,21 +506,19 @@ class GroupRemoveMember(GroupGeneric):
 class GroupRename(GroupGeneric):
     template_name = "placard/group_rename.html"
     form_class = placard.forms.RenameGroupForm
-    permissions = [ 'placard.rename_group' ]
+    permissions = ['placard.rename_group']
 
 
 class GroupEmail(GroupGeneric):
     template_name = "placard/send_email_form.html"
     form_class = placard.forms.EmailForm
-    permissions = [ 'placard.email_group' ]
+    permissions = ['placard.email_group']
 
 
 class GroupDelete(GroupGeneric):
     template_name = "placard/group_confirm_delete.html"
     form_class = placard.forms.DeleteGroupForm
-    permissions = [ 'placard.delete_group' ]
+    permissions = ['placard.delete_group']
 
     def get_success_url(self):
         return reverse("plac_group_list")
-
-

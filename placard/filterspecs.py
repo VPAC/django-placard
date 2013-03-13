@@ -21,7 +21,7 @@ from operator import itemgetter
 
 
 def get_query_string(qs):
-    qd = QueryDict("",mutable=True)
+    qd = QueryDict("", mutable=True)
     for k, v in qs.items():
         qd[k] = v
     return "?" + qd.urlencode()
@@ -41,7 +41,6 @@ class Filter(object):
         self.selected = None
         if request.GET.has_key(name):
             self.selected = request.GET[name]
-
 
     def output(self, qs):
 
@@ -94,4 +93,3 @@ class FilterBar(object):
 
     def __str__(self):
         return mark_safe(self.output())
-

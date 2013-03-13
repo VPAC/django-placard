@@ -20,13 +20,15 @@ from placard.logging.models import LogEntry
 
 log = LogEntry.objects.log_action
 
+
 def account_add(sender, user, **kwargs):
     account = sender
-    log(user, account, "A", u"Added account" )
+    log(user, account, "A", u"Added account")
+
 
 def account_edit(sender, user, data, **kwargs):
     account = sender
-    for key,value in data.iteritems():
+    for key, value in data.iteritems():
         old_value = getattr(account, key)
         if key == "primary_group" and old_value is not None:
             old_value = old_value.get_obj()
@@ -34,67 +36,78 @@ def account_edit(sender, user, data, **kwargs):
             old_value = old_value.get_obj()
 
         if old_value != value:
-            log(user, account, "C", u"Changed '%s' from '%s' to '%s'" % (key, old_value, value) )
+            log(user, account, "C", u"Changed '%s' from '%s' to '%s'" % (key, old_value, value))
             if key == "primary_group":
                 if old_value is not None:
-                    log(user, old_value, "C", u"Changed '%s' for '%s' from '%s' to '%s'" % (key, account, old_value, value) )
+                    log(user, old_value, "C", u"Changed '%s' for '%s' from '%s' to '%s'" % (key, account, old_value, value))
                 if value is not None:
-                    log(user, value, "C", u"Changed '%s' for '%s' from '%s' to '%s'" % (key, account, old_value, value) )
+                    log(user, value, "C", u"Changed '%s' for '%s' from '%s' to '%s'" % (key, account, old_value, value))
             if key == "managed_by":
                 if old_value is not None:
-                    log(user, old_value, "C", u"Changed '%s' for '%s' from '%s' to '%s'" % (key, account, old_value, value) )
+                    log(user, old_value, "C", u"Changed '%s' for '%s' from '%s' to '%s'" % (key, account, old_value, value))
                 if value is not None:
-                    log(user, value, "C", u"Changed '%s' for '%s' from '%s' to '%s'" % (key, account, old_value, value) )
+                    log(user, value, "C", u"Changed '%s' for '%s' from '%s' to '%s'" % (key, account, old_value, value))
+
 
 def account_password_change(sender, user, **kwargs):
     account = sender
-    log(user, account, "C", u"Changed password" )
+    log(user, account, "C", u"Changed password")
+
 
 def account_lock(sender, user, **kwargs):
     account = sender
-    log(user, account, "C", u"Locked account" )
+    log(user, account, "C", u"Locked account")
+
 
 def account_unlock(sender, user, **kwargs):
     account = sender
-    log(user, account, "C", u"Unlocked account" )
+    log(user, account, "C", u"Unlocked account")
+
 
 def account_delete(sender, user, **kwargs):
     account = sender
-    log(user, account, "D", u"Deleted account" )
+    log(user, account, "D", u"Deleted account")
+
 
 def group_add(sender, user, **kwargs):
     group = sender
-    log(user, group, "A", u"Added group" )
+    log(user, group, "A", u"Added group")
+
 
 def group_edit(sender, user, data, **kwargs):
     group = sender
-    for key,value in data.iteritems():
+    for key, value in data.iteritems():
         old_value = getattr(group, key)
         if old_value != value:
-            log(user, group, "C", u"Changed '%s' from '%s' to '%s'" % (key, old_value, value) )
+            log(user, group, "C", u"Changed '%s' from '%s' to '%s'" % (key, old_value, value))
+
 
 def group_add_member(sender, user, account, **kwargs):
     group = sender
-    log(user, account, "C", u"Added to group '%s'" % group )
-    log(user, group, "C", u"Added '%s' to group" % account )
+    log(user, account, "C", u"Added to group '%s'" % group)
+    log(user, group, "C", u"Added '%s' to group" % account)
+
 
 def group_remove_member(sender, user, account, **kwargs):
     group = sender
-    log(user, account, "C", u"Removed from group '%s'" % group )
-    log(user, group, "C", u"Removed '%s' from group" % account )
+    log(user, account, "C", u"Removed from group '%s'" % group)
+    log(user, group, "C", u"Removed '%s' from group" % account)
+
 
 def group_delete(sender, user, **kwargs):
     group = sender
-    log(user, group, "D", u"Deleted group" )
+    log(user, group, "D", u"Deleted group")
+
 
 def group_rename(sender, user, old_dn, old_pk, **kwargs):
     group = sender
     LogEntry.objects.filter(object_dn=old_dn).update(object_dn=group.dn, object_pk=group.pk)
-    log(user, group, "C", u"Renamed group from '%s' to '%s'" % (old_pk, group.pk) )
+    log(user, group, "C", u"Renamed group from '%s' to '%s'" % (old_pk, group.pk))
+
 
 def group_email(sender, user, subject, body, **kwargs):
     group = sender
-    log(user, group, "T", u"E-Mailed group" )
+    log(user, group, "T", u"E-Mailed group")
 
 
 def connect_all():

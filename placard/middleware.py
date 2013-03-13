@@ -24,16 +24,17 @@ from django.contrib import auth
 import placard.ldap_bonds as bonds
 import tldap.transaction
 
+
 class LDAPRemoteUserMiddleware(RemoteUserMiddleware):
     """
     Middleware for utilizing web-server-provided authentication.
-    
-    If request.user is not authenticated, then this middleware attempts to
-    authenticate the username passed in the ``REMOTE_USER`` request header.
-    If authentication is successful, the user is automatically logged in to
-    persist the user in the session. 
 
-    If the user doesn't exist the middleware will create a new User object 
+    If request.user is not authenticated, then this middleware attempts to
+    authenticate the username passed in the ``REMOTE_USER`` request header.  If
+    authentication is successful, the user is automatically logged in to
+    persist the user in the session.
+
+    If the user doesn't exist the middleware will create a new User object
     based on information pulled from LDAP
     """
 
@@ -70,7 +71,7 @@ class LDAPRemoteUserMiddleware(RemoteUserMiddleware):
             user.first_name = ldap_user.givenName
             user.last_name = ldap_user.sn
             user.save()
-    
+
         # User is valid.  Set request.user and persist user in the session
         # by logging the user in.
         user.backend = 'placard.backends.LDAPBackend'

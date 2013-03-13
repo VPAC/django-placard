@@ -19,6 +19,7 @@ import django.conf
 import django.utils.importlib
 from django.http import Http404
 
+
 def _lookup(cls):
     if isinstance(cls, str):
         module_name, _, name = cls.rpartition(".")
@@ -28,6 +29,7 @@ def _lookup(cls):
         except AttributeError:
             raise AttributeError("%s reference cannot be found" % cls)
     return(cls)
+
 
 class bond(object):
     def __init__(self, settings, slave_id):
@@ -45,11 +47,11 @@ class bond(object):
 
     def get_account_or_404(self, *args, **kwargs):
         """
-        Uses get() to return a account, or raises a Http404 exception if the account
-        does not exist.
+        Uses get() to return a account, or raises a Http404 exception if the
+        account does not exist.
 
-        Note: Like with get(), an MultipleObjectsReturned will be raised if more than one
-        account is found.
+        Note: Like with get(), an MultipleObjectsReturned will be raised if
+        more than one account is found.
         """
         queryset = self._account.objects.using(self._using)
         try:
@@ -59,11 +61,11 @@ class bond(object):
 
     def get_group_or_404(self, *args, **kwargs):
         """
-        Uses get() to return a group, or raises a Http404 exception if the group
-        does not exist.
+        Uses get() to return a group, or raises a Http404 exception if the
+        group does not exist.
 
-        Note: Like with get(), an MultipleObjectsReturned will be raised if more than one
-        group is found.
+        Note: Like with get(), an MultipleObjectsReturned will be raised if
+        more than one group is found.
         """
         queryset = self._group.objects.using(self._using)
         try:

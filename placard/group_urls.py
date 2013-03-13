@@ -19,7 +19,8 @@ from django.conf.urls import patterns, url
 
 import placard.views as views
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
     url(r'^$', views.GroupList.as_view(), name='plac_group_list'),
     url(r'^add/$', views.GroupEdit.as_view(), name='plac_group_add'),
     url(r'^(?P<group>[-.\w ]+)/$', views.GroupDetail.as_view(), name='plac_group_detail'),

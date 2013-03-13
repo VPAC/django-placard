@@ -20,7 +20,8 @@ from django.conf.urls import url, patterns
 import placard.views as views
 import placard.reports as reports
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
     url(r'^$', views.AccountList.as_view(), name='plac_account_list'),
     url(r'^pdf/$', reports.PdfAccountList.as_view(), name='plac_account_list_pdf'),
     url(r'^add/$', views.AccountAdd.as_view(), name='plac_account_add'),

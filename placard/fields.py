@@ -23,7 +23,6 @@ class CharField(django.forms.CharField):
     def clean(self, value):
         super(CharField, self).clean(value)
 
-        if value in ('',None):
+        if value in ('', None):
             return None
         return value
-

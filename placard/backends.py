@@ -21,6 +21,7 @@ from django.contrib.auth.backends import ModelBackend
 
 import placard.ldap_bonds as bonds
 
+
 class LDAPBackend(ModelBackend):
     def authenticate(self, username=None, password=None):
         try:

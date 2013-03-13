@@ -23,6 +23,7 @@ import re
 
 register = template.Library()
 
+
 @register.simple_tag
 def bond_url(name, *args):
     args = list(args)
@@ -32,12 +33,14 @@ def bond_url(name, *args):
         args.append(slave_id)
     return reverse(name, args=args)
 
+
 @register.simple_tag
 def group_detail_url(group, slave_id):
     if slave_id is None:
-        return reverse("plac_group_detail", kwargs={ 'group': group })
+        return reverse("plac_group_detail", kwargs={'group': group})
     else:
-        return reverse("plac_group_detail", kwargs={ 'group': group, 'slave': slave_id })
+        return reverse("plac_group_detail", kwargs={'group': group, 'slave': slave_id})
+
 
 @register.simple_tag
 def active(request, pattern):
@@ -45,9 +48,11 @@ def active(request, pattern):
         return 'active'
     return ''
 
+
 @register.inclusion_tag('placard/inlineformfield.html')
 def inlineformfield(field1, field2, field3=None):
     return locals()
+
 
 @register.inclusion_tag('placard/formfield.html')
 def formfield(field):
@@ -68,12 +73,14 @@ def formfield(field):
     context['type'] = widget_class_name
     return context
 
+
 @register.inclusion_tag('placard/pagination.html')
 def pagination(request, page_obj):
     context = {}
     context['request'] = request
     context['page_obj'] = page_obj
     return context
+
 
 class url_with_param_node(template.Node):
     def __init__(self, copy, nopage, changes):
@@ -82,7 +89,7 @@ class url_with_param_node(template.Node):
         self.changes = []
         for key, newvalue in changes:
             newvalue = template.Variable(newvalue)
-            self.changes.append( (key,newvalue,) )
+            self.changes.append((key, newvalue,))
 
     def render(self, context):
         if 'request' not in context:
@@ -95,7 +102,7 @@ class url_with_param_node(template.Node):
         if self.copy:
             result = request.GET.copy()
         else:
-            result = QueryDict("",mutable=True)
+            result = QueryDict("", mutable=True)
 
         if self.nopage:
             result.pop("page", None)
@@ -105,6 +112,7 @@ class url_with_param_node(template.Node):
             result[key] = newvalue
 
         return "?" + result.urlencode()
+
 
 @register.tag
 def url_with_param(parser, token):
@@ -125,9 +133,8 @@ def url_with_param(parser, token):
 
     for i in bits:
         try:
-            key, newvalue = i.split('=', 1);
-            qschanges.append( (key,newvalue,) )
+            key, newvalue = i.split('=', 1)
+            qschanges.append((key, newvalue,))
         except ValueError:
             raise template.TemplateSyntaxError, "Argument syntax wrong: should be key=value"
     return url_with_param_node(copy, nopage, qschanges)
-

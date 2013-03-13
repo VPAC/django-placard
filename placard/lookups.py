@@ -23,6 +23,7 @@ import placard.ldap_bonds as bonds
 import ajax_select
 import tldap
 
+
 class LookupChannel(ajax_select.LookupChannel):
     pass
 
@@ -30,7 +31,9 @@ class LookupChannel(ajax_select.LookupChannel):
 class AccountLookup(LookupChannel):
 
     def get_objects(self, ids):
-        """ Get the currently selected objects when editing an existing model """
+        """
+        Get the currently selected objects when editing an existing model
+        """
         # return in the same order as passed in here
         # this will be however the related objects Manager returns them
         # which is not guaranteed to be the same order they were in when you last edited
@@ -47,25 +50,35 @@ class AccountLookup(LookupChannel):
         return bonds.master.accounts().filter(tldap.Q(cn__contains=q) | tldap.Q(pk__contains=q))
 
     def get_result(self, obj):
-        u""" result is the simple text that is the completion of what the person typed """
+        """
+        result is the simple text that is the completion of what the person
+        typed
+        """
         return obj.cn
 
     def format_match(self, obj):
-        """ (HTML) formatted item for display in the dropdown """
-        result=[]
+        """
+        (HTML) formatted item for display in the dropdown
+        """
+        result = []
         if obj.jpegPhoto is not None:
             result.append(u"<img width='50' src='%s' alt='' />" % (reverse("plac_account_photo", args=[obj.uid])))
         result.append(u"%s<div><i>%s</i></div>" % (escape(obj), escape(obj.mail)))
         return u"".join(result)
 
     def format_item_display(self, obj):
-        """ (HTML) formatted item for displaying item in the selected deck area """
+        """
+        (HTML) formatted item for displaying item in the selected deck area
+        """
         return u"%s<div><i>%s</i></div>" % (escape(obj), escape(obj.mail))
+
 
 class GroupLookup(LookupChannel):
 
     def get_objects(self, ids):
-        """ Get the currently selected objects when editing an existing model """
+        """
+        Get the currently selected objects when editing an existing model
+        """
         # return in the same order as passed in here
         # this will be however the related objects Manager returns them
         # which is not guaranteed to be the same order they were in when you last edited
@@ -82,7 +95,10 @@ class GroupLookup(LookupChannel):
         return bonds.master.groups().filter(tldap.Q(pk__contains=q) | tldap.Q(description__contains=q))
 
     def get_result(self, obj):
-        u""" result is the simple text that is the completion of what the person typed """
+        """
+        result is the simple text that is the completion of what the person
+        typed
+        """
         return obj.cn
 
     def format_match(self, obj):

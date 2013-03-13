@@ -14,7 +14,8 @@ string module.
 
 __version__ = '0.1.0'
 
-import random, ldap
+import random
+import ldap
 try:
     # Recent versions of Python have hashlib
     from hashlib import md5
@@ -34,21 +35,22 @@ CRYPT_ALPHABET = './0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWX
 # After all AVAIL_USERPASSWORD_SCHEMES is a list of tuples containing
 # [(hash-id,(hash-description)].
 AVAIL_USERPASSWORD_SCHEMES = {
-    'sha':'userPassword SHA-1',
-    'ssha':'userPassword salted SHA-1',
-    'md5':'userPassword MD5',
-    'smd5':'userPassword salted MD5',
-    'crypt':'userPassword Unix crypt',
-    'md5-crypt' : 'userPassword MD5 crypt',
-    '':'userPassword plain text',
+    'sha': 'userPassword SHA-1',
+    'ssha': 'userPassword salted SHA-1',
+    'md5': 'userPassword MD5',
+    'smd5': 'userPassword salted MD5',
+    'crypt': 'userPassword Unix crypt',
+    'md5-crypt': 'userPassword MD5 crypt',
+    '': 'userPassword plain text',
 }
 
 AVAIL_AUTHPASSWORD_SCHEMES = {
-    'sha1':'authPassword SHA-1',
-    'md5':'authPassword MD5',
+    'sha1': 'authPassword SHA-1',
+    'md5': 'authPassword MD5',
 }
 
 _UnicodeType = type(u'')
+
 
 def _remove_dict_items(l, rl):
     """
@@ -60,7 +62,7 @@ def _remove_dict_items(l, rl):
             del l[i]
         except KeyError:
             pass
-        
+
 try:
     import base64
 except ImportError:
@@ -75,7 +77,7 @@ else:
         _remove_dict_items(AVAIL_AUTHPASSWORD_SCHEMES, ['md5', 'sha1'])
     else:
         random.seed()
-    try:    
+    try:
         import hashlib
     except ImportError:
         try:
@@ -123,7 +125,7 @@ class Password:
     """
     Base class for plain-text LDAP passwords.
     """
-    
+
     def __init__(self, l, dn=None, charset='utf-8'):
         """
         l
@@ -157,19 +159,19 @@ class Password:
     def _compareSinglePassword(self, testPassword, singlePasswordValue):
         """
         Compare testPassword with encoded password in singlePasswordValue.
-        
+
         testPassword
                 Plain text password for testing
         singlePasswordValue
                 password to verify against
         """
-        return testPassword==singlePasswordValue
+        return testPassword == singlePasswordValue
 
     def comparePassword(self, testPassword):
         """
         Return 1 if testPassword is in self._passwordAttributeValue
         """
-        if type(testPassword)==_UnicodeType:
+        if type(testPassword) == _UnicodeType:
             testPassword = testPassword.encode(self._charset)
         for p in self._passwordAttributeValue:
             if self._compareSinglePassword(testPassword, p):
@@ -190,7 +192,7 @@ class Password:
         """
         encode plainPassword into plain text password
         """
-        if type(plainPassword)==_UnicodeType:
+        if type(plainPassword) == _UnicodeType:
             plainPassword = plainPassword.encode(self._charset)
         return plainPassword
 
@@ -211,7 +213,7 @@ class Password:
                 This character set is used to encode passwords
                 in case oldPassword and/or newPassword are Unicode objects.
         """
-        if not oldPassword is None and type(oldPassword)==_UnicodeType:
+        if not oldPassword is None and type(oldPassword) == _UnicodeType:
             oldPassword = oldPassword.encode(charset)
         if self._multiple and not oldPassword is None:
             newPasswordValueList = self._delOldPassword(oldPassword)
@@ -248,7 +250,6 @@ class UserPassword(Password):
     """
     passwordAttributeType='userPassword'
     _hash_bytelen = {'md5':16, 'sha':20}
-
 
     def __init__(self, l=None, dn=None, charset='utf-8', multiple=0):
         """
@@ -289,7 +290,7 @@ class UserPassword(Password):
     def _compareSinglePassword(self, testPassword, singlePasswordValue, charset='utf-8'):
         """
         Compare testPassword with encoded password in singlePasswordValue.
-        
+
         testPassword
                 Plain text password for testing. If Unicode object
                 it is encoded using charset.
@@ -310,7 +311,7 @@ class UserPassword(Password):
             else:
                 cmp_password, salt = hashed_p, ''
         hashed_password = self._hashPassword(testPassword, scheme, salt)
-        return hashed_password==encoded_p
+        return hashed_password == encoded_p
 
     def encodePassword(self, plainPassword, scheme):
         """
@@ -321,14 +322,13 @@ class UserPassword(Password):
             # Brutal Hack
             if scheme == 'md5-crypt':
                 return '{crypt}%s' % md5crypt(plainPassword)
-            
+
             return ('{%s}%s' % (
                 scheme.upper(),
                 self._hashPassword(plainPassword, scheme)
             )).encode('ascii')
         else:
             return plainPassword
-
 
 
 # Based on FreeBSD src/lib/libcrypt/crypt.c 1.2
@@ -345,7 +345,7 @@ def md5crypt(password, salt=None, magic='$1$'):
 
     if salt is None:
         salt = _salt(saltLen=8, saltAlphabet=string.letters + string.digits)
-        # /* The password first, since that is what is most unknown */ /* Then our magic string */ /* Then the raw salt        
+        # /* The password first, since that is what is most unknown */ /* Then our magic string */ /* Then the raw salt
     m = md5()
     m.update(password + magic + salt)
 
@@ -363,7 +363,7 @@ def md5crypt(password, salt=None, magic='$1$'):
         else:
             m.update(password[0])
         i >>= 1
-            
+
     final = m.digest()
 
     # /* and now, just to make sure things don't run too fast */
@@ -373,18 +373,18 @@ def md5crypt(password, salt=None, magic='$1$'):
             m2.update(password)
         else:
             m2.update(final)
-            
+
         if i % 3:
             m2.update(salt)
-            
+
         if i % 7:
             m2.update(password)
-            
+
         if i & 1:
             m2.update(final)
         else:
             m2.update(password)
-            
+
         final = m2.digest()
 
     # This is the bit that uses to64() in the original code.
@@ -395,14 +395,15 @@ def md5crypt(password, salt=None, magic='$1$'):
     for a, b, c in ((0, 6, 12), (1, 7, 13), (2, 8, 14), (3, 9, 15), (4, 10, 5)):
         v = ord(final[a]) << 16 | ord(final[b]) << 8 | ord(final[c])
         for i in range(4):
-            rearranged += itoa64[v & 0x3f]; v >>= 6
+            rearranged += itoa64[v & 0x3f]
+            v >>= 6
 
     v = ord(final[11])
     for i in range(2):
-        rearranged += itoa64[v & 0x3f]; v >>= 6
-        
-    return magic + salt + '$' + rearranged
+        rearranged += itoa64[v & 0x3f]
+        v >>= 6
 
+    return magic + salt + '$' + rearranged
 
 
 if __debug__:
