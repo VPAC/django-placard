@@ -37,7 +37,7 @@
             <li><a href="{% url "plac_account_edit" account.pk %}">Edit details</a></li>
             {% endif %}
             {% if perms.placard.change_account_password %}
-            <li><a href="{% url "plac_change_password" account.pk %}">Change password</a></li>
+            <li><a href="{% url "plac_account_password" account.pk %}">Change password</a></li>
             {% endif %}
             {% if perms.placard.lock_account %}
                 {% if account.is_locked %}
