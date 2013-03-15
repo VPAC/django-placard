@@ -1,3 +1,10 @@
+django-placard (2.0.4-1) stable; urgency=low
+
+  * Fix PEP8 issues.
+  * Fix broken link.
+
+ -- Brian May <bam@debian.org>  Fri, 15 Mar 2013 14:40:44 +1100
+
 django-placard (2.0.3-1) stable; urgency=low
 
   * Fix CSRF.
