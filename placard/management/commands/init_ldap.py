@@ -17,7 +17,7 @@
 
 from django.core.management.base import BaseCommand, CommandError
 
-import tldap.models
+import tldap.schemas.rfc
 
 import ldap.dn
 
@@ -27,7 +27,7 @@ class Command(BaseCommand):
     def handle(self, **options):        
         verbose = int(options.get('verbosity'))
         
-        organizationalUnit = tldap.models.organizationalUnit
+        organizationalUnit = tldap.schemas.rfc.organizationalUnit
 
         from django.conf import settings
 
