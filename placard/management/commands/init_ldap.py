@@ -15,18 +15,17 @@
 # You should have received a copy of the GNU General Public License
 # along with django-placard  If not, see <http://www.gnu.org/licenses/>.
 
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 
 import tldap.schemas.rfc
 
-import ldap.dn
 
 class Command(BaseCommand):
     help = "Inititlise LDAP"
-    
-    def handle(self, **options):        
+
+    def handle(self, **options):
         verbose = int(options.get('verbosity'))
-        
+
         organizationalUnit = tldap.schemas.rfc.organizationalUnit
 
         from django.conf import settings
@@ -34,15 +33,16 @@ class Command(BaseCommand):
         USER_DN = settings.LDAP_USER_BASE
         GROUP_DN = settings.LDAP_GROUP_BASE
 
-        v,c = organizationalUnit.objects.get_or_create(dn=USER_DN)
-        if c:
-            print "Added " + USER_DN
-        else:
-            print USER_DN + " already exists."
+        v, c = organizationalUnit.objects.get_or_create(dn=USER_DN)
+        if verbose > 0:
+            if c:
+                print "Added " + USER_DN
+            else:
+                print USER_DN + " already exists."
 
-        v,c = organizationalUnit.objects.get_or_create(dn=GROUP_DN)
-        if c:
-            print "Added " + GROUP_DN
-        else:
-            print GROUP_DN + " already exists."
-
+        v, c = organizationalUnit.objects.get_or_create(dn=GROUP_DN)
+        if verbose > 0:
+            if c:
+                print "Added " + GROUP_DN
+            else:
+                print GROUP_DN + " already exists."
