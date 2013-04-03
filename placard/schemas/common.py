@@ -108,13 +108,9 @@ class personMixin(object):
         return tldap.connections[using].check_password(self.dn, password)
 
     @classmethod
-    def pre_create(cls, self, master):
-        if self.cn is None:
-            self.cn = self.uid
-
-    @classmethod
     def pre_save(cls, self):
         self.displayName = '%s %s' % (self.givenName, self.sn)
+        self.cn = self.displayName
 
 
 class accountMixin(object):
