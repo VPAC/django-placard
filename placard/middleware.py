@@ -66,7 +66,7 @@ class LDAPRemoteUserMiddleware(RemoteUserMiddleware):
             user = User.objects.get(username__exact=username)
         except User.DoesNotExist:
             # Create user
-            ldap_user = bonds.master.account().get(pk=username)
+            ldap_user = bonds.master.accounts().get(pk=username)
             user = User.objects.create_user(ldap_user.pk, ldap_user.mail)
             user.first_name = ldap_user.givenName
             user.last_name = ldap_user.sn
