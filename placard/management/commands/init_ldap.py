@@ -15,34 +15,50 @@
 # You should have received a copy of the GNU General Public License
 # along with django-placard  If not, see <http://www.gnu.org/licenses/>.
 
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 
+import tldap
 import tldap.schemas.rfc
+import tldap.transaction
 
 
 class Command(BaseCommand):
     help = "Inititlise LDAP"
+    args = "server [server ...]"
 
-    def handle(self, **options):
+    def handle(self, *servers, **options):
         verbose = int(options.get('verbosity'))
+        if len(servers) == 0:
+            servers = "default",
+        for server in servers:
+            self._do_server(verbose, server)
 
-        organizationalUnit = tldap.schemas.rfc.organizationalUnit
+    def _do_server(self, verbose, using):
+        try:
+            connection = tldap.connections[using]
+        except KeyError:
+            raise CommandError("LDAP Server %s not configured" % using)
 
-        from django.conf import settings
+        with tldap.transaction.commit_on_success(using=using):
 
-        USER_DN = settings.LDAP_USER_BASE
-        GROUP_DN = settings.LDAP_GROUP_BASE
+            if verbose > 0:
+                print "Processing %s" % using
 
-        v, c = organizationalUnit.objects.get_or_create(dn=USER_DN)
-        if verbose > 0:
-            if c:
-                print "Added " + USER_DN
-            else:
-                print USER_DN + " already exists."
+            user_dn = connection.settings_dict['LDAP_ACCOUNT_BASE']
+            group_dn = connection.settings_dict['LDAP_GROUP_BASE']
 
-        v, c = organizationalUnit.objects.get_or_create(dn=GROUP_DN)
-        if verbose > 0:
-            if c:
-                print "Added " + GROUP_DN
-            else:
-                print GROUP_DN + " already exists."
+            ou = tldap.schemas.rfc.organizationalUnit
+
+            v, c = ou.objects.using(using).get_or_create(dn=user_dn)
+            if verbose > 0:
+                if c:
+                    print "Added " + user_dn
+                else:
+                    print user_dn + " already exists."
+
+            v, c = ou.objects.using(using).get_or_create(dn=group_dn)
+            if verbose > 0:
+                if c:
+                    print "Added " + group_dn
+                else:
+                    print group_dn + " already exists."

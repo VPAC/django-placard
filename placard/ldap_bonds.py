@@ -87,6 +87,10 @@ class bond(object):
         return self._slave_id
 
     @property
+    def using(self):
+        return self._using
+
+    @property
     def AccountDoesNotExist(self):
         return self._account.DoesNotExist
 
