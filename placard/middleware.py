@@ -22,7 +22,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.contrib import auth
 
 import placard.ldap_bonds as bonds
-import tldap.transaction
+import placard.transaction
 
 
 class LDAPRemoteUserMiddleware(RemoteUserMiddleware):
@@ -88,21 +88,18 @@ class TransactionMiddleware(object):
     """
     def process_request(self, request):
         """Enters transaction management"""
-        for slave in bonds.slaves.keys():
-            if not tldap.transaction.is_managed(using=slave):
-                tldap.transaction.enter_transaction_management(using=slave)
+        if not placard.transaction.is_managed():
+            placard.transaction.enter_transaction_management()
 
     def process_exception(self, request, exception):
         """Rolls back the database and leaves transaction management"""
-        for slave in bonds.slaves.keys():
-            if tldap.transaction.is_dirty(using=slave):
-                tldap.transaction.rollback(using=slave)
+        if placard.transaction.is_dirty():
+            placard.transaction.rollback()
 
     def process_response(self, request, response):
         """Commits and leaves transaction management."""
-        for slave in bonds.slaves.keys():
-            if tldap.transaction.is_managed(using=slave):
-                if tldap.transaction.is_dirty(using=slave):
-                    tldap.transaction.commit(using=slave)
-                tldap.transaction.leave_transaction_management(using=slave)
+        if placard.transaction.is_managed():
+            if placard.transaction.is_dirty():
+                placard.transaction.commit()
+            placard.transaction.leave_transaction_management()
         return response
