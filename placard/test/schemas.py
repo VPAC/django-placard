@@ -25,10 +25,10 @@ import tldap.manager
 # rfc #
 #######
 
-class rfc_account(
+class rfc_account(common.baseMixin):
+    schema_list = [
         rfc.person, rfc.organizationalPerson, rfc.inetOrgPerson, rfc.pwdPolicy,
-        rfc.posixAccount, rfc.shadowAccount,
-        common.baseMixin):
+        rfc.posixAccount, rfc.shadowAccount]
     mixin_list = [common.personMixin, pwdPolicyMixin, common.accountMixin, common.shadowMixin]
 
     class Meta:
@@ -42,7 +42,8 @@ class rfc_account(
     unixHomeDirectory = tldap.manager.AliasDescriptor("homeDirectory")
 
 
-class rfc_group(rfc.posixGroup, common.baseMixin):
+class rfc_group(common.baseMixin):
+    schema_list = [rfc.posixGroup]
     mixin_list = [common.groupMixin]
 
     class Meta:
