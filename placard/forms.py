@@ -236,7 +236,7 @@ class LDAPHrAccountForm(AccountForm):
         return jpegPhoto
 
     def save(self, commit=True):
-        self.object = super(LDAPAccountForm, self).save(commit=False)
+        self.object = super(LDAPHrAccountForm, self).save(commit=False)
 
         self.object.managed_by = self.cleaned_data['managed_by']
 
