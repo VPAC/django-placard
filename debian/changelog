@@ -1,3 +1,9 @@
+django-placard (2.0.6-1) stable; urgency=low
+
+  * Various bugs fixed.
+
+ -- Brian May <bam@debian.org>  Wed, 01 May 2013 18:59:13 +1000
+
 django-placard (2.0.5-1) stable; urgency=low
 
   * Fix init_ldap operation.
