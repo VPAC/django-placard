@@ -32,7 +32,7 @@
         {% formfield form.raw_password2 %}
         {% endif %}
         {% inlineformfield form.givenName form.sn %}
-        {% formfield form.primary_group %}
+        {% if form.primary_group %}{% formfield form.primary_group %}{% endif %}
         {% formfield form.title %}
         {% formfield form.description %}
 
@@ -41,7 +41,7 @@
         {% formfield form.managed_by %}
         {% formfield form.l %}
         {% formfield form.jpegPhoto %}
-        {% formfield form.loginShell %}
+        {% if form.loginShell %}{% formfield form.loginShell %}{% endif %}
         {% endblock %}
     </fieldset>
 
