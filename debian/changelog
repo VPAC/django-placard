@@ -1,3 +1,9 @@
+django-placard (2.0.7-1) stable; urgency=low
+
+  * HR edit form broken; fixed.
+
+ -- Brian May <bam@debian.org>  Wed, 08 May 2013 11:26:48 +1000
+
 django-placard (2.0.6-1) stable; urgency=low
 
   * Various bugs fixed.
