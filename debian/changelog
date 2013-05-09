@@ -1,3 +1,11 @@
+django-placard (2.0.7-2) stable; urgency=low
+
+  * Transition to dh_python2.
+    http://wiki.debian.org/Python/TransitionToDHPython2
+  * Don't support python 2.5 anymore.
+
+ -- Brian May <bam@debian.org>  Thu, 09 May 2013 10:28:19 +1000
+
 django-placard (2.0.7-1) stable; urgency=low
 
   * HR edit form broken; fixed.
