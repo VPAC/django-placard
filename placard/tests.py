@@ -126,11 +126,13 @@ class PasswordTests(TestCase):
         u.save()
 
         self.failUnlessEqual(u.check_password('aq12ws'), True)
+        self.failUnlessEqual(u.check_password('qwerty'), False)
 
         u = bonds.master.accounts().get(uid='testuser3')
         u.change_password('qwerty')
         u.save()
 
+        self.failUnlessEqual(u.check_password('aq12ws'), False)
         self.failUnlessEqual(u.check_password('qwerty'), True)
 
     def test_admin_view(self):
