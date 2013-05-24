@@ -76,16 +76,29 @@ class UserViewsTests(TestCase):
         self.client.get(reverse('plac_account_detail_verbose', args=['testuser2']))
 
     def test_lock_unlock_account_view(self):
-        self.failUnlessEqual(bonds.master.accounts().get(uid='testuser2').is_locked(), False)
+        account = bonds.master.accounts().get(uid='testuser2')
+        account.change_password('qwerty')
+        account.save()
+
+        account = bonds.master.accounts().get(uid='testuser2')
+        self.failUnlessEqual(account.is_locked(), False)
+        self.failUnlessEqual(account.check_password('aq12ws'), False)
+        self.failUnlessEqual(account.check_password('qwerty'), True)
 
         self.client.login(username='super', password='aq12ws')
         self.client.post(reverse('plac_lock_user', args=['testuser2']))
 
-        self.failUnlessEqual(bonds.master.accounts().get(uid='testuser2').is_locked(), True)
+        account = bonds.master.accounts().get(uid='testuser2')
+        self.failUnlessEqual(account.is_locked(), True)
+        self.failUnlessEqual(account.check_password('aq12ws'), False)
+        self.failUnlessEqual(account.check_password('qwerty'), False)
 
         self.client.post(reverse('plac_unlock_user', args=['testuser2']))
 
-        self.failUnlessEqual(bonds.master.accounts().get(uid='testuser2').is_locked(), False)
+        account = bonds.master.accounts().get(uid='testuser2')
+        self.failUnlessEqual(account.is_locked(), False)
+        self.failUnlessEqual(account.check_password('aq12ws'), False)
+        self.failUnlessEqual(account.check_password('qwerty'), True)
 
 
 class PasswordTests(TestCase):
