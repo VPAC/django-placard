@@ -16,8 +16,9 @@
 # along with django-placard  If not, see <http://www.gnu.org/licenses/>.
 
 from tldap.schemas import rfc
-from placard.schemas import common
-from placard.schemas.pwdpolicy import pwdPolicyMixin
+import tldap.methods as base
+import tldap.methods.common as common
+import tldap.methods.pwdpolicy as pwdpolicy
 import tldap.manager
 
 
@@ -25,11 +26,11 @@ import tldap.manager
 # rfc #
 #######
 
-class rfc_account(common.baseMixin):
+class rfc_account(base.baseMixin):
     schema_list = [
         rfc.person, rfc.organizationalPerson, rfc.inetOrgPerson, rfc.pwdPolicy,
         rfc.posixAccount, rfc.shadowAccount]
-    mixin_list = [common.personMixin, pwdPolicyMixin, common.accountMixin, common.shadowMixin]
+    mixin_list = [common.personMixin, pwdpolicy.pwdPolicyMixin, common.accountMixin, common.shadowMixin]
 
     class Meta:
         base_dn_setting = "LDAP_ACCOUNT_BASE"
@@ -42,7 +43,7 @@ class rfc_account(common.baseMixin):
     unixHomeDirectory = tldap.manager.AliasDescriptor("homeDirectory")
 
 
-class rfc_group(common.baseMixin):
+class rfc_group(base.baseMixin):
     schema_list = [rfc.posixGroup]
     mixin_list = [common.groupMixin]
 

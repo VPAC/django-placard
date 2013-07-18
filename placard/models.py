@@ -16,22 +16,3 @@
 # along with django-placard  If not, see <http://www.gnu.org/licenses/>.
 
 from django.db import models
-
-
-class counters(models.Model):
-    name = models.CharField(max_length=20, db_index=True)
-    count = models.IntegerField()
-
-    @classmethod
-    def get_and_increment(cls, name, default, test):
-        entry, c = cls.objects.select_for_update().get_or_create(name=name, defaults={'count': default})
-
-        while not test(entry.count):
-            entry.count = entry.count + 1
-
-        n = entry.count
-
-        entry.count = entry.count + 1
-        entry.save()
-
-        return n

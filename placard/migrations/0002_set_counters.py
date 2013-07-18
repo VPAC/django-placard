@@ -1,12 +1,12 @@
 # encoding: utf-8
 import datetime
 from south.db import db
-from south.v2 import SchemaMigration
+from south.v2 import DataMigration
 from django.db import models
 
 import placard.ldap_bonds
 
-class Migration(SchemaMigration):
+class Migration(DataMigration):
 
     def forwards(self, orm):
         if db.dry_run:
@@ -48,3 +48,4 @@ class Migration(SchemaMigration):
     }
 
     complete_apps = ['placard']
+    symmetrical = True
