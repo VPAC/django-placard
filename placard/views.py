@@ -355,7 +355,7 @@ class AccountRemoveGroup(AccountGeneric):
 
     def get_form_kwargs(self):
         kwargs = super(AccountRemoveGroup, self).get_form_kwargs()
-        kwargs['group'] = bonds.master.get_account_or_404(cn=self.kwargs['group'])
+        kwargs['group'] = bonds.master.get_group_or_404(cn=self.kwargs['group'])
         self.group = kwargs['group']
         return kwargs
 
