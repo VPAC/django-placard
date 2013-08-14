@@ -33,7 +33,7 @@ DATABASES = {
 
 LDAP = {
     'default': {
-        'ENGINE': 'tldap.backend.transaction',
+        'ENGINE': 'tldap.backend.fake_transactions',
         'URI': 'ldap://localhost:38911/',
         'USER': 'cn=Manager,dc=python-ldap,dc=org',
         'PASSWORD': 'password',
@@ -50,8 +50,5 @@ PLACARD_MASTER = {
     'ACCOUNT': 'placard.test.schemas.rfc_account',
     'GROUP': 'placard.test.schemas.rfc_group',
 }
-
-SAMBA_ACCOUNT_RID_BASE = 0
-SAMBA_GROUP_RID_BASE = 0
 
 SECRET_KEY = '5hvhpe6gv2t5x4$3dtq(w2v#vg@)sx4p3r_@wv%l41g!stslc*'
