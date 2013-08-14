@@ -6,6 +6,11 @@ from django.db import models
 
 class Migration(DataMigration):
 
+    # the following update changes the schema and breaks this update
+    needed_by = (
+        ("methods", "auto__add_field_counters_scheme"),
+    )
+
     def forwards(self, orm):
         "Write your forwards methods here."
         if db.dry_run:
