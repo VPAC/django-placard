@@ -60,14 +60,8 @@ class LDAPForm(forms.Form):
 
         # newly created object? send trigger
         if self.created:
-            self.object.pre_create(master=None)
             for _, obj in self.slave_objs:
-                obj.pre_create(master=self.object)
-
-        # prepare to save
-        self.object.pre_save()
-        for _, obj in self.slave_objs:
-            obj.pre_save()
+                obj.setup_from_master(master=self.object)
 
         # do the save
         self.object.save()
@@ -78,12 +72,6 @@ class LDAPForm(forms.Form):
         if self.created:
             assert self.object.dn is not None
             self.signal_add.send(self.object, user=self.user)
-
-        # newly created object? send trigger
-        if self.created:
-            self.object.post_create(master=None)
-            for _, obj in self.slave_objs:
-                obj.post_create(master=self.object)
 
     def save(self, commit=True):
         if not self.created:
@@ -446,11 +434,9 @@ class DeleteAccountForm(AccountForm):
     def save(self, commit=True):
         placard.signals.account_delete.send(self.object, user=self.user)
 
-        self.object.pre_delete()
         self.object.delete()
 
         for obj in self.slave_objs:
-            obj.pre_delete()
             obj.delete()
         return None
 
@@ -551,11 +537,9 @@ class DeleteGroupForm(GroupForm):
     def save(self, commit=True):
         placard.signals.group_delete.send(self.object, user=self.user)
 
-        self.object.pre_delete()
         self.object.delete()
 
         for _, obj in self.slave_objs:
-            obj.pre_delete()
             obj.delete()
 
         return None
