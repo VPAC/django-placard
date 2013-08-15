@@ -38,12 +38,13 @@ class bond(object):
         self._using = settings['LDAP']
         self._account = _lookup(settings['ACCOUNT'])
         self._group = _lookup(settings['GROUP'])
+        self._settings = settings
 
     def accounts(self):
-        return self._account.objects.using(self._using)
+        return self._account.objects.using(using=self._using, settings=self._settings)
 
     def groups(self):
-        return self._group.objects.using(self._using)
+        return self._group.objects.using(using=self._using, settings=self._settings)
 
     def get_account_or_404(self, *args, **kwargs):
         """
@@ -53,7 +54,7 @@ class bond(object):
         Note: Like with get(), an MultipleObjectsReturned will be raised if
         more than one account is found.
         """
-        queryset = self._account.objects.using(self._using)
+        queryset = self._account.objects.using(using=self._using, settings=self._settings)
         try:
             return queryset.get(*args, **kwargs)
         except queryset.model.DoesNotExist:
@@ -67,17 +68,17 @@ class bond(object):
         Note: Like with get(), an MultipleObjectsReturned will be raised if
         more than one group is found.
         """
-        queryset = self._group.objects.using(self._using)
+        queryset = self._group.objects.using(using=self._using, settings=self._settings)
         try:
             return queryset.get(*args, **kwargs)
         except queryset.model.DoesNotExist:
             raise Http404('No %s matches the given query.' % queryset.model._meta.object_name)
 
     def create_account(self):
-        return self._account(using=self._using)
+        return self._account(using=self._using, settings=self._settings)
 
     def create_group(self):
-        return self._group(using=self._using)
+        return self._group(using=self._using, settings=self._settings)
 
     def __unicode__(self):
         return unicode(self._name)
