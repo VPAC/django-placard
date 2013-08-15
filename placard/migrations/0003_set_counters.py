@@ -8,7 +8,7 @@ class Migration(DataMigration):
 
     # the following update changes the schema and breaks this update
     needed_by = (
-        ("methods", "auto__add_field_counters_scheme"),
+        ("methods", "0002_auto__add_field_counters_scheme"),
     )
 
     def forwards(self, orm):
