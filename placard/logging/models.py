@@ -19,7 +19,7 @@ class LogEntry(models.Model):
     action_time = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(User, related_name="ldap_logs")
     object_dn = models.CharField(max_length=50)
-    object_pk = models.CharField(max_length=20)
+    object_pk = models.CharField(max_length=40)
     object_type = models.CharField(max_length=20)
     object_repr = models.CharField(max_length=200)
     action = models.CharField(max_length=1)
