@@ -337,8 +337,8 @@ class LDAPPasswordForm(LDAPAdminPasswordForm):
 
 class LDAPGroupForm(GroupForm):
     """ Add/modify a group form"""
-    displayName = fields.CharField('Display name', required=False, widget=forms.TextInput(attrs={'size': 60}))
-    description = fields.CharField('Description', required=False, widget=forms.TextInput(attrs={'size': 60}))
+    displayName = fields.CharField(label='Display name', required=False, widget=forms.TextInput(attrs={'size': 60}))
+    description = fields.CharField(label='Description', required=False, widget=forms.TextInput(attrs={'size': 60}))
     cn = fields.CharField(label='CN')
 
     signal_add = placard.signals.group_add
