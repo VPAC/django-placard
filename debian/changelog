@@ -1,3 +1,9 @@
+django-placard3 (3.0.0-2) unstable; urgency=low
+
+  * Fix packaging error.
+
+ -- Brian May <bam@debian.org>  Tue, 17 Dec 2013 14:29:18 +1100
+
 django-placard3 (3.0.0-1) unstable; urgency=low
 
   * New version. Breaks existing clients. Code moved to tldap.
