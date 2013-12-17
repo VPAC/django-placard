@@ -1,3 +1,10 @@
+django-placard3 (3.0.1-1) unstable; urgency=low
+
+  * Django 1.6 updates.
+  * Add email adddress to account form.
+
+ -- Brian May <bam@debian.org>  Wed, 18 Dec 2013 09:52:55 +1100
+
 django-placard3 (3.0.0-2) unstable; urgency=low
 
   * Fix packaging error.
