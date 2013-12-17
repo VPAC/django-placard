@@ -1,3 +1,10 @@
+django-placard (2.0.9-1) unstable; urgency=low
+
+  * Bug fixes.
+  * Django 1.6 support.
+
+ -- Brian May <bam@debian.org>  Tue, 17 Dec 2013 12:14:36 +1100
+
 django-placard (2.0.8-1) unstable; urgency=low
 
   * Improvements to tests.
