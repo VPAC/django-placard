@@ -1,3 +1,9 @@
+django-placard3 (3.0.0-1) unstable; urgency=low
+
+  * New version. Breaks existing clients. Code moved to tldap.
+
+ -- Brian May <bam@debian.org>  Tue, 17 Dec 2013 13:57:19 +1100
+
 django-placard (2.0.8-1) unstable; urgency=low
 
   * Improvements to tests.

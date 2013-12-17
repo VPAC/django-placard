@@ -1,4 +1,4 @@
-Source: django-placard
+Source: django-placard3
 Section: python
 Priority: optional
 Maintainer: Brian May <bam@debian.org>
@@ -6,11 +6,12 @@ Build-Depends: debhelper (>=7.0.0), python (>= 2.6.6-3), cdbs (>= 0.4.90)
 Standards-Version: 3.9.3
 X-Python-Version: >= 2.6
 
-Package: django-placard
+Package: django-placard3
 Architecture: all
 Homepage: http://code.arcs.org.au/gitorious/django/django-placard/
 Depends: ${misc:Depends}, ${python:Depends}, python-ldap (>= 2.2), python-django (>= 1.2.1), django-ajax-selects, django-tldap (>= 0.2.9)
-Breaks: karaage (<< 3.0.0)
+Breaks: django-placard (<< 3.0.0), karaage (<< 3.0.0)
+Replaces: django-placard (<< 3.0.0)
 Description: Django LDAP client library
  Provides an easy to use API to the python-ldap package.
  Also provides some urls/views and templates to use for
