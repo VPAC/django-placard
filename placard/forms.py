@@ -104,6 +104,7 @@ class LDAPAccountForm(AccountForm):
     description = fields.CharField(widget=forms.Textarea(attrs={'class': 'vLargeTextField', 'rows': 10, 'cols': 40}), required=False)
     facsimileTelephoneNumber = fields.CharField(label="Fax", required=False)
     mobile = fields.CharField(label="Mobile", required=False)
+    mail = fields.CharField(label="Email", required=True)
     jpegPhoto = forms.ImageField(label='Photo', required=False)
     title = fields.CharField(widget=forms.TextInput(attrs={'size': 60}))
     managed_by = AutoCompleteSelectField('account', required=False)
