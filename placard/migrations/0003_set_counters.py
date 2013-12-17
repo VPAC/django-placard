@@ -5,6 +5,9 @@ from south.v2 import DataMigration
 from django.db import models
 
 class Migration(DataMigration):
+    depends_on = (
+        ("methods", "0001_initial"),
+    )
 
     # the following update changes the schema and breaks this update
     needed_by = (
