@@ -93,7 +93,7 @@ class PermissionMixin(object):
                 ok = True
 
         if not ok:
-            return HttpResponseForbidden()
+            return HttpResponseForbidden("<h1>Access is Forbidden.</h1>")
 
         return None
 
