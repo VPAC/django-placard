@@ -109,6 +109,7 @@ class LDAPAccountForm(AccountForm):
     title = fields.CharField(widget=forms.TextInput(attrs={'size': 60}))
     managed_by = AutoCompleteSelectField('account', required=False)
     l = fields.CharField(label='Location', required=False)
+    roomNumber = fields.CharField(label='Room Number', required=False)
     loginShell = fields.CharField(label='Login Shell', required=False)
 
     signal_add = placard.signals.account_add

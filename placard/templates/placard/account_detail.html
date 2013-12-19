@@ -146,6 +146,9 @@
             <tr>
             <td>sn</td><td>{{ account.sn }}</td>
             </tr>
+            <tr>
+            <td>location</td><td>{{ account.l }} {% if account.roomNumber %}room {{ account.roomNumber }}{% endif %}</td>
+            </tr>
         </table>
     </div>
 

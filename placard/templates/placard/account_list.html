@@ -54,6 +54,7 @@
                     <th>Mobile</th>
                     <th>Email</th>
                     <th>Location</th>
+                    <th>Room</th>
                 </tr>
             </thead>
             <tbody>
@@ -64,6 +65,7 @@
                         <td>{{ u.mobile }}</td>
                         <td>{{ u.mail|urlize }}</td>
                         <td>{{ u.l }}</td>
+                        <td>{{ u.roomNumber }}</td>
                     </tr>
                 {% endfor %}
             </tbody>

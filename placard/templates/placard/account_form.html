@@ -40,7 +40,7 @@
         {% formfield form.mobile %}
         {% formfield form.mail %}
         {% formfield form.managed_by %}
-        {% formfield form.l %}
+        {% inlineformfield form.l form.roomNumber %}
         {% formfield form.jpegPhoto %}
         {% if form.loginShell %}{% formfield form.loginShell %}{% endif %}
         {% endblock %}
