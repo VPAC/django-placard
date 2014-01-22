@@ -18,10 +18,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.doc.XViewMiddleware',
-    'placard.middleware.TransactionMiddleware',
 )
-
-ATOMIC_REQUESTS = True
 
 STATIC_URL = '/media/'
 
