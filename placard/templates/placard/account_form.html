@@ -38,7 +38,7 @@
 
         {% inlineformfield form.telephoneNumber form.facsimileTelephoneNumber %}
         {% formfield form.mobile %}
-        {% formfield form.mail %}
+        {% if form.mail %}{% formfield form.mail %}{% endif %}
         {% formfield form.managed_by %}
         {% inlineformfield form.l form.roomNumber %}
         {% formfield form.jpegPhoto %}
