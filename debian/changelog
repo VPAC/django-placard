@@ -1,3 +1,11 @@
+django-placard3 (3.0.3-1) unstable; urgency=low
+
+  * Fix various bugs.
+  * Support roomNumber field.
+  * Remove depreciated placard.middleware.TransactionMiddleware.
+
+ -- Brian May <bam@debian.org>  Thu, 27 Feb 2014 16:17:41 +1100
+
 django-placard3 (3.0.2-1) unstable; urgency=low
 
   * Support latest python-ajax-select.
