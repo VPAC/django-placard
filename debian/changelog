@@ -1,3 +1,10 @@
+django-placard (2.0.10-1) unstable; urgency=low
+
+  * Backport fix error with get_template_names and latest tldap.
+  * Backport fix for latest python-ajax-select.
+
+ -- Brian May <bam@debian.org>  Fri, 28 Mar 2014 15:03:01 +1100
+
 django-placard (2.0.9-1) unstable; urgency=low
 
   * Bug fixes.
